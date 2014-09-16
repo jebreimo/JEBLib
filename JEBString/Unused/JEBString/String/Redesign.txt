@@ -1,0 +1,169 @@
+Creating a library for parsing text with iterators
+==================================================
+
+Consider ArgParse and Json; what do I need to make it more convenient to implement these two parsers?
+
+There is one thing I have to keep in mind: characters can be escaped, even newlines.
+
+* nextUnescapedNewline(beg, end) -> Range
+* nextUnescaped(beg, end, chr) -> Range
+* nextUnescaped(beg, end, str) -> Range
+* nextUnescapedWhere(beg, end, unary_func) -> Range
+
+Iterators
+=========
+
+* TokenIterator
+* SplitIterator
+* ReverseTokenIterator
+* ReverseSplitIterator
+
+Redesign
+========
+
+What I want is a UTF-8 string library.
+
+It should support at least the following:
+
+* capitalize(str)
+* chr(str, idx) -> chr
+* chrRange(str, idx) -> it, it
+* compare(str, str, cmp)
+* equal(str, str, cmp)
+* find()
+* findFirstWhere()
+* findFirstWhereNot()
+* findLastWhere()
+* findLastWhereNot()
+* findFirstOf()
+* findFirstNotOf()
+* findLastOf()
+* findLastNotOf()
+* insert(str, idx, str)
+* insert(str, idx, chr)
+* join()
+* length(str)
+* less(str, str, cmp)
+* lower(str)
+* remove(str, chr)
+* remove(str, pred)
+* replace(str, str, str)
+* replace(str, chr, chr)
+* replace(str, pred, chr)
+* split()
+* splitFirst() -> str, str
+* splitLast() -> str, str
+* startsWith() -> bool
+* endsWith() -> bool
+* string(chr) -> str
+* substring() -> str
+* trim()
+* trimFirst()
+* trimLast()
+* upper()
+* wild-card matching
+
+Functions I got from .Net's String
+----------------------------------
+* compareOrdinal(str, str)
+* append(str, chr)
+* contains(str, str)
+* padLeft(str, n, chr)
+* padRight(str, n, chr)
+* isNormalized(str) -> bool  [Unicode normalization]
+* normalize(str) -> str      [Unicode normalization]
+
+All of these should have a std::string-based interface.
+
+Internally it will use Utf8Iterator as much as possible, perhaps also Utf32Iterator where it provides sufficient optimization.
+
+Two types of token iterators make sense:
+
+* SeparatorIterator - will return the begin/end of a separator
+* WordIterator - will return the begin/end of the words between separators
+
+Different kinds of searching:
+-----------------------------
+* direct match
+* case-insensitive match
+* wild-card match
+* unaccentuated match (turning for instance á and à into a before comparing them)
+* token match
+* (regex match)
+
+Implementation of searches:
+---------------------------
+
+Finders:
+
+* FirstFinder
+    - direct match
+* LastFinder
+    - direct match
+* TransformedFinder
+    - case-insensitive match
+    - unaccentuated match
+* WildcardFinder
+* TokenFinder
+
+What should the Finder's interface be?
+
+std::pair<FwdIt, FwdIt> match(FwdIt beg, FwdIt end)
+
+where dereferencing FwdIt returns uint32_t.
+
+Predicates
+==========
+
+Functions that should take predicates
+-------------------------------------
+* findFirstWhere()
+* findFirstWhereNot()
+* findLastWhere()
+* findLastWhereNot()
+* split()
+* splitFirst()
+* splitLast()
+* trim()
+* trimFirst()
+* trimLast()
+
+isAlphanumeric() -> CharacterClassPredicate
+isAlphabetic() -> CharacterClassPredicate
+isAscii() -> AsciiPredicate
+isBlank() -> ?? BlankPredicate
+isControl() -> CharacterClassPredicate
+isDigit() -> CharacterClassPredicate
+isGraphic() -> CharacterClassPredicate
+isLower() -> CharacterClassPredicate
+isPrinted() -> CharacterClassPredicate
+isPunctuation() -> CharacterClassPredicate
+isSpace() -> SpacePredicate
+isUpper() -> CharacterClassPredicate
+isWord() -> CharacterClassPredicate
+isHexDigit() -> HexDigitPredicate
+
+isInCharacterClass(str) -> CharRangePredicate
+hasCharacterClass(class) -> CharacterClassPredicate
+
+POSIX   Description ASCII   Unicode Shorthand   Java
+[:alnum:]   Alphanumeric characters [a-zA-Z0-9] [\p{L&}\p{Nd}]      \p{Alnum}
+[:alpha:]   Alphabetic characters   [a-zA-Z]    \p{L&}      \p{Alpha}
+[:ascii:]   ASCII characters    [\x00-\x7F] \p{InBasicLatin}        \p{ASCII}
+[:blank:]   Space and tab   [ \t]   [\p{Zs}\t]      \p{Blank}
+[:cntrl:]   Control characters  [\x00-\x1F\x7F] \p{Cc}      \p{Cntrl}
+[:digit:]   Digits  [0-9]   \p{Nd}  \d  \p{Digit}
+[:graph:]   Visible characters (i.e. anything except spaces, control characters, etc.)  [\x21-\x7E] [^\p{Z}\p{C}]       \p{Graph}
+[:lower:]   Lowercase letters   [a-z]   \p{Ll}      \p{Lower}
+[:print:]   Visible characters and spaces (i.e. anything except control characters, etc.)   [\x20-\x7E] \P{C}       \p{Print}
+[:punct:]   Punctuation and symbols.    [!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]   [\p{P}\p{S}]        \p{Punct}
+[:space:]   All whitespace characters, including line breaks    [ \t\r\n\v\f]   [\p{Z}\t\r\n\v\f]   \s  \p{Space}
+[:upper:]   Uppercase letters   [A-Z]   \p{Lu}      \p{Upper}
+[:word:]    Word characters (letters, numbers and underscores)  [A-Za-z0-9_]    [\p{L}\p{N}\p{Pc}]  \w
+[:xdigit:]  Hexadecimal digits  [A-Fa-f0-9] [A-Fa-f0-9]     \p{XDigit}
+
+
+Path predicates
+---------------
+isDirSeparator()
+isPathSeparator()

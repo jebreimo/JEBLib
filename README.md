@@ -1,0 +1,1 @@
+This project consists of functions and classes used by the other JEB-libraries. It is a least common denominator consisting of generic algorithms, wrappers and utilities for working with the C++ standard library and basic bit and byte manipulations.
