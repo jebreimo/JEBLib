@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <limits>
 #include <string>
-#include <JEBBase/Bits/Endian.hpp>
+#include "JEBBase/Bits/Endian.hpp"
 #include "JEBString/JEBStringFlags.hpp"
 
 namespace JEBString { namespace EncodedStrings {

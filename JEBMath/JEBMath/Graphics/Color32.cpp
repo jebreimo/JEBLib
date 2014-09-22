@@ -2,8 +2,8 @@
 
 #include <iomanip>
 #include <iostream>
-#include <JEBBase/Bits/Union32.hpp>
-#include <JEBBase/Bits/Union64.hpp>
+#include "JEBBase/Bits/Union32.hpp"
+#include "JEBBase/Bits/Union64.hpp"
 #include "JEBMath/Math/ArrayMath.hpp"
 
 using namespace std;

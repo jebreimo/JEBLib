@@ -1,7 +1,7 @@
 #include "CharMap.hpp"
 
 #include <cassert>
-#include <JEBBase/Algorithms/Algorithms.hpp>
+#include "JEBBase/Algorithms/Algorithms.hpp"
 
 namespace JEBString { namespace Unicode {
 

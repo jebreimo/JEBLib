@@ -1,7 +1,7 @@
 #include "CodePage.hpp"
 #include <vector>
 #include <stdexcept>
-#include <JEBBase/Algorithms/Algorithms.hpp>
+#include "JEBBase/Algorithms/Algorithms.hpp"
 
 namespace JEBString { namespace CodePageStrings {
 

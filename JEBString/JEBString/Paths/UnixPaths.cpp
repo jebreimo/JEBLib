@@ -1,6 +1,6 @@
 #include "UnixPaths.hpp"
 #include <cstdint>
-#include <JEBBase/Algorithms/Algorithms.hpp>
+#include "JEBBase/Algorithms/Algorithms.hpp"
 #include "JEBString/RawStrings/RawString.hpp"
 
 namespace JEBString { namespace Paths { namespace Unix {
@@ -15,8 +15,21 @@ namespace
     auto CurrentDirRange = makeRange(CurrentDir);
     const char ParentDir[] = "..";
     auto ParentDirRange = makeRange(ParentDir);
-    bool isDirSep(uint32_t ch) {return ch == DirSep;}
-    bool isExtensionSep(uint32_t ch) {return ch == '.';}
+
+    bool isDirSep(uint32_t ch)
+    {
+        return ch == DirSep;
+    }
+
+    bool isPathSep(uint32_t ch)
+    {
+        return isDirSep(ch);
+    }
+
+    bool isExtensionSep(uint32_t ch)
+    {
+        return ch == '.';
+    }
 
     bool isDirOrExtensionSep(uint32_t ch)
     {
@@ -27,7 +40,7 @@ namespace
 std::string baseName(const std::string& path)
 {
     auto p = makeRange(path);
-    return RawStrings::toString<char>(RawStrings::prevToken(p, isDirSep));
+    return RawStrings::toString<char>(RawStrings::prevToken(p, isPathSep));
 }
 
 std::string commonPath(const std::string& a, const std::string& b)

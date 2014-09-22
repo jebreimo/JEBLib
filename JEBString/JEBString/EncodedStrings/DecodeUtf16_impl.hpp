@@ -1,5 +1,5 @@
-#include <JEBBase/Bits/Union16.hpp>
-#include <JEBBase/Bits/Integers.hpp>
+#include "JEBBase/Bits/Union16.hpp"
+#include "JEBBase/Bits/Integers.hpp"
 
 namespace JEBString { namespace EncodedStrings {
 

@@ -1,7 +1,7 @@
 #include "WindowsPaths.hpp"
 #include <cstdint>
-#include <JEBBase/Iterators/Iterators.hpp>
-#include <JEBBase/Ranges/RangeAlgorithms.hpp>
+#include "JEBBase/Iterators/Iterators.hpp"
+#include "JEBBase/Ranges/RangeAlgorithms.hpp"
 #include "JEBString/RawStrings/RawString.hpp"
 
 namespace JEBString { namespace Paths { namespace Windows {
@@ -10,32 +10,39 @@ using JEBBase::Ranges::makeRange;
 
 namespace
 {
-    const char DirSep = '\\';
-    static const std::string DirSepStr(1, DirSep);
+    // const char DirSep = '\\';
+    static const std::string DirSepStr("\\");
+
     bool isDirSep(uint32_t ch)
     {
-        return ch == DirSep;
+        return ch == '\\' || ch == '/';
     }
+
     bool isDriveSep(uint32_t ch)
     {
         return ch == ':';
     }
-    bool isDirOrDriveSep(uint32_t ch)
+
+    bool isPathSep(uint32_t ch)
     {
         return isDirSep(ch) || isDriveSep(ch);
     }
+
     bool isExtensionSep(uint32_t ch)
     {
         return ch == '.';
     }
+
     bool isDirOrExtensionSep(uint32_t ch)
     {
-        return isDirOrDriveSep(ch) || isExtensionSep(ch);
+        return isPathSep(ch) || isExtensionSep(ch);
     }
+
     bool isDriveLetter(char c)
     {
         return 'A' <= (c & 0xDF) && (c & 0xDF) <= 'Z';
     }
+
     template <typename FwdIt>
     bool isNetworkRoot(FwdIt first, FwdIt last)
     {
@@ -69,11 +76,16 @@ namespace
     }
 }
 
+std::string baseName(const std::string& path)
+{
+    auto p = makeRange(path);
+    return RawStrings::toString<char>(RawStrings::prevToken(p, isDirSep));
+}
+
 std::string extension(const std::string& path)
 {
     auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
-    if (it == begin(path) || isDirOrDriveSep(*it) ||
-            isDirOrDriveSep(*prev(it)))
+    if (it == begin(path) || isPathSep(*it) || isPathSep(*prev(it)))
         return std::string();
     return std::string(it, end(path));
 }
@@ -81,8 +93,7 @@ std::string extension(const std::string& path)
 std::string removeExtension(const std::string& path)
 {
     auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
-    if (it == begin(path) || isDirOrDriveSep(*it) ||
-            isDirOrDriveSep(*prev(it)))
+    if (it == begin(path) || isPathSep(*it) || isPathSep(*prev(it)))
         return path;
     return std::string(begin(path), it);
 }
@@ -93,8 +104,8 @@ std::pair<std::string, std::string> split(const std::string& path)
         return std::pair<std::string, std::string>();
 
     auto p = makeRange(path);
-    auto bn = RawStrings::prevToken(p, isDirOrDriveSep);
-    if (empty(p) && !isDirOrDriveSep(*end(p)))
+    auto bn = RawStrings::prevToken(p, isPathSep);
+    if (empty(p) && !isPathSep(*end(p)))
         return std::make_pair(std::string(), RawStrings::toString<char>(bn));
     if (isDriveRoot(begin(p), begin(bn)))
         return std::make_pair(std::string(begin(p), begin(bn)),
@@ -108,8 +119,7 @@ std::pair<std::string, std::string> split(const std::string& path)
 std::pair<std::string, std::string> splitExtension(const std::string& path)
 {
     auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
-    if (it == begin(path) || isDirOrDriveSep(*it) ||
-            isDirOrDriveSep(*prev(it)))
+    if (it == begin(path) || isPathSep(*it) || isPathSep(*prev(it)))
         return make_pair(path, std::string());
     return make_pair(std::string(begin(path), it),
                      std::string(it, end(path)));

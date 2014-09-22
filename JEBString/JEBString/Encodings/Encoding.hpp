@@ -2,7 +2,7 @@
 #define JEBSTRING_ENCODINGS_ENCODING_HPP
 
 #include <string>
-#include <JEBBase/Bits/Endian.hpp>
+#include "JEBBase/Bits/Endian.hpp"
 #include "JEBString/JEBStringFlags.hpp"
 #include "EncodingProperties.hpp"
 

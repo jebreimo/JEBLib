@@ -1,6 +1,6 @@
 #include "CodePageString.hpp"
 
-#include <JEBBase/Ranges/RangeAlgorithms.hpp>
+#include "JEBBase/Ranges/RangeAlgorithms.hpp"
 #include "JEBString/JEBStringMacros.hpp"
 #include "JEBString/EncodedStrings/EncodedString.hpp"
 #include "JEBString/EncodedStrings/Encoder.hpp"
