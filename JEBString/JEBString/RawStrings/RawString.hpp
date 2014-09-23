@@ -50,6 +50,6 @@ std::basic_string<CharType> toString(Range<It> range);
 
 }}
 
-#include "RawString_impl.hpp"
+#include "RawString.impl.hpp"
 
 #endif

@@ -7,7 +7,7 @@ set(JEB_DIR JEBString/${PROJECT_NAME})
 set(PUBLIC_HEADERS
     EscapedString.hpp
     RawString.hpp
-    RawString_impl.hpp
+    RawString.impl.hpp
    )
 
 add_custom_target(${PROJECT_NAME} SOURCES ${PUBLIC_HEADERS})
