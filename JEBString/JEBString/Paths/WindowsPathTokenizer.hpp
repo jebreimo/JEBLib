@@ -13,7 +13,8 @@ enum class PathTokenType
     Root,
     PathSeparator,
     Name,
-    ExtensionSeparator
+    ExtensionSeparator,
+    Invalid
 };
 
 struct WindowsPathTokenizer

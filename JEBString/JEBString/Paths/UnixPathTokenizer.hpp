@@ -27,22 +27,50 @@ public:
     static std::pair<Range<It>, PathTokenType> prevSubToken(Range<It>& path);
 private:
     template <typename It>
-    static std::pair<Range<It>, PathTokenType> makeResult(
+    static std::pair<Range<It>, PathTokenType> makeNextResult(
             Range<It>& r, It pos, PathTokenType tokenType);
 };
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> UnixPathTokenizer::next(Range<It>& path)
 {
+    if (empty(path))
+        return makeRange(path, PathTokenType::Empty);
+
     auto it = find(path, '/');
+    if (it == path.end())
+        return makeNextResult(path, it, PathTokenType::Name);
+    else if (it == path.begin())
+        return makeNextResult(path, ++it, PathTokenType::PathSeparator);
+    else
+        return makeNextResult(path, it, PathTokenType::Name);
+}
+
+template <typename It>
+std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prev(Range<It>& path)
+{
     return std::pair<Range<It>, PathTokenType>();
 }
 
 template <typename It>
-std::pair<Range<It>, PathTokenType> UnixPathTokenizer::makeResult(
-        Range<It>& r, It pos, PathTokenType tokenType)
+std::pair<Range<It>, PathTokenType> UnixPathTokenizer::nextSubToken(Range<It>& path)
 {
     return std::pair<Range<It>, PathTokenType>();
+}
+
+template <typename It>
+std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prevSubToken(Range<It>& path)
+{
+    return std::pair<Range<It>, PathTokenType>();
+}
+
+template <typename It>
+std::pair<Range<It>, PathTokenType> UnixPathTokenizer::makeNextResult(
+        Range<It>& r, It pos, PathTokenType tokenType)
+{
+    auto result = make_range(r.begin(), pos);
+    r.setBegin(pos);
+    return std::make_pair(result, tokenType);
 }
 
 }}
