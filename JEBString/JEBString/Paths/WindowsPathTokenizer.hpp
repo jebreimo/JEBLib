@@ -12,7 +12,7 @@ enum class PathTokenType
     Empty,
     Root,
     PathSeparator,
-    Word,
+    Name,
     ExtensionSeparator
 };
 
