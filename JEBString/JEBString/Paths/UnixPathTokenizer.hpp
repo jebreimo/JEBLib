@@ -2,16 +2,19 @@
 #define JEBSTRING_PATHS_UNIXPATHTOKENIZER_HPP
 
 #include "JEBBase/Ranges/Range.hpp"
+#include "JEBBase/Ranges/RangeAlgorithms.hpp"
 
 namespace JEBString { namespace Paths {
 
-enum class PathTokenType
+using JEBBase::Ranges::Range;
+
+enum PathTokenType
 {
-    Empty,
-    Root,
-    Name,
+    EmptyPath,
+    PathRoot,
+    PathName,
     PathSeparator,
-    ExtensionSeparator
+    PathExtensionSeparator
 };
 
 class UnixPathTokenizer
@@ -25,52 +28,57 @@ public:
     static std::pair<Range<It>, PathTokenType> nextSubToken(Range<It>& path);
     template <typename It>
     static std::pair<Range<It>, PathTokenType> prevSubToken(Range<It>& path);
-private:
-    template <typename It>
-    static std::pair<Range<It>, PathTokenType> makeNextResult(
-            Range<It>& r, It pos, PathTokenType tokenType);
 };
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> UnixPathTokenizer::next(Range<It>& path)
 {
     if (empty(path))
-        return makeRange(path, PathTokenType::Empty);
+        return std::make_pair(path, PathTokenType::EmptyPath);
 
     auto it = find(path, '/');
     if (it == path.end())
-        return makeNextResult(path, it, PathTokenType::Name);
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
     else if (it == path.begin())
-        return makeNextResult(path, ++it, PathTokenType::PathSeparator);
+        return std::make_pair(takeHead(path, ++it),
+                              PathTokenType::PathSeparator);
     else
-        return makeNextResult(path, it, PathTokenType::Name);
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
 }
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prev(Range<It>& path)
 {
+    if (empty(path))
+        return std::make_pair(path, PathTokenType::EmptyPath);
+
+    auto it = find_last(path, '/');
+    if (*it != '/')
+        return std::make_pair(takeTail(path, it), PathTokenType::PathName);
+    else if (++it != end(path))
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathName);
+    else if (--it == path.begin())
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathRoot);
+    else
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathSeparator);
     return std::pair<Range<It>, PathTokenType>();
 }
 
 template <typename It>
-std::pair<Range<It>, PathTokenType> UnixPathTokenizer::nextSubToken(Range<It>& path)
+std::pair<Range<It>, PathTokenType> UnixPathTokenizer::nextSubToken(
+        Range<It>& path)
 {
     return std::pair<Range<It>, PathTokenType>();
 }
 
 template <typename It>
-std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prevSubToken(Range<It>& path)
+std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prevSubToken(
+        Range<It>& path)
 {
     return std::pair<Range<It>, PathTokenType>();
-}
-
-template <typename It>
-std::pair<Range<It>, PathTokenType> UnixPathTokenizer::makeNextResult(
-        Range<It>& r, It pos, PathTokenType tokenType)
-{
-    auto result = make_range(r.begin(), pos);
-    r.setBegin(pos);
-    return std::make_pair(result, tokenType);
 }
 
 }}

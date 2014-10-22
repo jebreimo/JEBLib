@@ -6,24 +6,32 @@ using JEBBase::Ranges::makeRange;
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> WindowsPathTokenizer::next(
-        Range<It>& str)
+        Range<It>& path)
 {
     if (empty(path))
         return makeRange(path, PathTokenType::Empty);
 
-    auto it = find_if(begin(str), end(str),
-                      [](auto c){return c == '\\' || c == ':'});
-    if (it == path.end())
+    auto it = find_if(begin(path), end(path),
+                      [](auto c){return c == '\\' || c == ':';});
+    if (it == end(path))
+    {
         return makeNextResult(path, it, PathTokenType::Name);
-    else if (it == path.begin())
+    }
+    else if (it == begin(path))
     {
         if (*it == '\\')
             return makeNextResult(path, ++it, PathTokenType::PathSeparator);
         else
             return makeNextResult(path, ++it, PathTokenType::Invalid);
     }
-    else
+    else if (it == '\\')
+    {
         return makeNextResult(path, it, PathTokenType::Name);
+    }
+    else if (std::distance(begin(path), it) == 1 && *begin(path))
+    {
+
+    }
 }
 
 template <typename It>

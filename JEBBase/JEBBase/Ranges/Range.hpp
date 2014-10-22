@@ -216,6 +216,22 @@ Range<Iterator> subrange(const Range<Iterator>& range, ptrdiff_t first, ptrdiff_
     return makeRange(nth(range, first), nth(range, last));
 }
 
+template <typename Iterator>
+Range<Iterator> takeHead(Range<Iterator>& range, Iterator splitPos)
+{
+    auto b = begin(range);
+    range.begin() = splitPos;
+    return makeRange(b, splitPos);
+}
+
+template <typename Iterator>
+Range<Iterator> takeTail(Range<Iterator>& range, Iterator splitPos)
+{
+    auto e = end(range);
+    range.end() = splitPos;
+    return makeRange(splitPos, e);
+}
+
 template <typename It, typename T>
 It transformIterator(It it, T)
 {
@@ -235,6 +251,12 @@ template <typename Container, typename Iterator>
 Container& appendRange(Container& c, Range<Iterator> range)
 {
     return appendRange(c, begin(range), end(range));
+}
+
+template <typename Container, typename Iterator>
+Container fromRange(Range<Iterator> range)
+{
+    return Container(begin(range), end(range));
 }
 
 }}

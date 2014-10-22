@@ -83,26 +83,32 @@ FwdIt find_if_not(Range<FwdIt> range, UnaryPred predicate)
     return std::find_if_not(begin(range), end(range), predicate);
 }
 
-template <typename FwdIt, typename UnaryPred>
-FwdIt find_end_if(Range<FwdIt> range, UnaryPred predicate)
+template <typename BiIt, typename UnaryPred>
+BiIt find_end_if(Range<BiIt> range, UnaryPred predicate)
 {
     return Algorithms::find_end_if(begin(range), end(range), predicate);
 }
 
-template <typename FwdIt, typename UnaryPred>
-FwdIt find_end_if_not(Range<FwdIt> range, UnaryPred predicate)
+template <typename BiIt, typename UnaryPred>
+BiIt find_end_if_not(Range<BiIt> range, UnaryPred predicate)
 {
     return Algorithms::find_end_if_not(begin(range), end(range), predicate);
 }
 
-template <typename FwdIt, typename UnaryPred>
-FwdIt find_last_if(Range<FwdIt> range, UnaryPred predicate)
+template <typename BiIt, typename Value>
+BiIt find_last(Range<BiIt> range, const Value& value)
+{
+    return Algorithms::find_last(begin(range), end(range), value);
+}
+
+template <typename BiIt, typename UnaryPred>
+BiIt find_last_if(Range<BiIt> range, UnaryPred predicate)
 {
     return Algorithms::find_last_if(begin(range), end(range), predicate);
 }
 
-template <typename FwdIt, typename UnaryPred>
-FwdIt find_last_if_not(Range<FwdIt> range, UnaryPred predicate)
+template <typename BiIt, typename UnaryPred>
+BiIt find_last_if_not(Range<BiIt> range, UnaryPred predicate)
 {
     return Algorithms::find_last_if_not(begin(range), end(range), predicate);
 }

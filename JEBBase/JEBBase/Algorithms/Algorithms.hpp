@@ -261,6 +261,44 @@ std::pair<FwdIt1, FwdIt1> search_nth_last(FwdIt1 beg, FwdIt1 end,
                          >());
 }
 
+template <typename FwdIt, typename Value>
+FwdIt find_last_impl(FwdIt beg, FwdIt end,
+                        const Value& value,
+                        std::forward_iterator_tag)
+{
+    FwdIt it = end;
+    while (beg != end)
+    {
+        if (*beg == value)
+            it = beg;
+        ++beg;
+    }
+    return it;
+}
+
+template <typename BiIt, typename Value>
+BiIt find_last_impl(BiIt beg, BiIt end,
+                    const Value& value,
+                    std::bidirectional_iterator_tag)
+{
+    BiIt it = end;
+    while (beg != it)
+    {
+        --it;
+        if (*it == value)
+            break;
+    }
+    return it;
+}
+
+template <typename FwdIt, typename Value>
+FwdIt find_last(FwdIt beg, FwdIt end, const Value& value)
+{
+    return find_last_impl(
+            beg, end, value,
+            typename std::iterator_traits<FwdIt>::iterator_category());
+}
+
 template <typename FwdIt, typename UnaryFunc>
 FwdIt find_last_if_impl(FwdIt beg, FwdIt end,
                         UnaryFunc predicate,
@@ -295,8 +333,7 @@ template <typename FwdIt, typename UnaryPredicate>
 FwdIt find_last_if(FwdIt beg, FwdIt end, UnaryPredicate predicate)
 {
     return find_last_if_impl(
-            beg, end,
-            predicate,
+            beg, end, predicate,
             typename std::iterator_traits<FwdIt>::iterator_category());
 }
 
@@ -342,8 +379,7 @@ template <typename FwdIt, typename UnaryPredicate>
 FwdIt find_end_if(FwdIt beg, FwdIt end, UnaryPredicate predicate)
 {
     return find_end_if_impl(
-            beg, end,
-            predicate,
+            beg, end, predicate,
             typename std::iterator_traits<FwdIt>::iterator_category());
 }
 
