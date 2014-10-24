@@ -113,6 +113,20 @@ BiIt find_last_if_not(Range<BiIt> range, UnaryPred predicate)
     return Algorithms::find_last_if_not(begin(range), end(range), predicate);
 }
 
+template <typename FwdIt1, typename FwdIt2>
+FwdIt1 find_first_of(Range<FwdIt1> range, Range<FwdIt2> values)
+{
+    return std::find_first_of(begin(range), end(range),
+                              begin(values), end(values));
+}
+
+template <typename FwdIt1, typename FwdIt2>
+FwdIt1 find_last_of(Range<FwdIt1> range, Range<FwdIt2> values)
+{
+    return Algorithms::find_last_of(begin(range), end(range),
+                                    begin(values), end(values));
+}
+
 template <typename FwdIt, typename Value>
 bool has(Range<FwdIt> range, const Value& value)
 {

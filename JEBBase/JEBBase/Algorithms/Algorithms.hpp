@@ -390,6 +390,16 @@ FwdIt find_end_if_not(FwdIt beg, FwdIt end, UnaryPredicate predicate)
                        [&](decltype(*beg) s){return !predicate(s);});
 }
 
+template <typename FwdIt1, typename FwdIt2>
+FwdIt1 find_last_of(FwdIt1 first, FwdIt1 last,
+                    FwdIt2 firstValue, FwdIt2 lastValue)
+{
+    return find_last_if(
+            first, last,
+            [&](decltype(*first) s)
+               {return std::find(firstValue, lastValue, s) != lastValue;});
+}
+
 template <typename RndIt, typename T, typename UnaryFunc>
 RndIt lower_bound(RndIt beg, RndIt end, const T& value, UnaryFunc keyFunc)
 {

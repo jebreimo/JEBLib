@@ -7,11 +7,11 @@
 namespace JEBString { namespace Paths {
 
 using JEBBase::Ranges::Range;
+using JEBBase::Ranges::makeRange;
 
 enum PathTokenType
 {
     EmptyPath,
-    PathRoot,
     PathName,
     PathSeparator,
     PathExtensionSeparator
@@ -56,29 +56,50 @@ std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prev(Range<It>& path)
     if (*it != '/')
         return std::make_pair(takeTail(path, it), PathTokenType::PathName);
     else if (++it != end(path))
-        return std::make_pair(takeTail(path, it),
-                              PathTokenType::PathName);
-    else if (--it == path.begin())
-        return std::make_pair(takeTail(path, it),
-                              PathTokenType::PathRoot);
+        return std::make_pair(takeTail(path, it), PathTokenType::PathName);
     else
-        return std::make_pair(takeTail(path, it),
+        return std::make_pair(takeTail(path, --it),
                               PathTokenType::PathSeparator);
-    return std::pair<Range<It>, PathTokenType>();
 }
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> UnixPathTokenizer::nextSubToken(
         Range<It>& path)
 {
-    return std::pair<Range<It>, PathTokenType>();
+    if (empty(path))
+        return std::make_pair(path, PathTokenType::EmptyPath);
+
+    auto it = find_first_of(path, makeRange("/."));
+    if (it == end(path))
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
+    else if (it != begin(path))
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
+    else if (*it == '/')
+        return std::make_pair(takeHead(path, ++it),
+                              PathTokenType::PathSeparator);
+    else
+        return std::make_pair(takeHead(path, ++it),
+                              PathTokenType::PathExtensionSeparator);
 }
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prevSubToken(
         Range<It>& path)
 {
-    return std::pair<Range<It>, PathTokenType>();
+    if (empty(path))
+        return std::make_pair(path, PathTokenType::EmptyPath);
+
+    auto it = find_last_of(path, makeRange("/."));
+    if (*it != '/' && *it != '.')
+        return std::make_pair(takeTail(path, it), PathTokenType::PathName);
+    else if (++it != end(path))
+        return std::make_pair(takeTail(path, it), PathTokenType::PathName);
+    else if (*--it == '/')
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathSeparator);
+    else
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathExtensionSeparator);
 }
 
 }}
