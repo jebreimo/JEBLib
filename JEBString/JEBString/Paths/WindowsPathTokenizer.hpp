@@ -7,18 +7,18 @@ namespace JEBString { namespace Paths {
 
 using JEBBase::Ranges::Range;
 
-enum class PathTokenType
+enum PathTokenType
 {
-    Empty,
-    Root,
+    EmptyPath,
+    PathName,
     PathSeparator,
-    Name,
-    ExtensionSeparator,
-    Invalid
+    PathExtensionSeparator,
+    PathDriveSeparator
 };
 
-struct WindowsPathTokenizer
+class WindowsPathTokenizer
 {
+public:
     template <typename It>
     static std::pair<Range<It>, PathTokenType> next(Range<It>& range);
     template <typename It>

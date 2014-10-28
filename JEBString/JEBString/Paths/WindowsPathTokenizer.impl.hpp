@@ -9,50 +9,85 @@ std::pair<Range<It>, PathTokenType> WindowsPathTokenizer::next(
         Range<It>& path)
 {
     if (empty(path))
-        return makeRange(path, PathTokenType::Empty);
+        return std::make_pair(path, PathTokenType::EmptyPath);
 
-    auto it = find_if(begin(path), end(path),
-                      [](auto c){return c == '\\' || c == ':';});
+    auto it = find_first_of(path, makeRange("\\:"));
     if (it == end(path))
-    {
-        return makeNextResult(path, it, PathTokenType::Name);
-    }
-    else if (it == begin(path))
-    {
-        if (*it == '\\')
-            return makeNextResult(path, ++it, PathTokenType::PathSeparator);
-        else
-            return makeNextResult(path, ++it, PathTokenType::Invalid);
-    }
-    else if (it == '\\')
-    {
-        return makeNextResult(path, it, PathTokenType::Name);
-    }
-    else if (std::distance(begin(path), it) == 1 && *begin(path))
-    {
-
-    }
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
+    else if (it != begin(path))
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
+    else if (*it == '\\')
+        return std::make_pair(takeHead(path, ++it),
+                              PathTokenType::PathSeparator);
+    else
+        return std::make_pair(takeHead(path, ++it),
+                              PathTokenType::PathDriveSeparator);
 }
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> WindowsPathTokenizer::prev(
-        Range<It>& range)
+        Range<It>& path)
 {
-    return std::pair<Range<It>, PathTokenType>();
+    if (empty(path))
+        return std::make_pair(path, PathTokenType::EmptyPath);
+
+    auto it = find_last_of(path, makeRange("\\:"));
+    if (*it != '\\' && *it != ':')
+        return std::make_pair(takeTail(path, it), PathTokenType::PathName);
+    else if (++it != end(path))
+        return std::make_pair(takeTail(path, it), PathTokenType::PathName);
+    else if (*--it == '\\')
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathSeparator);
+    else
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathDriveSeparator);
 }
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> WindowsPathTokenizer::nextSubToken(
-        Range<It>& range)
+        Range<It>& path)
 {
-    return std::pair<Range<It>, PathTokenType>();
+    if (empty(path))
+        return std::make_pair(path, PathTokenType::EmptyPath);
+
+    auto it = find_first_of(path, makeRange("\\:."));
+    if (it == end(path))
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
+    else if (it != begin(path))
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
+    else if (*it == '\\')
+        return std::make_pair(takeHead(path, ++it),
+                              PathTokenType::PathSeparator);
+    else if (*it == ':')
+        return std::make_pair(takeHead(path, ++it),
+                              PathTokenType::PathDriveSeparator);
+    else
+        return std::make_pair(takeHead(path, ++it),
+                              PathTokenType::PathExtensionSeparator);
 }
 
 template <typename It>
 std::pair<Range<It>, PathTokenType> WindowsPathTokenizer::prevSubToken(
-        Range<It>& range)
+        Range<It>& path)
 {
-    return std::pair<Range<It>, PathTokenType>();
+    if (empty(path))
+        return std::make_pair(path, PathTokenType::EmptyPath);
+
+    auto it = find_last_of(path, makeRange("\\:."));
+    if (*it != '\\' && *it != ':' && *it != '.')
+        return std::make_pair(takeTail(path, it), PathTokenType::PathName);
+    else if (++it != end(path))
+        return std::make_pair(takeTail(path, it), PathTokenType::PathName);
+    else if (*--it == '\\')
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathSeparator);
+    else if (*it == ':')
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathDriveSeparator);
+    else
+        return std::make_pair(takeTail(path, it),
+                              PathTokenType::PathExtensionSeparator);
 }
 
 }}

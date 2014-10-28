@@ -39,11 +39,11 @@ std::pair<Range<It>, PathTokenType> UnixPathTokenizer::next(Range<It>& path)
     auto it = find(path, '/');
     if (it == path.end())
         return std::make_pair(takeHead(path, it), PathTokenType::PathName);
-    else if (it == path.begin())
+    else if (it != path.begin())
+        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
+    else
         return std::make_pair(takeHead(path, ++it),
                               PathTokenType::PathSeparator);
-    else
-        return std::make_pair(takeHead(path, it), PathTokenType::PathName);
 }
 
 template <typename It>
