@@ -22,22 +22,22 @@ void testNextToken(const std::string& path,
 
 void test_nextToken()
 {
-    JT_CALL(testNextToken("", "", "", PathTokenType::EmptyPath));
-    JT_CALL(testNextToken("\\", "\\", "", PathTokenType::PathSeparator));
-    JT_CALL(testNextToken("\\:", "\\", ":", PathTokenType::PathSeparator));
-    JT_CALL(testNextToken("\\a", "\\", "a", PathTokenType::PathSeparator));
-    JT_CALL(testNextToken("\\\\", "\\", "\\", PathTokenType::PathSeparator));
-    JT_CALL(testNextToken(":", ":", "", PathTokenType::PathDriveSeparator));
-    JT_CALL(testNextToken(":\\", ":", "\\", PathTokenType::PathDriveSeparator));
-    JT_CALL(testNextToken(":abc", ":", "abc", PathTokenType::PathDriveSeparator));
-    JT_CALL(testNextToken("::", ":", ":", PathTokenType::PathDriveSeparator));
-    JT_CALL(testNextToken("abc", "abc", "", PathTokenType::PathName));
-    JT_CALL(testNextToken("abc\\", "abc", "\\", PathTokenType::PathName));
-    JT_CALL(testNextToken("abc:", "abc", ":", PathTokenType::PathName));
-    JT_CALL(testNextToken("abc.def", "abc.def", "", PathTokenType::PathName));
-    JT_CALL(testNextToken("abc.def\\", "abc.def", "\\", PathTokenType::PathName));
-    JT_CALL(testNextToken("abc def", "abc def", "", PathTokenType::PathName));
-    JT_CALL(testNextToken("abc def\\", "abc def", "\\", PathTokenType::PathName));
+    JT_CALL(testNextToken("", "", "", PathTokenType::Empty));
+    JT_CALL(testNextToken("\\", "\\", "", PathTokenType::DirSeparator));
+    JT_CALL(testNextToken("\\:", "\\", ":", PathTokenType::DirSeparator));
+    JT_CALL(testNextToken("\\a", "\\", "a", PathTokenType::DirSeparator));
+    JT_CALL(testNextToken("\\\\", "\\", "\\", PathTokenType::DirSeparator));
+    JT_CALL(testNextToken(":", ":", "", PathTokenType::DriveSeparator));
+    JT_CALL(testNextToken(":\\", ":", "\\", PathTokenType::DriveSeparator));
+    JT_CALL(testNextToken(":abc", ":", "abc", PathTokenType::DriveSeparator));
+    JT_CALL(testNextToken("::", ":", ":", PathTokenType::DriveSeparator));
+    JT_CALL(testNextToken("abc", "abc", "", PathTokenType::Name));
+    JT_CALL(testNextToken("abc\\", "abc", "\\", PathTokenType::Name));
+    JT_CALL(testNextToken("abc:", "abc", ":", PathTokenType::Name));
+    JT_CALL(testNextToken("abc.def", "abc.def", "", PathTokenType::Name));
+    JT_CALL(testNextToken("abc.def\\", "abc.def", "\\", PathTokenType::Name));
+    JT_CALL(testNextToken("abc def", "abc def", "", PathTokenType::Name));
+    JT_CALL(testNextToken("abc def\\", "abc def", "\\", PathTokenType::Name));
 }
 
 void testPrevToken(const std::string& path,
@@ -55,22 +55,22 @@ void testPrevToken(const std::string& path,
 
 void test_prevToken()
 {
-    JT_CALL(testPrevToken("", "", "", PathTokenType::EmptyPath));
-    JT_CALL(testPrevToken("\\", "\\", "", PathTokenType::PathSeparator));
-    JT_CALL(testPrevToken(":\\", "\\", ":", PathTokenType::PathSeparator));
-    JT_CALL(testPrevToken("a\\", "\\", "a", PathTokenType::PathSeparator));
-    JT_CALL(testPrevToken("\\\\", "\\", "\\", PathTokenType::PathSeparator));
-    JT_CALL(testPrevToken(":", ":", "", PathTokenType::PathDriveSeparator));
-    JT_CALL(testPrevToken("\\:", ":", "\\", PathTokenType::PathDriveSeparator));
-    JT_CALL(testPrevToken("abc:", ":", "abc", PathTokenType::PathDriveSeparator));
-    JT_CALL(testPrevToken("::", ":", ":", PathTokenType::PathDriveSeparator));
-    JT_CALL(testPrevToken("abc", "abc", "", PathTokenType::PathName));
-    JT_CALL(testPrevToken("\\abc", "abc", "\\", PathTokenType::PathName));
-    JT_CALL(testPrevToken("C:abc", "abc", "C:", PathTokenType::PathName));
-    JT_CALL(testPrevToken("abc.def", "abc.def", "", PathTokenType::PathName));
-    JT_CALL(testPrevToken("\\abc.def", "abc.def", "\\", PathTokenType::PathName));
-    JT_CALL(testPrevToken("abc def", "abc def", "", PathTokenType::PathName));
-    JT_CALL(testPrevToken("\\abc def", "abc def", "\\", PathTokenType::PathName));
+    JT_CALL(testPrevToken("", "", "", PathTokenType::Empty));
+    JT_CALL(testPrevToken("\\", "\\", "", PathTokenType::DirSeparator));
+    JT_CALL(testPrevToken(":\\", "\\", ":", PathTokenType::DirSeparator));
+    JT_CALL(testPrevToken("a\\", "\\", "a", PathTokenType::DirSeparator));
+    JT_CALL(testPrevToken("\\\\", "\\", "\\", PathTokenType::DirSeparator));
+    JT_CALL(testPrevToken(":", ":", "", PathTokenType::DriveSeparator));
+    JT_CALL(testPrevToken("\\:", ":", "\\", PathTokenType::DriveSeparator));
+    JT_CALL(testPrevToken("abc:", ":", "abc", PathTokenType::DriveSeparator));
+    JT_CALL(testPrevToken("::", ":", ":", PathTokenType::DriveSeparator));
+    JT_CALL(testPrevToken("abc", "abc", "", PathTokenType::Name));
+    JT_CALL(testPrevToken("\\abc", "abc", "\\", PathTokenType::Name));
+    JT_CALL(testPrevToken("C:abc", "abc", "C:", PathTokenType::Name));
+    JT_CALL(testPrevToken("abc.def", "abc.def", "", PathTokenType::Name));
+    JT_CALL(testPrevToken("\\abc.def", "abc.def", "\\", PathTokenType::Name));
+    JT_CALL(testPrevToken("abc def", "abc def", "", PathTokenType::Name));
+    JT_CALL(testPrevToken("\\abc def", "abc def", "\\", PathTokenType::Name));
 }
 
 void testNextSubToken(const std::string& path,
@@ -88,25 +88,25 @@ void testNextSubToken(const std::string& path,
 
 void test_nextSubToken()
 {
-    JT_CALL(testNextSubToken("", "", "", PathTokenType::EmptyPath));
-    JT_CALL(testNextSubToken("\\", "\\", "", PathTokenType::PathSeparator));
-    JT_CALL(testNextSubToken("\\a", "\\", "a", PathTokenType::PathSeparator));
-    JT_CALL(testNextSubToken("\\\\", "\\", "\\", PathTokenType::PathSeparator));
-    JT_CALL(testNextSubToken(":", ":", "", PathTokenType::PathDriveSeparator));
-    JT_CALL(testNextSubToken(":\\", ":", "\\", PathTokenType::PathDriveSeparator));
-    JT_CALL(testNextSubToken(":abc", ":", "abc", PathTokenType::PathDriveSeparator));
-    JT_CALL(testNextSubToken("::", ":", ":", PathTokenType::PathDriveSeparator));
-    JT_CALL(testNextSubToken("abc", "abc", "", PathTokenType::PathName));
-    JT_CALL(testNextSubToken("abc\\", "abc", "\\", PathTokenType::PathName));
-    JT_CALL(testNextSubToken("abc.def", "abc", ".def", PathTokenType::PathName));
-    JT_CALL(testNextSubToken("abc.def\\", "abc", ".def\\", PathTokenType::PathName));
-    JT_CALL(testNextSubToken("abc def", "abc def", "", PathTokenType::PathName));
-    JT_CALL(testNextSubToken("abc def\\", "abc def", "\\", PathTokenType::PathName));
-    JT_CALL(testNextSubToken(".", ".", "", PathTokenType::PathExtensionSeparator));
-    JT_CALL(testNextSubToken(".def", ".", "def", PathTokenType::PathExtensionSeparator));
-    JT_CALL(testNextSubToken(".\\", ".", "\\", PathTokenType::PathExtensionSeparator));
-    JT_CALL(testNextSubToken(".:", ".", ":", PathTokenType::PathExtensionSeparator));
-    JT_CALL(testNextSubToken("..", ".", ".", PathTokenType::PathExtensionSeparator));
+    JT_CALL(testNextSubToken("", "", "", PathTokenType::Empty));
+    JT_CALL(testNextSubToken("\\", "\\", "", PathTokenType::DirSeparator));
+    JT_CALL(testNextSubToken("\\a", "\\", "a", PathTokenType::DirSeparator));
+    JT_CALL(testNextSubToken("\\\\", "\\", "\\", PathTokenType::DirSeparator));
+    JT_CALL(testNextSubToken(":", ":", "", PathTokenType::DriveSeparator));
+    JT_CALL(testNextSubToken(":\\", ":", "\\", PathTokenType::DriveSeparator));
+    JT_CALL(testNextSubToken(":abc", ":", "abc", PathTokenType::DriveSeparator));
+    JT_CALL(testNextSubToken("::", ":", ":", PathTokenType::DriveSeparator));
+    JT_CALL(testNextSubToken("abc", "abc", "", PathTokenType::Name));
+    JT_CALL(testNextSubToken("abc\\", "abc", "\\", PathTokenType::Name));
+    JT_CALL(testNextSubToken("abc.def", "abc", ".def", PathTokenType::Name));
+    JT_CALL(testNextSubToken("abc.def\\", "abc", ".def\\", PathTokenType::Name));
+    JT_CALL(testNextSubToken("abc def", "abc def", "", PathTokenType::Name));
+    JT_CALL(testNextSubToken("abc def\\", "abc def", "\\", PathTokenType::Name));
+    JT_CALL(testNextSubToken(".", ".", "", PathTokenType::ExtensionSeparator));
+    JT_CALL(testNextSubToken(".def", ".", "def", PathTokenType::ExtensionSeparator));
+    JT_CALL(testNextSubToken(".\\", ".", "\\", PathTokenType::ExtensionSeparator));
+    JT_CALL(testNextSubToken(".:", ".", ":", PathTokenType::ExtensionSeparator));
+    JT_CALL(testNextSubToken("..", ".", ".", PathTokenType::ExtensionSeparator));
 }
 
 void testPrevSubToken(const std::string& path,
@@ -124,24 +124,24 @@ void testPrevSubToken(const std::string& path,
 
 void test_prevSubToken()
 {
-    JT_CALL(testPrevSubToken("", "", "", PathTokenType::EmptyPath));
-    JT_CALL(testPrevSubToken("\\", "\\", "", PathTokenType::PathSeparator));
-    JT_CALL(testPrevSubToken("a\\", "\\", "a", PathTokenType::PathSeparator));
-    JT_CALL(testPrevSubToken("\\\\", "\\", "\\", PathTokenType::PathSeparator));
-    JT_CALL(testPrevSubToken(":", ":", "", PathTokenType::PathDriveSeparator));
-    JT_CALL(testPrevSubToken("\\:", ":", "\\", PathTokenType::PathDriveSeparator));
-    JT_CALL(testPrevSubToken("abc:", ":", "abc", PathTokenType::PathDriveSeparator));
-    JT_CALL(testPrevSubToken("::", ":", ":", PathTokenType::PathDriveSeparator));
-    JT_CALL(testPrevSubToken("abc", "abc", "", PathTokenType::PathName));
-    JT_CALL(testPrevSubToken("\\abc", "abc", "\\", PathTokenType::PathName));
-    JT_CALL(testPrevSubToken("abc.def", "def", "abc.", PathTokenType::PathName));
-    JT_CALL(testPrevSubToken("\\abc.def", "def", "\\abc.", PathTokenType::PathName));
-    JT_CALL(testPrevSubToken("abc def", "abc def", "", PathTokenType::PathName));
-    JT_CALL(testPrevSubToken("\\abc def", "abc def", "\\", PathTokenType::PathName));
-    JT_CALL(testPrevSubToken(".", ".", "", PathTokenType::PathExtensionSeparator));
-    JT_CALL(testPrevSubToken("def.", ".", "def", PathTokenType::PathExtensionSeparator));
-    JT_CALL(testPrevSubToken("\\.", ".", "\\", PathTokenType::PathExtensionSeparator));
-    JT_CALL(testPrevSubToken("..", ".", ".", PathTokenType::PathExtensionSeparator));
+    JT_CALL(testPrevSubToken("", "", "", PathTokenType::Empty));
+    JT_CALL(testPrevSubToken("\\", "\\", "", PathTokenType::DirSeparator));
+    JT_CALL(testPrevSubToken("a\\", "\\", "a", PathTokenType::DirSeparator));
+    JT_CALL(testPrevSubToken("\\\\", "\\", "\\", PathTokenType::DirSeparator));
+    JT_CALL(testPrevSubToken(":", ":", "", PathTokenType::DriveSeparator));
+    JT_CALL(testPrevSubToken("\\:", ":", "\\", PathTokenType::DriveSeparator));
+    JT_CALL(testPrevSubToken("abc:", ":", "abc", PathTokenType::DriveSeparator));
+    JT_CALL(testPrevSubToken("::", ":", ":", PathTokenType::DriveSeparator));
+    JT_CALL(testPrevSubToken("abc", "abc", "", PathTokenType::Name));
+    JT_CALL(testPrevSubToken("\\abc", "abc", "\\", PathTokenType::Name));
+    JT_CALL(testPrevSubToken("abc.def", "def", "abc.", PathTokenType::Name));
+    JT_CALL(testPrevSubToken("\\abc.def", "def", "\\abc.", PathTokenType::Name));
+    JT_CALL(testPrevSubToken("abc def", "abc def", "", PathTokenType::Name));
+    JT_CALL(testPrevSubToken("\\abc def", "abc def", "\\", PathTokenType::Name));
+    JT_CALL(testPrevSubToken(".", ".", "", PathTokenType::ExtensionSeparator));
+    JT_CALL(testPrevSubToken("def.", ".", "def", PathTokenType::ExtensionSeparator));
+    JT_CALL(testPrevSubToken("\\.", ".", "\\", PathTokenType::ExtensionSeparator));
+    JT_CALL(testPrevSubToken("..", ".", ".", PathTokenType::ExtensionSeparator));
 }
 
 JT_SUBTEST("Paths",

@@ -2,19 +2,11 @@
 #define JEBSTRING_PATHS_WINDOWSPATHTOKENIZER_HPP
 
 #include "JEBBase/Ranges/Range.hpp"
+#include "PathTokenType.hpp"
 
 namespace JEBString { namespace Paths {
 
 using JEBBase::Ranges::Range;
-
-enum PathTokenType
-{
-    EmptyPath,
-    PathName,
-    PathSeparator,
-    PathExtensionSeparator,
-    PathDriveSeparator
-};
 
 class WindowsPathTokenizer
 {

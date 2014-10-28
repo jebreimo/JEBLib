@@ -6,8 +6,12 @@ set(JEB_DIR JEBString/${PROJECT_NAME})
 
 set(PUBLIC_HEADERS
     PathFilter.hpp
+    PathTokenType.hpp
     UnixPaths.hpp
+    UnixPathTokenizer.hpp
     WindowsPaths.hpp
+    WindowsPathTokenizer.hpp
+    WindowsPathTokenizer.impl.hpp
    )
 
 set(SRC
