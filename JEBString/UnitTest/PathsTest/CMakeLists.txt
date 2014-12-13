@@ -4,6 +4,7 @@ project(PathsTest)
 
 set(SRC
     test_PathFilter.cpp
+    test_PathAlgorithms.cpp
     test_UnixPaths.cpp
     test_UnixPathTokenizer.cpp
     test_WindowsPaths.cpp
