@@ -128,6 +128,18 @@ auto back(Range<Iterator> range) -> decltype(*range.end())
 }
 
 template <typename Iterator>
+Range<Iterator> frontRange(Range<Iterator> range)
+{
+    return Range<Iterator>(range.begin(), range.begin());
+}
+
+template <typename Iterator>
+Range<Iterator> endRange(Range<Iterator> range)
+{
+    return Range<Iterator>(range.end(), range.end());
+}
+
+template <typename Iterator>
 Range<Iterator> makeRange(Iterator first, Iterator last)
 {
     return Range<Iterator>(first, last);

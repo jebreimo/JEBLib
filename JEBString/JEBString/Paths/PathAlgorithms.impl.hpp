@@ -17,8 +17,8 @@ std::pair<Range<It1>, Range<It2>> commonPath(
         Range<It1> path1,
         Range<It2> path2)
 {
-    auto result1 = path1;
-    auto result2 = path2;
+    auto result1 = frontRange(path1);
+    auto result2 = frontRange(path2);
     while (!empty(path1) && !empty(path2))
     {
         auto tok1 = tokenizer.next(path1);
