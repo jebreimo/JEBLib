@@ -16,8 +16,14 @@ Range<It> baseName(const PathTokenizer& tokenizer, Range<It> path);
 template <typename PathTokenizer, typename It1, typename It2>
 std::pair<Range<It1>, Range<It2>> commonPath(
         const PathTokenizer& tokenizer,
-        Range<It1> path1,
-        Range<It2> path2);
+        Range<It1>& path1,
+        Range<It2>& path2);
+
+template <typename PathTokenizer, typename It1, typename It2>
+std::pair<Range<It1>, Range<It2>> commonPath(
+        const PathTokenizer& tokenizer,
+        const Range<It1>& path1,
+        const Range<It2>& path2);
 
 template <typename PathTokenizer, typename It>
 Range<It> dirName(const PathTokenizer& tokenizer, Range<It> path);
@@ -28,7 +34,10 @@ Range<It> dirName(const PathTokenizer& tokenizer, Range<It> path);
 //   * empty string.
 //   */
 template <typename PathTokenizer, typename It>
-Range<It> extension(const PathTokenizer& tokenizer, Range<It> path);
+Range<It> extension(const PathTokenizer& tokenizer, Range<It>& path);
+
+template <typename PathTokenizer, typename It>
+Range<It> extension(const PathTokenizer& tokenizer, const Range<It>& path);
 
 // bool isAbsPath(const std::string& path);
 
@@ -43,11 +52,6 @@ Range<It> extension(const PathTokenizer& tokenizer, Range<It> path);
 // std::string replaceExtension(const std::string& path, const std::string& ext);
 
 // std::pair<std::string, std::string> split(const std::string& path);
-
-template <typename PathTokenizer, typename It>
-std::pair<Range<It>, Range<It>> splitExtension(
-        const PathTokenizer& tokenizer,
-        Range<It> path);
 
 // std::vector<std::string> splitPath(const std::string& path);
 

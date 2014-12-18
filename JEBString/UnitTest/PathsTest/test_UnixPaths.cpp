@@ -18,9 +18,9 @@ void test_baseName()
 
 void test_commonPath()
 {
-    JT_EQUAL(Unix::commonPath("/a/b/c/a", "/a/b/c/c"), "/a/b/c");
-    JT_EQUAL(Unix::commonPath("/a/b/c/a", "/a/b/b/c"), "/a/b");
-    JT_EQUAL(Unix::commonPath("/aaa/bbb/ccc", "/aaa/bb2/ccc"), "/aaa");
+    JT_EQUAL(Unix::commonPath("/a/b/c/a", "/a/b/c/c"), "/a/b/c/");
+    JT_EQUAL(Unix::commonPath("/a/b/c/a", "/a/b/b/c"), "/a/b/");
+    JT_EQUAL(Unix::commonPath("/aaa/bbb/ccc", "/aaa/bb2/ccc"), "/aaa/");
     JT_EQUAL(Unix::commonPath("/aaabbb/ccc", "/aaabb2/ccc"), "/");
     JT_EQUAL(Unix::commonPath("aaabbb/ccc", "aaabb2/ccc"), "");
     JT_EQUAL(Unix::commonPath("/aaabbb/ccc", "aaabb2/ccc"), "");
@@ -28,11 +28,11 @@ void test_commonPath()
     JT_EQUAL(Unix::commonPath("a/b/c", "/a/b/c"), "");
     JT_EQUAL(Unix::commonPath("a/b/c", ""), "");
     JT_EQUAL(Unix::commonPath("", ""), "");
-    JT_EQUAL(Unix::commonPath("/a/b/", "/a/b/"), "/a/b");
-    JT_EQUAL(Unix::commonPath("/a/b/", "/a/b//"), "/a/b");
-    JT_EQUAL(Unix::commonPath("/a/b//", "/a/b/"), "/a/b");
-    JT_EQUAL(Unix::commonPath("/a/b/", "/a/b/c"), "/a/b");
-    JT_EQUAL(Unix::commonPath("/a/b/c", "/a/b/"), "/a/b");
+    JT_EQUAL(Unix::commonPath("/a/b/", "/a/b/"), "/a/b/");
+    JT_EQUAL(Unix::commonPath("/a/b/", "/a/b//"), "/a/b/");
+    JT_EQUAL(Unix::commonPath("/a/b//", "/a/b/"), "/a/b/");
+    JT_EQUAL(Unix::commonPath("/a/b/", "/a/b/c"), "/a/b/");
+    JT_EQUAL(Unix::commonPath("/a/b/c", "/a/b/"), "/a/b/");
 }
 
 void test_dirName()

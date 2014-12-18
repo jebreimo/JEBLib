@@ -7,12 +7,14 @@
 namespace {
 
 using JEBBase::Ranges::Range;
+using JEBBase::Ranges::fromRange;
 using JEBBase::Ranges::makeRange;
 using namespace JEBString::Paths;
 
-std::string str(Range<const char*> r)
+template <typename It>
+std::string str(Range<It> r)
 {
-    return std::string(begin(r), end(r));
+    return fromRange<std::string>(r);
 }
 
 void test_baseName_ux()
@@ -84,12 +86,33 @@ void test_dirName_win()
     JT_EQUAL(str(dirName(tok, makeRange("\\"))), "\\");
 }
 
+template <typename Tokenizer>
+void testExtension(const std::string& path,
+                   const std::string& expectedExtension,
+                   const std::string& expectedRemainder)
+{
+    auto pathRange = makeRange(path);
+    JT_EQUAL(str(extension(Tokenizer(), pathRange)), expectedExtension);
+    JT_EQUAL(str(pathRange), expectedRemainder);
+}
+
+void test_extension_ux()
+{
+    JT_CALL(testExtension<UnixPathTokenizer>("/a/b/cdef.ghij",
+                                             ".ghij", "/a/b/cdef"));
+    JT_CALL(testExtension<UnixPathTokenizer>("/a/b/.ghij",
+                                             "", "/a/b/.ghij"));
+    JT_CALL(testExtension<UnixPathTokenizer>("/a/b.cd/ghij",
+                                             "", "/a/b.cd/ghij"));
+}
+
 JT_SUBTEST("Paths",
            test_baseName_ux,
            test_baseName_win,
            test_commonPath_ux,
            test_commonPath_win,
            test_dirName_ux,
-           test_dirName_win);
+           test_dirName_win,
+           test_extension_ux);
 
 }

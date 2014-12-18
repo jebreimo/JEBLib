@@ -2,10 +2,13 @@
 #include <cstdint>
 #include "JEBBase/Algorithms/Algorithms.hpp"
 #include "JEBString/RawStrings/RawString.hpp"
+#include "PathAlgorithms.hpp"
+#include "UnixPathTokenizer.hpp"
 
 namespace JEBString { namespace Paths { namespace Unix {
 
 using JEBBase::Ranges::makeRange;
+using JEBBase::Ranges::fromRange;
 
 namespace
 {
@@ -21,10 +24,10 @@ namespace
         return ch == DirSep;
     }
 
-    bool isPathSep(uint32_t ch)
-    {
-        return isDirSep(ch);
-    }
+    // bool isPathSep(uint32_t ch)
+    // {
+    //     return isDirSep(ch);
+    // }
 
     bool isExtensionSep(uint32_t ch)
     {
@@ -39,51 +42,27 @@ namespace
 
 std::string baseName(const std::string& path)
 {
-    auto p = makeRange(path);
-    return RawStrings::toString<char>(RawStrings::prevToken(p, isPathSep));
+    return fromRange<std::string>(baseName(UnixPathTokenizer(),
+                                           makeRange(path)));
 }
 
 std::string commonPath(const std::string& a, const std::string& b)
 {
-    auto its = mismatch(makeRange(a), makeRange(b));
-    if (its.first == begin(a))
-        return std::string();
-    if (its.first == end(a) && its.second == end(b))
-    {
-        if (!isDirSep(a.back()))
-            return a;
-    }
-    else if (its.first == end(a) && isDirSep(*its.second) &&
-             !isDirSep(a.back()))
-    {
-        return a;
-    }
-    else if (its.second == end(b) && isDirSep(*its.first) &&
-             !isDirSep(b.back()))
-    {
-        return b;
-    }
-    auto it = find_last_if(makeRange(begin(a), its.first), isDirSep);
-    if (it == begin(a) && isDirSep(*it))
-        return DirSepStr;
-    return std::string(begin(a), it);
+    return fromRange<std::string>(commonPath(UnixPathTokenizer(),
+                                             makeRange(a),
+                                             makeRange(b)).first);
 }
 
 std::string dirName(const std::string& path)
 {
-    auto p = makeRange(path);
-    RawStrings::prevToken(p, isDirSep);
-    if (empty(p) && !path.empty() && isDirSep(path[0]))
-        return DirSepStr;
-    return RawStrings::toString<char>(p);
+    return fromRange<std::string>(dirName(UnixPathTokenizer(),
+                                          makeRange(path)));
 }
 
 std::string extension(const std::string& path)
 {
-    auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
-    if (it == begin(path) || isDirSep(*it) || isDirSep(*prev(it)))
-        return std::string();
-    return std::string(it, end(path));
+    return fromRange<std::string>(extension(UnixPathTokenizer(),
+                                            makeRange(path)));
 }
 
 bool isAbsPath(const std::string& path)
@@ -136,16 +115,20 @@ std::string relativePath(const std::string& souce, const std::string& dest)
 {
     auto normSource = normalize(souce);
     auto normDest = normalize(dest);
-    auto common = commonPath(normSource, normDest);
-    if (common.empty())
+    auto sourceRange = makeRange(normSource);
+    auto destRange = makeRange(normDest);
+    UnixPathTokenizer tokenizer;
+    auto common = commonPath(tokenizer, sourceRange, destRange);
+    if (empty(common.first))
         return normDest;
-    auto commonLength = common.size() + (common == DirSepStr ? 0 : 1);
-    auto ascent = std::count_if(next(begin(normSource), commonLength),
-                                end(normSource), isDirSep) + 1;
+
     std::string result;
-    for (size_t i = 0; i != ascent; ++i)
-        result.append("../");
-    result.append(next(begin(normDest), commonLength), end(normDest));
+    while (!empty(sourceRange))
+    {
+        if (tokenizer.next(sourceRange).second == PathTokenType::Name)
+            result.append("../");
+    }
+    result.append(begin(destRange), end(destRange));
     return result;
 }
 
