@@ -134,25 +134,36 @@ std::string relativePath(const std::string& souce, const std::string& dest)
 
 std::string removeExtension(const std::string& path)
 {
-    auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
-    if (it == begin(path) || isDirSep(*it) || isDirSep(*prev(it)))
-        return path;
-    return std::string(begin(path), it);
+    auto pathRng = makeRange(path);
+    extension(UnixPathTokenizer(), pathRng);
+    return fromRange<std::string>(pathRng);
 }
 
 std::string replaceExtension(const std::string& path, const std::string& ext)
 {
+    if (!ext.empty() && ext[0] != '.')
+        return removeExtension(path) + "." + ext;
     return removeExtension(path) + ext;
 }
 
 std::pair<std::string, std::string> split(const std::string& path)
 {
-    auto p = makeRange(path);
-    auto bn = RawStrings::prevToken(p, isDirSep);
-    if (empty(p) && !path.empty() && isDirSep(path[0]))
-        return std::make_pair(DirSepStr, RawStrings::toString<char>(bn));
-    return std::make_pair(RawStrings::toString<char>(p),
-                          RawStrings::toString<char>(bn));
+    auto first = makeRange(path);
+    auto second = makeRange(end(path), end(path));
+    UnixPathTokenizer tokenizer;
+    while (!empty(first))
+    {
+        auto token = tokenizer.prev(first);
+        if (token.second == PathTokenType::DirSeparator)
+        {
+            if (empty(first))
+                first = token.first;
+            break;
+        }
+        second.begin() = token.first.begin();
+    }
+    return std::make_pair(fromRange<std::string>(first),
+                          fromRange<std::string>(second));
 }
 
 std::pair<std::string, std::string> splitExtension(const std::string& path)
