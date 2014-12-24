@@ -12,6 +12,8 @@ set(JEB_DIR JEBBase/${PROJECT_NAME})
 
 set(PUBLIC_HEADERS
     Algorithms.hpp
+    AlgorithmsCpp14.hpp
+    KeyFunctionAlgorithms.hpp
     Sort.hpp
     )
 

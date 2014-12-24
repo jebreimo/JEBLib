@@ -13,7 +13,7 @@
 #include <functional>
 #include <iterator>
 #include <utility>
-#include "JEBBase/JEBBaseDefinitions.hpp"
+#include "AlgorithmsCpp14.hpp"
 
 /** @file
   * @brief Defines various wrappers and extensions to the generic algorithms
@@ -26,31 +26,6 @@ namespace JEBBase
   */
 namespace Algorithms
 {
-
-template <typename InpIt1, typename InpIt2>
-std::pair<InpIt1, InpIt2> mismatch(InpIt1 beg, InpIt1 end,
-                                   InpIt2 cmpBeg, InpIt2 cmpEnd)
-{
-    while (beg != end && cmpBeg != cmpEnd && *beg == *cmpBeg)
-    {
-        beg++;
-        cmpBeg++;
-    }
-    return std::make_pair(beg, cmpBeg);
-}
-
-template <typename InpIt1, typename InpIt2, typename BinaryPredicate>
-std::pair<InpIt1, InpIt2> mismatch(InpIt1 beg, InpIt1 end,
-                                   InpIt2 cmpBeg, InpIt2 cmpEnd,
-                                   BinaryPredicate pred)
-{
-    while (beg != end && cmpBeg != cmpEnd && pred(*beg, *cmpBeg))
-    {
-        beg++;
-        cmpBeg++;
-    }
-    return std::make_pair(beg, cmpBeg);
-}
 
 template <typename InpIt1, typename InpIt2, typename BinaryFunc>
 auto compare(InpIt1 first, InpIt1 last,
@@ -90,23 +65,6 @@ auto compare(InpIt1 first, InpIt1 last,
 }
 
 template <typename FwdIt1, typename FwdIt2>
-bool equal(FwdIt1 beg, FwdIt1 end,
-           FwdIt2 cmpBeg, FwdIt2 cmpEnd)
-{
-    return Algorithms::mismatch(beg, end, cmpBeg, cmpEnd) ==
-            std::make_pair(end, cmpEnd);
-}
-
-template <typename FwdIt1, typename FwdIt2, typename BinaryPredicate>
-bool equal(FwdIt1 beg, FwdIt1 end,
-           FwdIt2 cmpBeg, FwdIt2 cmpEnd,
-           BinaryPredicate pred)
-{
-    return Algorithms::mismatch(beg, end, cmpBeg, cmpEnd, pred) ==
-            std::make_pair(end, cmpEnd);
-}
-
-template <typename FwdIt1, typename FwdIt2>
 bool less(FwdIt1 first, FwdIt1 last,
           FwdIt2 cmpFirst, FwdIt2 cmpLast)
 {
@@ -129,43 +87,6 @@ bool less(FwdIt1 first, FwdIt1 last,
         return isLess(*its.first, *its.second);
     else
         return its.first == last && its.second != cmpLast;
-}
-
-template <typename FwdIt1, typename FwdIt2>
-std::pair<FwdIt1, FwdIt1> search(FwdIt1 beg, FwdIt1 end,
-                                 FwdIt2 cmpBeg, FwdIt2 cmpEnd)
-{
-    if (cmpBeg == cmpEnd)
-        return std::make_pair(end, end);
-    while (beg != end)
-    {
-        auto its = Algorithms::mismatch(beg, end, cmpBeg, cmpEnd);
-        if (its.second == cmpEnd)
-            return std::make_pair(beg, its.first);
-        else if (its.first == end)
-            break;
-        beg++;
-    }
-    return std::make_pair(end, end);
-}
-
-template <typename FwdIt1, typename FwdIt2, typename BinaryPredicate>
-std::pair<FwdIt1, FwdIt1> search(FwdIt1 beg, FwdIt1 end,
-                                 FwdIt2 cmpBeg, FwdIt2 cmpEnd,
-                                 BinaryPredicate pred)
-{
-    if (cmpBeg == cmpEnd)
-        return std::make_pair(end, end);
-    while (beg != end)
-    {
-        auto its = Algorithms::mismatch(beg, end, cmpBeg, cmpEnd, pred);
-        if (its.second == cmpEnd)
-            return std::make_pair(beg, its.first);
-        else if (its.first == end)
-            break;
-        beg++;
-    }
-    return std::make_pair(end, end);
 }
 
 template <typename FwdIt1, typename FwdIt2, typename BinaryPredicate>
@@ -400,44 +321,7 @@ FwdIt1 find_last_of(FwdIt1 first, FwdIt1 last,
                {return std::find(firstValue, lastValue, s) != lastValue;});
 }
 
-template <typename RndIt, typename T, typename UnaryFunc>
-RndIt lower_bound(RndIt beg, RndIt end, const T& value, UnaryFunc keyFunc)
-{
-    while (beg != end)
-    {
-        RndIt mid = beg + std::distance(beg, end) / 2;
-        if (keyFunc(*mid) < value)
-            beg = mid + 1;
-        else
-            end = mid;
-    }
-    return beg;
-}
-
-template <typename RndIt, typename T, typename UnaryFunc>
-RndIt upper_bound(RndIt beg, RndIt end, const T& value, UnaryFunc keyFunc)
-{
-    while (beg != end)
-    {
-        RndIt mid = beg + std::distance(beg, end) / 2;
-        if (value < keyFunc(*mid))
-            end = mid;
-        else
-            beg = mid + 1;
-    }
-    return beg;
-}
-
-template <typename RndIt, typename T, typename UnaryFunc>
-RndIt binary_find(RndIt beg, RndIt end, const T& value, UnaryFunc keyFunc)
-{
-    RndIt it = Algorithms::lower_bound(beg, end, value, keyFunc);
-    if (it == end || value < keyFunc(*it))
-      return end;
-    return it;
-}
-
-template <typename RndIt, typename T, typename UnaryFunc>
+template <typename RndIt, typename T>
 RndIt binary_find(RndIt beg, RndIt end, const T& value)
 {
     RndIt it = std::lower_bound(beg, end, value);
@@ -446,70 +330,16 @@ RndIt binary_find(RndIt beg, RndIt end, const T& value)
     return it;
 }
 
-template <typename RndIt, typename T, typename UnaryFunc>
-bool binary_search(RndIt beg, RndIt end, const T& value, UnaryFunc keyFunc)
-{
-    RndIt it = Algorithms::lower_bound(beg, end, value, keyFunc);
-    return it != end && value == keyFunc(*it);
-}
-
-template <typename RndIt, typename T, typename UnaryFunc>
-std::pair<RndIt, RndIt> bounds(
-        RndIt beg, RndIt end, const T& value, UnaryFunc keyFunc)
-{
-    RndIt first = ::JEBBase::Algorithms::lower_bound(
-            beg, end, value, keyFunc);
-    RndIt second = ::JEBBase::Algorithms::upper_bound(
-            first, end, value, keyFunc);
-    return std::make_pair(first, second);
-}
-
-template <typename UnaryFunc>
-class KeyComparer
-{
-public:
-    KeyComparer(UnaryFunc keyFunc) : m_KeyFunc(keyFunc) {}
-    template <typename T>
-    bool operator()(T a, T b) {return m_KeyFunc(a) < m_KeyFunc(b);}
-private:
-    UnaryFunc m_KeyFunc;
-};
-
-template <typename RndIt, typename UnaryFunc>
-void sort_by_key(RndIt beg, RndIt end, UnaryFunc keyFunc)
-{
-    std::sort(beg, end, KeyComparer<UnaryFunc>(keyFunc));
-}
-
-template <typename FwdIt, typename UnaryFunc>
-FwdIt max_element_by_key(FwdIt begin, FwdIt end, UnaryFunc func)
-{
-    return std::max_element(begin, end, KeyComparer<UnaryFunc>(func));
-}
-
-template <typename FwdIt, typename UnaryFunc>
-FwdIt min_element_by_key(FwdIt begin, FwdIt end, UnaryFunc func)
-{
-    return std::min_element(begin, end, KeyComparer<UnaryFunc>(func));
-}
-
-template <typename FwdIt, typename UnaryFunc>
-std::pair<FwdIt, FwdIt> minmax_element_by_key(
-        FwdIt begin, FwdIt end, UnaryFunc func)
-{
-    return std::minmax_element(begin, end, KeyComparer<UnaryFunc>(func));
-}
-
 template <typename InIt, typename OutIt, typename UnaryPred,
           typename UnaryFunc>
 OutIt transform_if(InIt first, InIt last, OutIt dst,
-                   UnaryPred predicate, UnaryFunc func)
+                   UnaryPred predicate, UnaryFunc tranFunc)
 {
     for (; first != last; ++first)
     {
         if (predicate(*first))
         {
-            *dst = func(*first);
+            *dst = tranFunc(*first);
             ++dst;
         }
     }
@@ -517,5 +347,7 @@ OutIt transform_if(InIt first, InIt last, OutIt dst,
 }
 
 }}
+
+#include "KeyFunctionAlgorithms.hpp"
 
 #endif
