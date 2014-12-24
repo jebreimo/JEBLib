@@ -45,7 +45,7 @@ void Unwinder::setTolerance(double tolerance)
 bool Unwinder::isSelfIntersecting()
 {
     prepare();
-    auto it = makeIterator(m_FirstVertex);
+    auto it = makeIterator(m_FirstVertex, nextVertex);
     while (it.next())
     {
         if ((*it)->spoke)
@@ -78,7 +78,7 @@ void Unwinder::prepare()
 
 void Unwinder::print(std::ostream& os) const
 {
-    auto it = makeIterator(m_FirstVertex);
+    auto it = makeIterator(m_FirstVertex, nextVertex);
     if (it.next())
         os << **it;
     while (it.next())
@@ -88,8 +88,8 @@ void Unwinder::print(std::ostream& os) const
 
 bool isDoubleEdge(Spoke* a, Spoke* b)
 {
-    return other(a)->spoke &&
-           other(a)->spoke == other(b)->spoke;
+    return otherSpoke(a)->spoke &&
+           otherSpoke(a)->spoke == otherSpoke(b)->spoke;
 }
 
 std::vector<Dim2::PointD> walk(
@@ -116,7 +116,7 @@ std::vector<Dim2::PointD> walk(
                 throw std::runtime_error("Invalid polygon.");
             corners.set(std::make_pair(cur, nxt), true);
             prev = nxt->vertex;
-            vertex = other(nxt);
+            vertex = otherSpoke(nxt);
             forward = prev->next == vertex;
         }
         else
@@ -137,20 +137,20 @@ JEBBase::UniquePairSet<Spoke*> getCorners(Vertex* first)
     // I'm taking advantage of the fact that all vertexes at an intersection
     // point to the same spoke instance.
     std::set<Spoke*> visited;
-    auto it = makeIterator(first);
+    auto it = makeIterator(first, nextVertex);
     while (it.next())
     {
         if ((*it)->spoke &&
             visited.find((*it)->spoke) == visited.end())
         {
             visited.insert((*it)->spoke);
-            auto isectIt = makeIterator((*it)->spoke);
+            auto isectIt = makeIterator((*it)->spoke, nextSpoke);
             while (isectIt.next())
             {
                 Spoke* right = (*isectIt)->right;
-                if (other(right) != other(*isectIt) &&
-                    (other(right)->spoke == NULL ||
-                     other(right)->spoke != other(*isectIt)->spoke))
+                if (otherSpoke(right) != otherSpoke(*isectIt) &&
+                    (otherSpoke(right)->spoke == NULL ||
+                     otherSpoke(right)->spoke != otherSpoke(*isectIt)->spoke))
                 {
                     builder.add(std::make_pair(*isectIt, right));
                 }
@@ -164,10 +164,10 @@ void printSet(std::ostream& os, const JEBBase::UniquePairSet<Spoke*>& set)
 {
     for (auto it = set.begin(); it != set.end(); ++it)
     {
-        os << other(it->first.first)->offset << "->"
+        os << otherSpoke(it->first.first)->offset << "->"
            << it->first.first->vertex->offset << " "
            << it->first.second->vertex->offset << "->"
-           << other(it->first.second)->offset << ": "
+           << otherSpoke(it->first.second)->offset << ": "
            << (it->second ? "true" : "false") << "\n";
     }
 }
@@ -190,7 +190,7 @@ std::vector<std::vector<Dim2::PointD>> Unwinder::split()
                 isect = it->first.second, isect2 = it->first.first;
             else
                 isect = it->first.first, isect2 = it->first.second;
-            result.push_back(walk(isect->vertex, other(isect), corners));
+            result.push_back(walk(isect->vertex, otherSpoke(isect), corners));
         }
     }
 
@@ -231,7 +231,7 @@ Vertex* Unwinder::insertIntersections(Vertex* first,
                                       const Dim2::LineSegmentD& line1,
                                       Vertex* second)
 {
-    Vertex* secondEnd = nextVertex(second);
+    Vertex* secondEnd = nextZeroOffsetVertex(second);
     Vertex* nextStart = secondEnd;
     Dim2::LineSegmentD line2(second->point, secondEnd->point);
     double offset1, offset2;
@@ -269,9 +269,9 @@ Vertex* Unwinder::insertIntersections(Vertex* first,
 Vertex* Unwinder::insertIntersections(Vertex* lineStart,
                                       const Vertex* searchEnd)
 {
-    Vertex* lineEnd = nextVertex(lineStart);
+    Vertex* lineEnd = nextZeroOffsetVertex(lineStart);
     Dim2::LineSegmentD line1(lineStart->point, lineEnd->point);
-    Vertex* it = nextVertex(lineEnd);
+    Vertex* it = nextZeroOffsetVertex(lineEnd);
     while (it != searchEnd)
     {
         it = insertIntersections(lineStart, line1, it);

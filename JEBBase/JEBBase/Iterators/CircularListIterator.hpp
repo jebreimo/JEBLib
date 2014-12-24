@@ -12,46 +12,46 @@
 
 namespace JEBBase { namespace Iterators {
 
-template <typename Node>
+template <typename Node, typename NextFunc>
 class CircularListIterator
 {
 public:
-    CircularListIterator(Node* first);
+    /** @param nextNode a function that accepts a single argument of Node*
+      *     and returns the succeeding Node*.
+      */
+    CircularListIterator(Node* first, NextFunc nextNode);
 
     bool current() const;
     bool next();
     Node* operator*();
 private:
+    NextFunc m_NextNode;
     Node* m_First;
     Node* m_Current;
 };
 
-// This is part of a trick to make it possible to use a function named next
-// inside CircularListIterator::next.
-namespace CircularListIteratorDetail { inline void next() {}}
-
-template <typename Node>
-CircularListIterator<Node>::CircularListIterator(Node* first)
-    : m_First(first),
+template <typename Node, typename NextFunc>
+CircularListIterator<Node, NextFunc>::CircularListIterator(
+        Node* first,
+        NextFunc nextNode)
+    : m_NextNode(nextNode),
+      m_First(first),
       m_Current(NULL)
 {
 }
 
-template <typename Node>
-bool CircularListIterator<Node>::current() const
+template <typename Node, typename NextFunc>
+bool CircularListIterator<Node, NextFunc>::current() const
 {
     return m_Current != NULL;
 }
 
-template <typename Node>
-bool CircularListIterator<Node>::next()
+template <typename Node, typename NextFunc>
+bool CircularListIterator<Node, NextFunc>::next()
 {
-    // This using statement tricks the compiler into searching for a function
-    // named next in Node's namespace.
-    using CircularListIteratorDetail::next;
     if (m_Current)
     {
-        m_Current = next(m_Current);
+        m_Current = m_NextNode(m_Current);
         if (m_Current == m_First)
         {
             m_First = m_Current = NULL;
@@ -70,16 +70,18 @@ bool CircularListIterator<Node>::next()
     }
 }
 
-template <typename Node>
-Node* CircularListIterator<Node>::operator*()
+template <typename Node, typename NextFunc>
+Node* CircularListIterator<Node, NextFunc>::operator*()
 {
     return m_Current;
 }
 
-template <typename Node>
-CircularListIterator<Node> makeIterator(Node* first)
+template <typename Node, typename NextFunc>
+CircularListIterator<Node, NextFunc> makeIterator(
+        Node* first,
+        NextFunc nextNode)
 {
-    return CircularListIterator<Node>(first);
+    return CircularListIterator<Node, NextFunc>(first, nextNode);
 }
 
 }}

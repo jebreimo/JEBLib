@@ -25,11 +25,11 @@ std::ostream& operator<<(std::ostream& os, const Vertex& vertex)
     os << "[" << vertex.offset << " " << vertex.point;
     if (vertex.spoke)
     {
-        auto it = makeIterator(vertex.spoke);
+        auto it = makeIterator(vertex.spoke, nextSpoke);
         it.next();
-        os << " [spokes | " << other(*it)->offset;
+        os << " [spokes | " << otherSpoke(*it)->offset;
         while (it.next())
-            os << " " << other(*it)->offset;
+            os << " " << otherSpoke(*it)->offset;
         os << "]";
     }
     os << "]";
@@ -45,7 +45,7 @@ void createSpokes(Vertex* vertex1, Vertex* vertex2)
         new Spoke(vertex2, &vertex2->next),
     };
     Dim2::sortClockwise(std::begin(spoke), std::end(spoke), vertex1->point,
-                        [](const Spoke* i){return other(i)->point;});
+                        [](const Spoke* i){return otherSpoke(i)->point;});
     spoke[0]->left = spoke[3];
     for (size_t i = 1; i < 4; i++)
     {
@@ -59,7 +59,7 @@ void createSpokes(Vertex* vertex1, Vertex* vertex2)
 Spoke* findSpoke(const Vertex* vertex, const Vertex* other)
 {
     assert(vertex && vertex->spoke && other);
-    auto it = makeIterator(vertex->spoke);
+    auto it = makeIterator(vertex->spoke, nextSpoke);
     while (it.next())
     {
         if ((*it)->vertex == vertex && *(*it)->other == other)
@@ -73,33 +73,34 @@ Spoke* getRightSpoke(Spoke* spoke)
     if (!spoke)
         return NULL;
 
-    auto firstIt = makeIterator(spoke);
+    auto firstIt = makeIterator(spoke, nextSpoke);
     while (firstIt.next())
     {
-        Spoke* iCur = other(*firstIt)->spoke;
+        Spoke* iCur = otherSpoke(*firstIt)->spoke;
         if (!iCur)
             break;
-        Spoke* iLeft = other((*firstIt)->left)->spoke;
+        Spoke* iLeft = otherSpoke((*firstIt)->left)->spoke;
         if (iCur != iLeft)
             break;
     }
 
     Spoke* result = NULL;
-    auto it = makeIterator(*firstIt ? *firstIt : spoke);
+    auto it = makeIterator(*firstIt ? *firstIt : spoke, nextSpoke);
     double bestRatio = 0;
     Vector<double, 2> bestVec;
     if (it.next())
     {
         result = *it;
-        auto vec = other(*it)->point - spoke->vertex->point;
+        auto vec = otherSpoke(*it)->point - spoke->vertex->point;
         bestRatio = x(vec) != 0 ? y(vec) / x(vec)
                                 : std::numeric_limits<double>::max();
     }
     while (it.next())
     {
-        if (!other(result)->spoke || other(*it)->spoke != other(result)->spoke)
+        if (!otherSpoke(result)->spoke ||
+            otherSpoke(*it)->spoke != otherSpoke(result)->spoke)
         {
-            auto vec = other(*it)->point - spoke->vertex->point;
+            auto vec = otherSpoke(*it)->point - spoke->vertex->point;
             double ratio = x(vec) != 0 ? y(vec) / x(vec)
                                        : std::numeric_limits<double>::max();
             if (ratio < bestRatio)
@@ -117,7 +118,7 @@ std::pair<Vertex*, Vertex*> getRightEdge(Vertex* vertex)
     if (vertex->spoke)
     {
         Spoke* spoke = getRightSpoke(vertex->spoke);
-        return std::make_pair(spoke->vertex, other(spoke));
+        return std::make_pair(spoke->vertex, otherSpoke(spoke));
     }
 
     if (direction(vertex->prev->point, vertex->point, vertex->next->point,
@@ -135,9 +136,9 @@ Spoke* findInsertPos(Spoke* existing,
                      Spoke* newSpoke,
                      const Dim2::DirectionComparer<double>& cmp)
 {
-    auto it = makeIterator(existing);
+    auto it = makeIterator(existing, nextSpoke);
     while (it.next())
-        if (!cmp(other(*it)->point, other(newSpoke)->point))
+        if (!cmp(otherSpoke(*it)->point, otherSpoke(newSpoke)->point))
             break;
     return *it;
 }
@@ -167,7 +168,7 @@ void updateSpokes(Spoke* spoke, Vertex* vertex)
 
 std::pair<Vertex*, Vertex*> getFirstEdge(Vertex* vertex)
 {
-    auto it = makeIterator(vertex);
+    auto it = makeIterator(vertex, nextVertex);
     if (!it.next())
         return std::make_pair(vertex, vertex);
     Vertex* loLe = *it; // Lower left
@@ -213,7 +214,7 @@ void deleteAll(Vertex* vertex)
 
 Vertex* findInsertPos(Vertex* first, double offset, double tolerance)
 {
-    auto it = makeIterator(first);
+    auto it = makeIterator(first, nextVertex);
     if (it.next() && !less((*it)->offset, offset, tolerance))
         return *it;
     while (it.next())
@@ -224,7 +225,7 @@ Vertex* findInsertPos(Vertex* first, double offset, double tolerance)
     return first;
 }
 
-Vertex* nextVertex(Vertex* first)
+Vertex* nextZeroOffsetVertex(Vertex* first)
 {
     double offset = std::floor(first->offset + 1);
     return findInsertPos(first, offset, 0);

@@ -23,12 +23,12 @@ struct Spoke
     Vertex** other;
 };
 
-inline Spoke* next(const Spoke* hand)
+inline Spoke* nextSpoke(const Spoke* hand)
 {
     return hand->right;
 }
 
-inline Vertex* other(const Spoke* hand)
+inline Vertex* otherSpoke(const Spoke* hand)
 {
     return *hand->other;
 }
@@ -56,7 +56,7 @@ struct Vertex
     Spoke* spoke;
 };
 
-inline Vertex* next(Vertex* vertex)
+inline Vertex* nextVertex(Vertex* vertex)
 {
     return vertex->next;
 }
@@ -79,7 +79,7 @@ void deleteAll(Vertex* vertex);
 
 Vertex* findInsertPos(Vertex* first, double offset, double tolerance);
 
-Vertex* nextVertex(Vertex* first);
+Vertex* nextZeroOffsetVertex(Vertex* first);
 
 }}
 
