@@ -31,10 +31,10 @@ void sort(T& a, T& b, T& c)
 template <typename T>
 void sort(T& a, T& b, T& c, T& d)
 {
-    sort(a, c);
-    sort(b, d);
     sort(a, b);
     sort(c, d);
+    sort(a, c);
+    sort(b, d);
     sort(b, c);
 }
 
