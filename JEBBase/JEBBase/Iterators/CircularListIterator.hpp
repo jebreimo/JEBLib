@@ -16,7 +16,7 @@ template <typename Node, typename NextFunc>
 class CircularListIterator
 {
 public:
-    /** @param nextNode a function that accepts a single argument of Node*
+    /** @param nextNode a function that takes a single argument of Node*
       *     and returns the succeeding Node*.
       */
     CircularListIterator(Node* first, NextFunc nextNode);
