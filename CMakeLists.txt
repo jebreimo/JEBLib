@@ -54,6 +54,12 @@ add_library(${PROJECT_NAME} SHARED
             $<TARGET_OBJECTS:Unicode>
             $<TARGET_OBJECTS:Utf8>
             $<TARGET_OBJECTS:Utf16>
+
+            # JEBIO
+            $<TARGET_OBJECTS:Json>
+            $<TARGET_OBJECTS:Paths>
+            $<TARGET_OBJECTS:Streams>
+            $<TARGET_OBJECTS:Xml>
            )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY MACOSX_RPATH ON)

@@ -7,6 +7,7 @@ set(JEB_DIR JEBIO)
 add_subdirectory(Json)
 add_subdirectory(Paths)
 add_subdirectory(Streams)
+add_subdirectory(Xml)
 
 set(PUBLIC_HEADERS
     JEBMathDefinitions.hpp

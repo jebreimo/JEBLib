@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME} STATIC
             $<TARGET_OBJECTS:Json>
             $<TARGET_OBJECTS:Paths>
             $<TARGET_OBJECTS:Streams>
+            $<TARGET_OBJECTS:Xml>
             )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
