@@ -1,26 +1,21 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(Paths)
+project(Json)
 
 set(JEB_DIR JEBIO/${PROJECT_NAME})
 
 set(PUBLIC_HEADERS
-    PathFilter.hpp
-    PathTokenType.hpp
-    PathAlgorithms.hpp
-    PathAlgorithms.impl.hpp
-    UnixPaths.hpp
-    UnixPathTokenizer.hpp
-    WindowsPaths.hpp
-    WindowsPathTokenizer.hpp
-    WindowsPathTokenizer.impl.hpp
-   )
+    JsonTokenizer.hpp
+    JsonValue.hpp
+    JsonValueError.hpp
+    JsonWriter.hpp
+    )
 
 set(SRC
-    PathFilter.cpp
-    UnixPaths.cpp
-    WindowsPaths.cpp
-   )
+    JsonTokenizer.cpp
+    JsonValue.cpp
+    JsonWriter.cpp
+    )
 
 add_library(${PROJECT_NAME} OBJECT ${SRC} ${PUBLIC_HEADERS})
 

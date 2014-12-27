@@ -14,11 +14,13 @@ set(SRC
     main.cpp
     )
 
+add_subdirectory(JsonTest)
 add_subdirectory(PathsTest)
 add_subdirectory(StreamsTest)
 
 add_executable(${PROJECT_NAME}
                ${SRC}
+               $<TARGET_OBJECTS:JsonTest>
                $<TARGET_OBJECTS:PathsTest>
                $<TARGET_OBJECTS:StreamsTest>
                )

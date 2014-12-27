@@ -10,6 +10,7 @@ add_subdirectory(${PROJECT_NAME})
 
 add_library(${PROJECT_NAME} STATIC
             ${JEB_SRC}
+            $<TARGET_OBJECTS:Json>
             $<TARGET_OBJECTS:Paths>
             $<TARGET_OBJECTS:Streams>
             )

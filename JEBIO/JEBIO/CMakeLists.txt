@@ -4,6 +4,7 @@ project(JEBIO_Root)
 
 set(JEB_DIR JEBIO)
 
+add_subdirectory(Json)
 add_subdirectory(Paths)
 add_subdirectory(Streams)
 

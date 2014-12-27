@@ -1,6 +1,6 @@
 #include "JEBIO/Paths/PathAlgorithms.hpp"
-#include "JEBBase/Ranges/RangeAlgorithms.hpp"
 #include <JEBTest/JEBTest.hpp>
+#include "JEBBase/Ranges/RangeAlgorithms.hpp"
 #include "JEBIO/Paths/UnixPathTokenizer.hpp"
 #include "JEBIO/Paths/WindowsPathTokenizer.hpp"
 
