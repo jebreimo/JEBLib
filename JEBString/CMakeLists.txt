@@ -17,7 +17,6 @@ add_library(${PROJECT_NAME} STATIC
             $<TARGET_OBJECTS:CodePageStrings>
             $<TARGET_OBJECTS:EncodedStrings>
             $<TARGET_OBJECTS:Encodings>
-            $<TARGET_OBJECTS:Paths>
             $<TARGET_OBJECTS:Unicode>
             $<TARGET_OBJECTS:Utf8>
             $<TARGET_OBJECTS:Utf16>

@@ -7,34 +7,25 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-set(PARENT_PROJECT JEBString)
+set(PARENT_PROJECT JEBIO)
 project(${PARENT_PROJECT}Test)
 
 set(SRC
     main.cpp
     )
 
-add_subdirectory(CodePagesTest)
-add_subdirectory(CodePointsTest)
-add_subdirectory(EncodedStringsTest)
-add_subdirectory(EncodingsTest)
-add_subdirectory(UnicodeTest)
-add_subdirectory(Utf8Test)
-add_subdirectory(Utf16Test)
+add_subdirectory(PathsTest)
+add_subdirectory(StreamsTest)
 
 add_executable(${PROJECT_NAME}
                ${SRC}
-               $<TARGET_OBJECTS:CodePagesTest>
-               $<TARGET_OBJECTS:CodePointsTest>
-               $<TARGET_OBJECTS:EncodedStringsTest>
-               $<TARGET_OBJECTS:EncodingsTest>
-               $<TARGET_OBJECTS:UnicodeTest>
-               $<TARGET_OBJECTS:Utf8Test>
-               $<TARGET_OBJECTS:Utf16Test>
+               $<TARGET_OBJECTS:PathsTest>
+               $<TARGET_OBJECTS:StreamsTest>
                )
 
 target_link_libraries(${PROJECT_NAME}
                       JEBBase
+                      JEBString
                       ${PARENT_PROJECT}
                       ${JEBTEST_LIBRARIES})
 add_test(${PARENT_PROJECT} ${PROJECT_NAME})

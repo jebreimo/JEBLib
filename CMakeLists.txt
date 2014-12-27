@@ -16,7 +16,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 
 include_directories(${CMAKE_SOURCE_DIR}/JEBBase
                     ${CMAKE_SOURCE_DIR}/JEBMath
-                    ${CMAKE_SOURCE_DIR}/JEBString)
+                    ${CMAKE_SOURCE_DIR}/JEBString
+                    ${CMAKE_SOURCE_DIR}/JEBIO)
 
 find_package(JEBDebug)
 if(JEBDEBUG_FOUND)
@@ -34,6 +35,7 @@ find_package(JEBTest)
 add_subdirectory(JEBBase)
 add_subdirectory(JEBMath)
 add_subdirectory(JEBString)
+add_subdirectory(JEBIO)
 
 add_library(${PROJECT_NAME} SHARED
             
@@ -49,7 +51,6 @@ add_library(${PROJECT_NAME} SHARED
             $<TARGET_OBJECTS:CodePageStrings>
             $<TARGET_OBJECTS:EncodedStrings>
             $<TARGET_OBJECTS:Encodings>
-            $<TARGET_OBJECTS:Paths>
             $<TARGET_OBJECTS:Unicode>
             $<TARGET_OBJECTS:Utf8>
             $<TARGET_OBJECTS:Utf16>
