@@ -19,9 +19,11 @@ public:
     {}
 
     template <typename FwdIterator2>
-    std::pair<FwdIterator2, FwdIterator2> operator()(FwdIterator2 begin, FwdIterator2 end) const
+    std::pair<FwdIterator2, FwdIterator2> operator()(
+            FwdIterator2 begin, FwdIterator2 end) const
     {
-        return JEB::Algorithms::search(begin, end, m_Begin, m_End, m_Comparer);
+        return JEB::Algorithms::search(begin, end, m_Begin, m_End,
+                                       m_Comparer);
     }
 private:
     FwdIterator m_Begin, m_End;
@@ -46,11 +48,12 @@ public:
     {}
 
     template <typename Iterator>
-    std::pair<Iterator, Iterator> operator()(Iterator begin, Iterator end) const
+    std::pair<Iterator, Iterator> operator()(
+            Iterator begin, Iterator end) const
     {
-        return JEB::Algorithms::search_last(begin, end,
-                                            m_Begin, m_End,
-                                            m_Comparer);
+        return JEB::Algorithms::searchLast(begin, end,
+                                           m_Begin, m_End,
+                                           m_Comparer);
     }
 private:
     FwdIterator m_Begin, m_End;
@@ -78,9 +81,10 @@ public:
     {}
 
     template <typename Iterator>
-    std::pair<Iterator, Iterator> operator()(Iterator begin, Iterator end) const
+    std::pair<Iterator, Iterator> operator()(
+            Iterator begin, Iterator end) const
     {
-        return JEB::Algorithms::search_nth_last(begin, end,
+        return JEB::Algorithms::searchNthLast(begin, end,
                                                 m_Begin, m_End,
                                                 m_Count,
                                                 m_Comparer);
@@ -137,7 +141,7 @@ public:
     std::pair<FwdIterator, FwdIterator> operator()(FwdIterator begin,
                                                    FwdIterator end) const
     {
-        FwdIterator itEnd = Algorithms::find_last_if(begin, end, m_Predicate);
+        FwdIterator itEnd = Algorithms::findLastIf(begin, end, m_Predicate);
         if (itEnd == end)
             return std::make_pair(begin, begin);
 
@@ -145,7 +149,7 @@ public:
         if (m_Compress)
         {
             FwdIterator it = itStart;
-            itStart = Algorithms::find_last_if(
+            itStart = Algorithms::findLastIf(
                     begin, it,
                     [this](uint32_t c){return !m_Predicate(c);});
             if (itStart != it)

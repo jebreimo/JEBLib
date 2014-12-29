@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <utility>
-#include "JEBBase/Algorithms/Algorithms.hpp"
+#include "JEBBase/Algorithms/KeyFunctionAlgorithms.hpp"
 
 namespace JEBBase {
 
@@ -41,7 +41,7 @@ public:
     {
         if (key.first > key.second)
             std::swap(key.first, key.second);
-        auto it = Algorithms::lower_bound(begin(), end(), key,
+        auto it = Algorithms::lowerBound(begin(), end(), key,
                 [](const Value& v){return v.first;});
         if (it == end() || key != it->first)
         {
@@ -54,7 +54,7 @@ public:
     {
         if (key.first > key.second)
             std::swap(key.first, key.second);
-        auto it = Algorithms::lower_bound(begin(), end(), key,
+        auto it = Algorithms::lowerBound(begin(), end(), key,
                 [](const Value& v){return v.first;});
         if (it == end() || key != it->first)
             throw std::invalid_argument("Unknown key.");
@@ -83,13 +83,14 @@ public:
 
     Container&& build(bool removeDuplicates = true)
     {
-        Algorithms::sort_by_key(m_Container.begin(), m_Container.end(),
-                                [](const Value& v){return v.first;});
+        Algorithms::sortByKey(m_Container.begin(), m_Container.end(),
+                              [](const Value& v){return v.first;});
         if (removeDuplicates)
-            m_Container.erase(std::unique(m_Container.begin(), m_Container.end(),
-                                [](const Value& a, const Value& b)
-                                {return a.first == b.first;}),
-                              m_Container.end());
+            m_Container.erase(std::unique(
+                            m_Container.begin(), m_Container.end(),
+                            [](const Value& a, const Value& b)
+                              {return a.first == b.first;}),
+                    m_Container.end());
         return std::move(m_Container);
     }
 private:

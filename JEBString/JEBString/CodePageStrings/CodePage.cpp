@@ -1,7 +1,7 @@
 #include "CodePage.hpp"
 #include <vector>
 #include <stdexcept>
-#include "JEBBase/Algorithms/Algorithms.hpp"
+#include "JEBBase/Algorithms/KeyFunctionAlgorithms.hpp"
 
 namespace JEBString { namespace CodePageStrings {
 
@@ -17,7 +17,7 @@ namespace detail
         {0x20AC, 0x80}, {0x20C6, 0x88}, {0x2122, 0x99}
     };
 
-    const uint32_t* windows1252_to_unicode()
+    const uint32_t* windows1252ToUnicode()
     {
         static std::vector<uint32_t> table;
         if (table.empty())
@@ -33,7 +33,7 @@ namespace detail
     }
 
     std::pair<const std::pair<uint32_t, uint8_t>*,
-              const std::pair<uint32_t, uint8_t>*> unicode_to_windows1252()
+              const std::pair<uint32_t, uint8_t>*> unicodeToWindows1252()
     {
         return std::make_pair(std::begin(Windows1252SpecialChars),
                               std::end(Windows1252SpecialChars));
@@ -41,12 +41,12 @@ namespace detail
 
     CodePage makeWindows1252()
     {
-        auto to = windows1252_to_unicode();
-        auto from = unicode_to_windows1252();
+        auto to = windows1252ToUnicode();
+        auto from = unicodeToWindows1252();
         return CodePage(to, from.first, from.second, Encoding::Windows1252);
     }
 
-    const uint32_t* latin1_to_unicode()
+    const uint32_t* latin1ToUnicode()
     {
         static std::vector<uint32_t> table;
         if (table.empty())
@@ -59,7 +59,7 @@ namespace detail
     }
 
     std::pair<const std::pair<uint32_t, uint8_t>*,
-              const std::pair<uint32_t, uint8_t>*> unicode_to_latin1()
+              const std::pair<uint32_t, uint8_t>*> unicodeToLatin1()
     {
         return std::pair<const std::pair<uint32_t, uint8_t>*,
                          const std::pair<uint32_t, uint8_t>*>(nullptr,
@@ -68,8 +68,8 @@ namespace detail
 
     CodePage makeLatin1()
     {
-        auto to = latin1_to_unicode();
-        auto from = unicode_to_latin1();
+        auto to = latin1ToUnicode();
+        auto from = unicodeToLatin1();
         return CodePage(to, from.first, from.second, Encoding::Latin1);
     }
 }
@@ -93,7 +93,7 @@ uint32_t CodePage::fromCodePoint(uint32_t c) const
 {
     if (c < 256 && m_ToCodePoints[c] == c)
         return c;
-    auto it = JEBBase::Algorithms::binary_find(
+    auto it = JEBBase::Algorithms::binaryFind(
         m_FirstFromCodePoints, m_LastFromCodePoints, c,
         [](const std::pair<uint32_t, char>& p){return p.first;});
     if (it != m_LastFromCodePoints)

@@ -44,7 +44,7 @@ size_t count(Range<FwdIt> range, const T& value)
 }
 
 template <typename FwdIt, typename UnaryPred>
-size_t count_if(Range<FwdIt> range, UnaryPred pred)
+size_t countIf(Range<FwdIt> range, UnaryPred pred)
 {
     return std::count_if(begin(range), end(range), pred);
 }
@@ -84,47 +84,47 @@ FwdIt find_if_not(Range<FwdIt> range, UnaryPred predicate)
 }
 
 template <typename BiIt, typename UnaryPred>
-BiIt find_end_if(Range<BiIt> range, UnaryPred predicate)
+BiIt findEndIf(Range<BiIt> range, UnaryPred predicate)
 {
-    return Algorithms::find_end_if(begin(range), end(range), predicate);
+    return Algorithms::findEndIf(begin(range), end(range), predicate);
 }
 
 template <typename BiIt, typename UnaryPred>
-BiIt find_end_if_not(Range<BiIt> range, UnaryPred predicate)
+BiIt findEndIfNot(Range<BiIt> range, UnaryPred predicate)
 {
-    return Algorithms::find_end_if_not(begin(range), end(range), predicate);
+    return Algorithms::findEndIfNot(begin(range), end(range), predicate);
 }
 
 template <typename BiIt, typename Value>
-BiIt find_last(Range<BiIt> range, const Value& value)
+BiIt findLast(Range<BiIt> range, const Value& value)
 {
-    return Algorithms::find_last(begin(range), end(range), value);
+    return Algorithms::findLast(begin(range), end(range), value);
 }
 
 template <typename BiIt, typename UnaryPred>
-BiIt find_last_if(Range<BiIt> range, UnaryPred predicate)
+BiIt findLastIf(Range<BiIt> range, UnaryPred predicate)
 {
-    return Algorithms::find_last_if(begin(range), end(range), predicate);
+    return Algorithms::findLastIf(begin(range), end(range), predicate);
 }
 
 template <typename BiIt, typename UnaryPred>
-BiIt find_last_if_not(Range<BiIt> range, UnaryPred predicate)
+BiIt findLastIfNot(Range<BiIt> range, UnaryPred predicate)
 {
-    return Algorithms::find_last_if_not(begin(range), end(range), predicate);
+    return Algorithms::findLastIfNot(begin(range), end(range), predicate);
 }
 
 template <typename FwdIt1, typename FwdIt2>
-FwdIt1 find_first_of(Range<FwdIt1> range, Range<FwdIt2> values)
+FwdIt1 findFirstOf(Range<FwdIt1> range, Range<FwdIt2> values)
 {
     return std::find_first_of(begin(range), end(range),
                               begin(values), end(values));
 }
 
 template <typename FwdIt1, typename FwdIt2>
-FwdIt1 find_last_of(Range<FwdIt1> range, Range<FwdIt2> values)
+FwdIt1 findLastOf(Range<FwdIt1> range, Range<FwdIt2> values)
 {
-    return Algorithms::find_last_of(begin(range), end(range),
-                                    begin(values), end(values));
+    return Algorithms::findLastOf(begin(range), end(range),
+                                  begin(values), end(values));
 }
 
 template <typename FwdIt, typename Value>
@@ -184,17 +184,17 @@ Range<FwdIt1> search(Range<FwdIt1> range1, Range<FwdIt2> range2,
 }
 
 template <typename FwdIt1, typename FwdIt2>
-Range<FwdIt1> search_last(Range<FwdIt1> range1, Range<FwdIt2> range2)
+Range<FwdIt1> searchLast(Range<FwdIt1> range1, Range<FwdIt2> range2)
 {
-    return Algorithms::search_last(begin(range1), end(range1),
+    return Algorithms::searchLast(begin(range1), end(range1),
                                    begin(range2), end(range2));
 }
 
 template <typename FwdIt1, typename FwdIt2, typename BinaryPred>
-Range<FwdIt1> search_last(Range<FwdIt1> range1, Range<FwdIt2> range2,
+Range<FwdIt1> searchLast(Range<FwdIt1> range1, Range<FwdIt2> range2,
                           BinaryPred predicate)
 {
-    return Algorithms::search_last(begin(range1), end(range1),
+    return Algorithms::searchLast(begin(range1), end(range1),
                                    begin(range2), end(range2),
                                    predicate);
 }

@@ -10,7 +10,7 @@
 
 #include <utility>
 #include <vector>
-#include "JEBBase/Algorithms/Algorithms.hpp"
+#include "JEBBase/Algorithms/KeyFunctionAlgorithms.hpp"
 
 /** @file
  *  @brief Defines the class IntervalMap<Key, T>.
@@ -158,11 +158,11 @@ void IntervalMap<Key, T>::insert(const Interval& interval, const T& value)
     if (interval.first == interval.second)
       return;
 
-    iterator beg = Algorithms::upper_bound(
+    iterator beg = Algorithms::upperBound(
             m_Values.begin(), m_Values.end(),
             interval.first,
             detail::getTo<Key, T>);
-    iterator end = Algorithms::lower_bound(
+    iterator end = Algorithms::lowerBound(
             m_Values.begin(), m_Values.end(),
             interval.second,
             detail::getFrom<Key, T>);
@@ -197,7 +197,7 @@ void IntervalMap<Key, T>::insert(const Interval& interval, const T& value)
 template <typename Key, typename T>
 typename IntervalMap<Key, T>::iterator IntervalMap<Key, T>::find(Key pos)
 {
-    iterator it = Algorithms::upper_bound(
+    iterator it = Algorithms::upperBound(
             m_Values.begin(), m_Values.end(),
             pos,
             detail::getTo<Key, T>);
@@ -210,7 +210,7 @@ typename IntervalMap<Key, T>::iterator IntervalMap<Key, T>::find(Key pos)
 template <typename Key, typename T>
 typename IntervalMap<Key, T>::const_iterator IntervalMap<Key, T>::find(Key pos) const
 {
-    const_iterator it = Algorithms::upper_bound(
+    const_iterator it = Algorithms::upperBound(
             m_Values.begin(), m_Values.end(),
             pos,
             detail::getTo<Key, T>);

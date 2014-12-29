@@ -97,7 +97,7 @@ Range<It> nextToken(Range<It>& str, UnaryPred delimiter)
 template <typename It, typename UnaryPred>
 Range<It> prevToken(Range<It>& str, UnaryPred delimiter)
 {
-    auto it = find_last_if(str, delimiter);
+    auto it = findLastIf(str, delimiter);
     auto last = end(str);
     str.end() = it;
     if (it == begin(str) && it != last && !delimiter(*it))

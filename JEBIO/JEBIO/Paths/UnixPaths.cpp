@@ -168,7 +168,7 @@ std::pair<std::string, std::string> split(const std::string& path)
 
 std::pair<std::string, std::string> splitExtension(const std::string& path)
 {
-    auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
+    auto it = findLastIf(makeRange(path), isDirOrExtensionSep);
     if (it == begin(path) || isDirSep(*it) || isDirSep(*prev(it)))
         return make_pair(path, std::string());
     return make_pair(std::string(begin(path), it),

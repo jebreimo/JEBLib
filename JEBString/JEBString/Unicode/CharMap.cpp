@@ -1,7 +1,7 @@
 #include "CharMap.hpp"
 
 #include <cassert>
-#include "JEBBase/Algorithms/Algorithms.hpp"
+#include "JEBBase/JEBAlgorithms.hpp"
 
 namespace JEBString { namespace Unicode {
 
@@ -59,7 +59,7 @@ bool CharMap::has(uint32_t chr) const
 
 bool CharMap::findInCompactMapping(uint32_t chr, uint32_t& mappedChr) const
 {
-    const CompactCharMapping* set = Algorithms::lower_bound(
+    const CompactCharMapping* set = Algorithms::lowerBound(
                 m_CompactMappings,
                 m_CompactMappings + m_CompactMappingsSize,
                 chr & SegMask,
@@ -73,7 +73,7 @@ bool CharMap::findInCompactMapping(uint32_t chr, uint32_t& mappedChr) const
 
 bool CharMap::findInMapping(uint32_t chr, uint32_t& mappedChr) const
 {
-    const CharMapping* mapping = Algorithms::lower_bound(
+    const CharMapping* mapping = Algorithms::lowerBound(
                 m_Mappings,
                 m_Mappings + m_MappingsSize,
                 chr,

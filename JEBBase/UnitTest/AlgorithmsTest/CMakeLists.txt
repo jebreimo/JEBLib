@@ -10,6 +10,7 @@ project(AlgorithmsTest)
 
 set(SRC
     test_Algorithms.cpp
+    test_KeyFunctionAlgorithms.cpp
     )
 
 add_library(${PROJECT_NAME} OBJECT ${SRC})

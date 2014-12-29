@@ -20,6 +20,7 @@ add_subdirectory(Ranges)
 
 set(PUBLIC_HEADERS
     JEBBaseDefinitions.hpp
+    JEBAlgorithms.hpp
     )
 
 add_custom_target(${PROJECT_NAME} SOURCES ${PUBLIC_HEADERS})

@@ -45,7 +45,7 @@ std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prev(Range<It>& path)
     if (empty(path))
         return std::make_pair(path, PathTokenType::Empty);
 
-    auto it = find_last(path, '/');
+    auto it = findLast(path, '/');
     if (*it != '/')
         return std::make_pair(takeTail(path, it), PathTokenType::Name);
     else if (++it != end(path))
@@ -62,7 +62,7 @@ std::pair<Range<It>, PathTokenType> UnixPathTokenizer::nextSubToken(
     if (empty(path))
         return std::make_pair(path, PathTokenType::Empty);
 
-    auto it = find_first_of(path, makeRange("/."));
+    auto it = findFirstOf(path, makeRange("/."));
     if (it == end(path))
         return std::make_pair(takeHead(path, it), PathTokenType::Name);
     else if (it != begin(path))
@@ -82,7 +82,7 @@ std::pair<Range<It>, PathTokenType> UnixPathTokenizer::prevSubToken(
     if (empty(path))
         return std::make_pair(path, PathTokenType::Empty);
 
-    auto it = find_last_of(path, makeRange("/."));
+    auto it = findLastOf(path, makeRange("/."));
     if (*it != '/' && *it != '.')
         return std::make_pair(takeTail(path, it), PathTokenType::Name);
     else if (++it != end(path))

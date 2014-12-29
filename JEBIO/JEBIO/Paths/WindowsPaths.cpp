@@ -85,7 +85,7 @@ std::string baseName(const std::string& path)
 
 std::string extension(const std::string& path)
 {
-    auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
+    auto it = findLastIf(makeRange(path), isDirOrExtensionSep);
     if (it == begin(path) || isPathSep(*it) || isPathSep(*prev(it)))
         return std::string();
     return std::string(it, end(path));
@@ -93,7 +93,7 @@ std::string extension(const std::string& path)
 
 std::string removeExtension(const std::string& path)
 {
-    auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
+    auto it = findLastIf(makeRange(path), isDirOrExtensionSep);
     if (it == begin(path) || isPathSep(*it) || isPathSep(*prev(it)))
         return path;
     return std::string(begin(path), it);
@@ -119,7 +119,7 @@ std::pair<std::string, std::string> split(const std::string& path)
 
 std::pair<std::string, std::string> splitExtension(const std::string& path)
 {
-    auto it = find_last_if(makeRange(path), isDirOrExtensionSep);
+    auto it = findLastIf(makeRange(path), isDirOrExtensionSep);
     if (it == begin(path) || isPathSep(*it) || isPathSep(*prev(it)))
         return make_pair(path, std::string());
     return make_pair(std::string(begin(path), it),

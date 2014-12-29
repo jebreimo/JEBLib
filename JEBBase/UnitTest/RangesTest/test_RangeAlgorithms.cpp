@@ -13,10 +13,10 @@ using namespace JEBBase::Ranges;
 
 namespace {
 
-void test_count_if()
+void test_countIf()
 {
     int values[] = {1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1};
-    JT_EQUAL(count_if(makeRange(values), [](auto c){return c > 5;}), 3);
+    JT_EQUAL(countIf(makeRange(values), [](auto c){return c > 5;}), 3);
 }
 
 void test_transform()
@@ -27,6 +27,6 @@ void test_transform()
     JT_ASSERT(equal(makeRange(values), makeRange(expected)));
 }
 
-JT_SUBTEST("Ranges", test_count_if, test_transform);
+JT_SUBTEST("Ranges", test_countIf, test_transform);
 
 }
