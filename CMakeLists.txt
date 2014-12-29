@@ -32,9 +32,16 @@ endif(APPLE)
 
 find_package(JEBTest)
 
+set(JEB_INSTALL_JEBMATH_API 1)
 add_subdirectory(JEBBase)
+
+set(JEB_INSTALL_JEBMATH_API 1)
 add_subdirectory(JEBMath)
+
+set(JEB_INSTALL_JEBSTRING_API 1)
 add_subdirectory(JEBString)
+
+set(JEB_INSTALL_JEBIO_API 1)
 add_subdirectory(JEBIO)
 
 add_library(${PROJECT_NAME} SHARED

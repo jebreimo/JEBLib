@@ -1,9 +1,9 @@
-#ifndef JEBSTRING_PATHS_WINDOWSPATHS_HPP
-#define JEBSTRING_PATHS_WINDOWSPATHS_HPP
+#ifndef JEBIO_PATHS_WINDOWSPATHS_HPP
+#define JEBIO_PATHS_WINDOWSPATHS_HPP
 
 #include <string>
 #include <vector>
-#include "JEBString/JEBStringDefinitions.hpp"
+#include "JEBIO/JEBIODefinitions.hpp"
 
 namespace JEBIO { namespace Windows {
 

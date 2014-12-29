@@ -1,5 +1,5 @@
-#ifndef JEBSTRING_PATHS_PATHFILTER_HPP
-#define JEBSTRING_PATHS_PATHFILTER_HPP
+#ifndef JEBIO_PATHS_PATHFILTER_HPP
+#define JEBIO_PATHS_PATHFILTER_HPP
 
 #include <string>
 #include <vector>

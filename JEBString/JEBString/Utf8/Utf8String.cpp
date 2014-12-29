@@ -123,6 +123,12 @@ bool isValidUtf8(const std::string& str)
     return EncodedStrings::isValidUtf8(begin(str), end(str));
 }
 
+std::string join(const std::vector<std::string>& strings,
+                 const std::string& separator)
+{
+    return join(begin(strings), end(strings), separator);
+}
+
 std::string lower(const std::string& str)
 {
     std::string result;

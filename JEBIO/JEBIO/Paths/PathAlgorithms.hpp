@@ -1,10 +1,10 @@
-#ifndef JEBSTRING_PATHS_PATHS_HPP
-#define JEBSTRING_PATHS_PATHS_HPP
+#ifndef JEBIO_PATHS_PATHS_HPP
+#define JEBIO_PATHS_PATHS_HPP
 
 #include <string>
 #include <vector>
 #include "JEBBase/Ranges/Range.hpp"
-#include "JEBString/JEBStringDefinitions.hpp"
+#include "JEBIO/JEBIODefinitions.hpp"
 
 namespace JEBIO {
 

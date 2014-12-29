@@ -142,6 +142,9 @@ std::string join(FwdIt first, FwdIt last);
 template <typename FwdIt>
 std::string join(FwdIt first, FwdIt last, const std::string& separator);
 
+std::string join(const std::vector<std::string>& strings,
+                 const std::string& separator);
+
 /** @brief Returns a copy of @a str with all letters lower-cased.
   */
 std::string lower(const std::string& str);
