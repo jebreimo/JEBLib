@@ -1,4 +1,5 @@
 #include "JEBString/Utf8/Utf8String.hpp"
+
 #include "JEBString/Unicode/UnicodeChars.hpp"
 #include "JEBString/Unicode/UnicodePredicates.hpp"
 #include "JEBString/Utf8/Utf8Chars.hpp"
@@ -379,22 +380,28 @@ void test_trim()
              "C_DFB.-G");
 }
 
-void test_trimFirst()
+void test_trimFront()
 {
-    JT_EQUAL(trimFirst(" \n\t" UTF8_PARAGRAPH_SEPARATOR " foo bar \f\r"),
+    JT_EQUAL(trimFront(" \n\t" UTF8_PARAGRAPH_SEPARATOR " foo bar \f\r"),
              "foo bar \f\r");
-    JT_EQUAL(trimFirst(":--." UTF8_GREEK_SMALL_SIGMA "foo bar:--",
+    JT_EQUAL(trimFront(":--." UTF8_GREEK_SMALL_SIGMA "foo bar:--",
                        Unicode::isPunctuation),
              UTF8_GREEK_SMALL_SIGMA "foo bar:--");
 }
 
-void test_trimLast()
+void test_trimBack()
 {
-    JT_EQUAL(trimLast(" \n\t foo bar \f\r" UTF8_PARAGRAPH_SEPARATOR),
+    JT_EQUAL(trimBack(" \n\t foo bar \f\r" UTF8_PARAGRAPH_SEPARATOR),
              " \n\t foo bar");
-    JT_EQUAL(trimLast(":--." UTF8_GREEK_SMALL_SIGMA "foo bar:--",
+    JT_EQUAL(trimBack(":--." UTF8_GREEK_SMALL_SIGMA "foo bar:--",
                       Unicode::isPunctuation),
              ":--." UTF8_GREEK_SMALL_SIGMA "foo bar");
+}
+
+void test_unescape()
+{
+    JT_EQUAL(unescape("\\u00C6\\n\\t\\\\\\x41"),
+                      UTF8_LATIN_CAPITAL_AE "\n\t\\A");
 }
 
 void test_upper()
@@ -439,7 +446,8 @@ JT_SUBTEST("Utf8",
            test_toUtf8_fromUtf8,
            test_toUtf8_fromUtf16,
            test_trim,
-           test_trimFirst,
-           test_trimLast,
+           test_trimFront,
+           test_trimBack,
+           test_unescape,
            test_upper);
 }

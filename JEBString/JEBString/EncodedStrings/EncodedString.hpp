@@ -116,11 +116,11 @@ template <typename It, typename Enc, typename UnaryPred>
 EncodedRange<It, Enc> trim(EncodedRange<It, Enc> str, UnaryPred trimChar);
 
 template <typename It, typename Enc, typename UnaryPred>
-EncodedRange<It, Enc> trimFirst(EncodedRange<It, Enc> str,
+EncodedRange<It, Enc> trimFront(EncodedRange<It, Enc> str,
                                 UnaryPred trimChar);
 
 template <typename It, typename Enc, typename UnaryPred>
-EncodedRange<It, Enc> trimLast(EncodedRange<It, Enc> str,
+EncodedRange<It, Enc> trimBack(EncodedRange<It, Enc> str,
                                UnaryPred trimChar);
 
 }}

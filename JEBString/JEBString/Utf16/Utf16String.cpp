@@ -342,15 +342,15 @@ std::wstring trim(const std::wstring& str)
     return toString(EncodedStrings::trim(utf16Range(str), Unicode::isWhitespace));
 }
 
-std::wstring trimFirst(const std::wstring& str)
+std::wstring trimFront(const std::wstring& str)
 {
-    return toString(EncodedStrings::trimFirst(utf16Range(str),
+    return toString(EncodedStrings::trimFront(utf16Range(str),
                                        Unicode::isWhitespace));
 }
 
-std::wstring trimLast(const std::wstring& str)
+std::wstring trimBack(const std::wstring& str)
 {
-    return toString(EncodedStrings::trimLast(utf16Range(str),
+    return toString(EncodedStrings::trimBack(utf16Range(str),
                                       Unicode::isWhitespace));
 }
 

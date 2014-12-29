@@ -269,15 +269,15 @@ std::wstring trim(const std::wstring& str);
 template <typename UnaryPred>
 std::wstring trim(const std::wstring& str, UnaryPred predicate);
 
-std::wstring trimFirst(const std::wstring& str);
+std::wstring trimFront(const std::wstring& str);
 
 template <typename UnaryPred>
-std::wstring trimFirst(const std::wstring& str, UnaryPred predicate);
+std::wstring trimFront(const std::wstring& str, UnaryPred predicate);
 
-std::wstring trimLast(const std::wstring& str);
+std::wstring trimBack(const std::wstring& str);
 
 template <typename UnaryPred>
-std::wstring trimLast(const std::wstring& str, UnaryPred predicate);
+std::wstring trimBack(const std::wstring& str, UnaryPred predicate);
 
 std::wstring upper(const std::wstring& str);
 

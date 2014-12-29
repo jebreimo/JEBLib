@@ -61,15 +61,15 @@ std::wstring trim(const std::wstring& str, UnaryPred predicate)
 }
 
 template <typename UnaryPred>
-std::wstring trimFirst(const std::wstring& str, UnaryPred predicate)
+std::wstring trimFront(const std::wstring& str, UnaryPred predicate)
 {
-    return toString(EncodedStrings::trimFirst(utf16Range(str), predicate));
+    return toString(EncodedStrings::trimFront(utf16Range(str), predicate));
 }
 
 template <typename UnaryPred>
-std::wstring trimLast(const std::wstring& str, UnaryPred predicate)
+std::wstring trimBack(const std::wstring& str, UnaryPred predicate)
 {
-    return toString(EncodedStrings::trimLast(utf16Range(str), predicate));
+    return toString(EncodedStrings::trimBack(utf16Range(str), predicate));
 }
 
 }}

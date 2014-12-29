@@ -361,15 +361,15 @@ std::string trim(const std::string& str)
     return toString(EncodedStrings::trim(utf8Range(str), Unicode::isWhitespace));
 }
 
-std::string trimFirst(const std::string& str)
+std::string trimFront(const std::string& str)
 {
-    return toString(EncodedStrings::trimFirst(utf8Range(str),
+    return toString(EncodedStrings::trimFront(utf8Range(str),
                                        Unicode::isWhitespace));
 }
 
-std::string trimLast(const std::string& str)
+std::string trimBack(const std::string& str)
 {
-    return toString(EncodedStrings::trimLast(utf8Range(str),
+    return toString(EncodedStrings::trimBack(utf8Range(str),
                                       Unicode::isWhitespace));
 }
 

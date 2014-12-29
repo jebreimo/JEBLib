@@ -271,15 +271,15 @@ std::string trim(const std::string& str);
 template <typename UnaryPred>
 std::string trim(const std::string& str, UnaryPred predicate);
 
-std::string trimFirst(const std::string& str);
+std::string trimFront(const std::string& str);
 
 template <typename UnaryPred>
-std::string trimFirst(const std::string& str, UnaryPred predicate);
+std::string trimFront(const std::string& str, UnaryPred predicate);
 
-std::string trimLast(const std::string& str);
+std::string trimBack(const std::string& str);
 
 template <typename UnaryPred>
-std::string trimLast(const std::string& str, UnaryPred predicate);
+std::string trimBack(const std::string& str, UnaryPred predicate);
 
 std::string unescape(const std::string& str);
 

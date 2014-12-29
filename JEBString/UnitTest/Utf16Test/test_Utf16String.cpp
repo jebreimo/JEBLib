@@ -355,20 +355,20 @@ void test_trim()
              L"C_DFB.-G");
 }
 
-void test_trimFirst()
+void test_trimFront()
 {
-    JT_EQUAL(trimFirst(L" \n\t" UTF16_PARAGRAPH_SEPARATOR L" foo bar \f\r"),
+    JT_EQUAL(trimFront(L" \n\t" UTF16_PARAGRAPH_SEPARATOR L" foo bar \f\r"),
              L"foo bar \f\r");
-    JT_EQUAL(trimFirst(L":--." UTF16_GREEK_SMALL_SIGMA L"foo bar:--",
+    JT_EQUAL(trimFront(L":--." UTF16_GREEK_SMALL_SIGMA L"foo bar:--",
                        Unicode::isPunctuation),
              UTF16_GREEK_SMALL_SIGMA L"foo bar:--");
 }
 
-void test_trimLast()
+void test_trimBack()
 {
-    JT_EQUAL(trimLast(L" \n\t foo bar \f\r" UTF16_PARAGRAPH_SEPARATOR),
+    JT_EQUAL(trimBack(L" \n\t foo bar \f\r" UTF16_PARAGRAPH_SEPARATOR),
              L" \n\t foo bar");
-    JT_EQUAL(trimLast(L":--." UTF16_GREEK_SMALL_SIGMA L"foo bar:--",
+    JT_EQUAL(trimBack(L":--." UTF16_GREEK_SMALL_SIGMA L"foo bar:--",
                       Unicode::isPunctuation),
              L":--." UTF16_GREEK_SMALL_SIGMA L"foo bar");
 }
@@ -412,7 +412,7 @@ JT_SUBTEST("Utf16",
            test_title,
            test_toUtf16,
            test_trim,
-           test_trimFirst,
-           test_trimLast,
+           test_trimFront,
+           test_trimBack,
            test_upper);
 }
