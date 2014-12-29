@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "JEBString/JEBStringDefinitions.hpp"
+#include "JEBIO/JEBIODefinitions.hpp"
 
 namespace JEBIO {
 

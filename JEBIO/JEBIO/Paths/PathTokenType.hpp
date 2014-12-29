@@ -1,7 +1,7 @@
 #ifndef JEBSTRING_PATHS_PATHTOKENTYPE_HPP
 #define JEBSTRING_PATHS_PATHTOKENTYPE_HPP
 
-#include "JEBString/JEBStringDefinitions.hpp"
+#include "JEBIO/JEBIODefinitions.hpp"
 
 namespace JEBIO {
 
