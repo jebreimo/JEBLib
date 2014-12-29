@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include "JEBString/Utf8/Utf8String.hpp"
+#include "JEBString/JEBUtf8.hpp"
 #include "JEBString/Unicode/UnicodePredicates.hpp"
 
 #define PRECONDITION(cond, msg) \
