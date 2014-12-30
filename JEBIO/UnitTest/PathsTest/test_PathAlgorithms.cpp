@@ -77,8 +77,8 @@ void test_dirName_win()
     JT_EQUAL(str(dirName(tok, makeRange("C:\\abra\\kadabra.txt"))),
              "C:\\abra");
     JT_EQUAL(str(dirName(tok, makeRange("C:\\abra\\"))), "C:\\abra");
-    JT_EQUAL(str(dirName(tok, makeRange("C:\\abra"))), "C:");
-    JT_EQUAL(str(dirName(tok, makeRange("C:\\"))), "C:");
+    JT_EQUAL(str(dirName(tok, makeRange("C:\\abra"))), "C:\\");
+    JT_EQUAL(str(dirName(tok, makeRange("C:\\"))), "C:\\");
     JT_EQUAL(str(dirName(tok, makeRange("abra"))), "");
     JT_EQUAL(str(dirName(tok, makeRange("\\abra\\kadabra.txt"))), "\\abra");
     JT_EQUAL(str(dirName(tok, makeRange("\\abra\\"))), "\\abra");

@@ -9,6 +9,7 @@ set(PUBLIC_HEADERS
     PathTokenType.hpp
     PathAlgorithms.hpp
     PathAlgorithms.impl.hpp
+    Paths.hpp
     UnixPaths.hpp
     UnixPathTokenizer.hpp
     WindowsPaths.hpp
@@ -18,6 +19,7 @@ set(PUBLIC_HEADERS
 
 set(SRC
     PathFilter.cpp
+    Paths.cpp
     UnixPaths.cpp
     WindowsPaths.cpp
    )

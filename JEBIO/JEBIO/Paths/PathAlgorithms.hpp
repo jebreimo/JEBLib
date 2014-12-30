@@ -55,6 +55,12 @@ Range<It> extension(const PathTokenizer& tokenizer, const Range<It>& path);
 
 // std::vector<std::string> splitPath(const std::string& path);
 
+template <typename PathTokenizer, typename It>
+Range<It> splitBack(const PathTokenizer& tokenizer, Range<It>& path);
+
+template <typename PathTokenizer, typename It>
+Range<It> splitFront(const PathTokenizer& tokenizer, Range<It>& path);
+
 }
 
 #include "PathAlgorithms.impl.hpp"

@@ -25,7 +25,7 @@ void test_split()
     JT_EQUAL(Windows::split("c:\\a"), stringPair("c:\\", "a"));
     JT_EQUAL(Windows::split("c:a"), stringPair("c:", "a"));
     JT_EQUAL(Windows::split("\\\\abra\\b"), stringPair("\\\\abra", "b"));
-    JT_EQUAL(Windows::split("\\\\abra"), stringPair("\\\\abra", ""));
+    JT_EQUAL(Windows::split("\\\\abra"), stringPair("\\\\", "abra"));
     JT_EQUAL(Windows::split("c:\\"), stringPair("c:\\", ""));
     JT_EQUAL(Windows::split("c:"), stringPair("c:", ""));
 }

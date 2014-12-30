@@ -23,21 +23,6 @@ namespace
     {
         return ch == DirSep;
     }
-
-    // bool isPathSep(uint32_t ch)
-    // {
-    //     return isDirSep(ch);
-    // }
-
-    bool isExtensionSep(uint32_t ch)
-    {
-        return ch == '.';
-    }
-
-    bool isDirOrExtensionSep(uint32_t ch)
-    {
-        return isDirSep(ch) || isExtensionSep(ch);
-    }
 }
 
 std::string baseName(const std::string& path)
@@ -149,30 +134,17 @@ std::string replaceExtension(const std::string& path, const std::string& ext)
 std::pair<std::string, std::string> split(const std::string& path)
 {
     auto first = makeRange(path);
-    auto second = makeRange(end(path), end(path));
-    UnixPathTokenizer tokenizer;
-    while (!empty(first))
-    {
-        auto token = tokenizer.prev(first);
-        if (token.second == PathTokenType::DirSeparator)
-        {
-            if (empty(first))
-                first = token.first;
-            break;
-        }
-        second.begin() = token.first.begin();
-    }
+    auto second = splitBack(UnixPathTokenizer(), first);
     return std::make_pair(fromRange<std::string>(first),
                           fromRange<std::string>(second));
 }
 
 std::pair<std::string, std::string> splitExtension(const std::string& path)
 {
-    auto it = findLastIf(makeRange(path), isDirOrExtensionSep);
-    if (it == begin(path) || isDirSep(*it) || isDirSep(*prev(it)))
-        return make_pair(path, std::string());
-    return make_pair(std::string(begin(path), it),
-                     std::string(it, end(path)));
+    auto first = makeRange(path);
+    auto second = extension(UnixPathTokenizer(), first);
+    return std::make_pair(fromRange<std::string>(first),
+                          fromRange<std::string>(second));
 }
 
 std::vector<std::string> splitPath(const std::string& path)

@@ -7,10 +7,7 @@ using JEBBase::Ranges::makeRange;
 template <typename PathTokenizer, typename It>
 Range<It> baseName(const PathTokenizer& tokenizer, Range<It> path)
 {
-    auto last = tokenizer.prev(path);
-    if (last.second != PathTokenType::Name)
-        return Range<It>();
-    return last.first;
+    return splitBack(tokenizer, path);
 }
 
 template <typename PathTokenizer, typename It1, typename It2>
@@ -51,16 +48,7 @@ std::pair<Range<It1>, Range<It2>> commonPath(
 template <typename PathTokenizer, typename It>
 Range<It> dirName(const PathTokenizer& tokenizer, Range<It> path)
 {
-    auto tmp = path;
-    auto last = tokenizer.prev(path);
-    if (last.second == PathTokenType::Name)
-    {
-        tmp = path;
-        last = tokenizer.prev(path);
-    }
-    if ((last.second == PathTokenType::DriveSeparator) ||
-        (last.second == PathTokenType::DirSeparator && empty(path)))
-        return tmp;
+    splitBack(tokenizer, path);
     return path;
 }
 
@@ -91,6 +79,66 @@ Range<It> extension(const PathTokenizer& tokenizer, const Range<It>& path)
 {
     auto tmp = path;
     return extension(tokenizer, tmp);
+}
+
+template <typename PathTokenizer, typename It>
+Range<It> splitBack(const PathTokenizer& tokenizer, Range<It>& path)
+{
+    auto remainder = path;
+    auto tok = tokenizer.prev(path);
+    Range<It> name;
+
+    if (tok.second == PathTokenType::Name)
+    {
+        name = tok.first;
+        remainder = path;
+        tok = tokenizer.prev(path);
+    }
+
+    if (tok.second == PathTokenType::DirSeparator)
+    {
+        auto tmp = path;
+        tok = tokenizer.prev(path);
+        if (tok.second == PathTokenType::Name)
+            remainder = tmp;
+    }
+
+    path = remainder;
+    return name;
+}
+
+template <typename PathTokenizer, typename It>
+Range<It> splitFront(const PathTokenizer& tokenizer, Range<It>& path)
+{
+    auto remainder = path;
+    auto tok = tokenizer.next(path);
+    Range<It> name = tok.first;
+    bool isRoot = true;
+
+    if (tok.second == PathTokenType::Name)
+    {
+        isRoot = false;
+        tok = tokenizer.next(path);
+    }
+
+    if (tok.second == PathTokenType::Empty)
+    {
+        isRoot = true;
+    }
+    else if (tok.second == PathTokenType::DriveSeparator)
+    {
+        isRoot = true;
+        remainder = path;
+        tok = tokenizer.next(path);
+    }
+
+    if (tok.second != PathTokenType::DirSeparator)
+        path = remainder;
+
+    if (isRoot)
+        name.end() = path.begin();
+
+    return name;
 }
 
 }
