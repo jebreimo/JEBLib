@@ -30,14 +30,14 @@ std::pair<std::string, std::string> split(const std::string& path)
     return PATHS_IMPL_NS::split(path);
 }
 
-std::pair<std::string, std::string> splitExtension(const std::string& path)
-{
-    return PATHS_IMPL_NS::splitExtension(path);
-}
-
 std::vector<std::string> splitDirs(const std::string& path)
 {
     return PATHS_IMPL_NS::splitDirs(path);
+}
+
+std::pair<std::string, std::string> splitExtension(const std::string& path)
+{
+    return PATHS_IMPL_NS::splitExtension(path);
 }
 
 }
