@@ -106,6 +106,34 @@ void test_extension_ux()
                                              "", "/a/b.cd/ghij"));
 }
 
+template <typename Tokenizer>
+void testSplitFront(const std::string& path,
+                    const std::string& expectedToken,
+                    const std::string& expectedRemainder)
+{
+    auto pathRange = makeRange(path);
+    JT_EQUAL(str(splitFront(Tokenizer(), pathRange)), expectedToken);
+    JT_EQUAL(str(pathRange), expectedRemainder);
+}
+
+void test_splitFront_win()
+{
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("", "", ""));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("a", "", "a"));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("a\\", "a", ""));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("a\\b", "a", "b"));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("a\\\\b", "a", "\\b"));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("c:", "c:", ""));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("c::", "c:", ":"));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("c:a", "c:", "a"));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("c:\\", "c:\\", ""));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>("c:\\a", "c:\\", "a"));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>(":", ":", ""));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>(":a", ":", "a"));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>(":\\", ":\\", ""));
+    JT_CALL(testSplitFront<WindowsPathTokenizer>(":\\a", ":\\", "a"));
+}
+
 JT_SUBTEST("Paths",
            test_baseName_ux,
            test_baseName_win,
@@ -113,6 +141,7 @@ JT_SUBTEST("Paths",
            test_commonPath_win,
            test_dirName_ux,
            test_dirName_win,
-           test_extension_ux);
+           test_extension_ux,
+           test_splitFront_win);
 
 }

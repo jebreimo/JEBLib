@@ -14,6 +14,7 @@ namespace
 {
     const char DirSep = '/';
     static const std::string DirSepStr(1, DirSep);
+    auto DirSepRange = makeRange(DirSepStr);
     const char CurrentDir[] = ".";
     auto CurrentDirRange = makeRange(CurrentDir);
     const char ParentDir[] = "..";
@@ -22,6 +23,12 @@ namespace
     bool isDirSep(uint32_t ch)
     {
         return ch == DirSep;
+    }
+
+    template <typename Iterator>
+    bool endsWithDirSep(Range<Iterator> str)
+    {
+        return !empty(str) && isDirSep(back(str));
     }
 }
 
@@ -73,27 +80,73 @@ std::string join(std::string left, const std::string& right)
     return left.append(DirSepStr).append(right);
 }
 
+template <typename Iterator>
+void append(std::string& left, Range<Iterator> right)
+{
+    if (empty(right))
+        return;
+
+    if (left.empty())
+    {
+        left.assign(begin(right), end(right));
+        return;
+    }
+
+    bool sepL = isDirSep(left.back());
+    bool sepR = isDirSep(back(right));
+    if (sepL && sepR)
+        left.append(next(begin(right)), end(right));
+    else if (sepL || sepR)
+        left.append(begin(right), end(right));
+    else
+        left.append(DirSepStr).append(begin(right), end(right));
+}
+
 std::string normalize(const std::string& path)
 {
-    std::vector<std::string> result;
-    auto parts = splitPath(path);
-    for (auto it = begin(parts); it != end(parts); ++it)
+    typedef Range<std::string::const_iterator> StrRange;
+
+    std::vector<StrRange> dirs;
+
+    UnixPathTokenizer tokenizer;
+    auto pathRng = makeRange(path);
+    auto dir = splitFront(tokenizer, pathRng);
+    while (!empty(dir))
     {
-        if (*it == CurrentDir)
-            continue;
-        else if (*it != ParentDir)
-            result.push_back(*it);
-        else if (result.empty() || result.back() == ParentDir)
-            result.push_back(*it);
-        else if (!result.back().empty())
-            result.pop_back();
+        if (equal(dir, ParentDirRange))
+        {
+            if (dirs.empty() || equal(dirs.back(), ParentDirRange))
+                dirs.push_back(dir);
+            else if (!endsWithDirSep(dirs.back()))
+                dirs.pop_back();
+        }
+        else if (!equal(dir, CurrentDirRange) &&
+                 (dirs.empty() || !equal(dir, DirSepRange)))
+        {
+            dirs.push_back(dir);
+        }
+        dir = splitFront(tokenizer, pathRng);
     }
+    if (equal(pathRng, ParentDirRange))
+    {
+        if (dirs.empty() || equal(dirs.back(), ParentDirRange))
+            dirs.push_back(pathRng);
+        else if (!endsWithDirSep(dirs.back()))
+            dirs.pop_back();
+    }
+    else if (!equal(pathRng, CurrentDirRange) &&
+             (dirs.empty() || !equal(pathRng, DirSepRange)))
+    {
+        dirs.push_back(pathRng);
+    }
+
+    std::string result;
+    for (auto it = begin(dirs); it != end(dirs); ++it)
+        append(result, *it);
+
     if (result.empty())
-        return CurrentDir;
-    if (result.size() == 1 && result[0].empty())
-        return DirSepStr;
-    return JEBString::RawStrings::join<std::string>(
-            begin(result), end(result), DirSepStr);
+        result = CurrentDir;
+    return result;
 }
 
 std::string relativePath(const std::string& souce, const std::string& dest)
@@ -139,28 +192,28 @@ std::pair<std::string, std::string> split(const std::string& path)
                           fromRange<std::string>(second));
 }
 
+std::vector<std::string> splitDirs(const std::string& path)
+{
+    std::vector<std::string> result;
+
+    UnixPathTokenizer tokenizer;
+    auto pathRng = makeRange(path);
+    auto dir = splitFront(tokenizer, pathRng);
+    while (!empty(dir))
+    {
+        result.push_back(fromRange<std::string>(dir));
+        dir = splitFront(tokenizer, pathRng);
+    }
+    result.push_back(fromRange<std::string>(pathRng));
+    return result;
+}
+
 std::pair<std::string, std::string> splitExtension(const std::string& path)
 {
     auto first = makeRange(path);
     auto second = extension(UnixPathTokenizer(), first);
     return std::make_pair(fromRange<std::string>(first),
                           fromRange<std::string>(second));
-}
-
-std::vector<std::string> splitPath(const std::string& path)
-{
-    auto parts = JEBString::RawStrings::splitIf(makeRange(path), isDirSep);
-    std::vector<std::string> result;
-    auto it = begin(parts);
-    if (it == end(parts))
-        return result;
-    result.push_back(JEBString::RawStrings::toString<char>(*it));
-    for (++it; it != end(parts); ++it)
-    {
-        if (!empty(*it))
-            result.push_back(JEBString::RawStrings::toString<char>(*it));
-    }
-    return result;
 }
 
 }}

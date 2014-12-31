@@ -57,6 +57,22 @@ std::pair<std::string, std::string> split(const std::string& path)
                           fromRange<std::string>(second));
 }
 
+std::vector<std::string> splitDirs(const std::string& path)
+{
+    std::vector<std::string> result;
+
+    WindowsPathTokenizer tokenizer;
+    auto pathRng = makeRange(path);
+    auto dir = splitFront(tokenizer, pathRng);
+    while (!empty(dir))
+    {
+        result.push_back(fromRange<std::string>(dir));
+        dir = splitFront(tokenizer, pathRng);
+    }
+    result.push_back(fromRange<std::string>(pathRng));
+    return result;
+}
+
 std::pair<std::string, std::string> splitExtension(const std::string& path)
 {
     auto first = makeRange(path);

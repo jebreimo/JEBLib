@@ -83,6 +83,7 @@ void test_normalize()
     JT_EQUAL(Unix::normalize("foo/bar"), "foo/bar");
     JT_EQUAL(Unix::normalize("../bar"), "../bar");
     JT_EQUAL(Unix::normalize("/../bar"), "/bar");
+    JT_EQUAL(Unix::normalize("/../../bar"), "/bar");
     JT_EQUAL(Unix::normalize("../../foo/../bar"), "../../bar");
     JT_EQUAL(Unix::normalize("./."), ".");
     JT_EQUAL(Unix::normalize("./.."), "..");
@@ -161,26 +162,33 @@ void test_splitExtension()
                                "/abc.txt/file", ".with_long_extension"));
 }
 
-void test_splitPath()
+void test_splitDirs()
 {
-    auto parts1 = Unix::splitPath("/foo/faa/fee");
+    auto parts1 = Unix::splitDirs("/foo/faa/fee");
     JT_EQUAL(parts1.size(), 4);
-    JT_EQUAL(parts1[0], "");
+    JT_EQUAL(parts1[0], "/");
     JT_EQUAL(parts1[1], "foo");
     JT_EQUAL(parts1[2], "faa");
     JT_EQUAL(parts1[3], "fee");
-    auto parts2 = Unix::splitPath("foo/faa/fee.bar");
+    auto parts2 = Unix::splitDirs("foo/faa/fee.bar");
     JT_EQUAL(parts2.size(), 3);
     JT_EQUAL(parts2[0], "foo");
     JT_EQUAL(parts2[1], "faa");
     JT_EQUAL(parts2[2], "fee.bar");
-    auto parts3 = Unix::splitPath("//foo//./faa/fee/");
-    JT_EQUAL(parts3.size(), 5);
-    JT_EQUAL(parts3[0], "");
-    JT_EQUAL(parts3[1], "foo");
-    JT_EQUAL(parts3[2], ".");
-    JT_EQUAL(parts3[3], "faa");
-    JT_EQUAL(parts3[4], "fee");
+    auto parts3 = Unix::splitDirs("//foo//./faa/fee/");
+    JT_EQUAL(parts3.size(), 8);
+    JT_EQUAL(parts3[0], "/");
+    JT_EQUAL(parts3[1], "/");
+    JT_EQUAL(parts3[2], "foo");
+    JT_EQUAL(parts3[3], "/");
+    JT_EQUAL(parts3[4], ".");
+    JT_EQUAL(parts3[5], "faa");
+    JT_EQUAL(parts3[6], "fee");
+    JT_EQUAL(parts3[7], "");
+    auto parts4 = Unix::splitDirs("./foo");
+    JT_EQUAL(parts4.size(), 2);
+    JT_EQUAL(parts4[0], ".");
+    JT_EQUAL(parts4[1], "foo");
 }
 
 JT_SUBTEST("Paths",
@@ -196,5 +204,5 @@ JT_SUBTEST("Paths",
            test_replaceExtension,
            test_split,
            test_splitExtension,
-           test_splitPath);
+           test_splitDirs);
 }
