@@ -30,6 +30,45 @@ namespace
     {
         return !empty(str) && isDirSep(back(str));
     }
+
+    template <typename Iterator>
+    void append(std::string& left, Range<Iterator> right)
+    {
+        if (empty(right))
+            return;
+
+        if (left.empty())
+        {
+            left.assign(begin(right), end(right));
+            return;
+        }
+
+        bool sepL = isDirSep(left.back());
+        bool sepR = isDirSep(back(right));
+        if (sepL && sepR)
+            left.append(next(begin(right)), end(right));
+        else if (sepL || sepR)
+            left.append(begin(right), end(right));
+        else
+            left.append(DirSepStr).append(begin(right), end(right));
+    }
+
+    template <typename Iterator>
+    void changeDirectory(std::vector<Range<Iterator>>& path, Range<Iterator>& dir)
+    {
+        if (empty(dir))
+            return;
+        if (equal(dir, CurrentDirRange))
+            return;
+        if (endsWithDirSep(dir) && !path.empty())
+            return;
+        if (!equal(dir, ParentDirRange))
+            path.push_back(dir);
+        else if (path.empty() || equal(path.back(), ParentDirRange))
+            path.push_back(dir);
+        else if (!endsWithDirSep(path.back()))
+            path.pop_back();
+    }
 }
 
 std::string baseName(const std::string& path)
@@ -80,28 +119,6 @@ std::string join(std::string left, const std::string& right)
     return left.append(DirSepStr).append(right);
 }
 
-template <typename Iterator>
-void append(std::string& left, Range<Iterator> right)
-{
-    if (empty(right))
-        return;
-
-    if (left.empty())
-    {
-        left.assign(begin(right), end(right));
-        return;
-    }
-
-    bool sepL = isDirSep(left.back());
-    bool sepR = isDirSep(back(right));
-    if (sepL && sepR)
-        left.append(next(begin(right)), end(right));
-    else if (sepL || sepR)
-        left.append(begin(right), end(right));
-    else
-        left.append(DirSepStr).append(begin(right), end(right));
-}
-
 std::string normalize(const std::string& path)
 {
     typedef Range<std::string::const_iterator> StrRange;
@@ -113,32 +130,10 @@ std::string normalize(const std::string& path)
     auto dir = splitFront(tokenizer, pathRng);
     while (!empty(dir))
     {
-        if (equal(dir, ParentDirRange))
-        {
-            if (dirs.empty() || equal(dirs.back(), ParentDirRange))
-                dirs.push_back(dir);
-            else if (!endsWithDirSep(dirs.back()))
-                dirs.pop_back();
-        }
-        else if (!equal(dir, CurrentDirRange) &&
-                 (dirs.empty() || !equal(dir, DirSepRange)))
-        {
-            dirs.push_back(dir);
-        }
+        changeDirectory(dirs, dir);
         dir = splitFront(tokenizer, pathRng);
     }
-    if (equal(pathRng, ParentDirRange))
-    {
-        if (dirs.empty() || equal(dirs.back(), ParentDirRange))
-            dirs.push_back(pathRng);
-        else if (!endsWithDirSep(dirs.back()))
-            dirs.pop_back();
-    }
-    else if (!equal(pathRng, CurrentDirRange) &&
-             (dirs.empty() || !equal(pathRng, DirSepRange)))
-    {
-        dirs.push_back(pathRng);
-    }
+    changeDirectory(dirs, pathRng);
 
     std::string result;
     for (auto it = begin(dirs); it != end(dirs); ++it)
