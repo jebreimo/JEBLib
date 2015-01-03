@@ -10,7 +10,8 @@ add_subdirectory(Streams)
 add_subdirectory(Xml)
 
 set(PUBLIC_HEADERS
-    JEBMathDefinitions.hpp
+    JEBIODefinitions.hpp
+    JEBPath.hpp
     )
 
 if (DEFINED JEB_INSTALL_JEBMATH_API)
