@@ -33,15 +33,21 @@ auto compare(InpIt1 first, InpIt1 last,
     -> decltype(*first - *cmpFirst)
 {
     typedef decltype(*first - *cmpFirst) ReturnType;
-    auto its = Algorithms::mismatch(first, last, cmpFirst, cmpLast);
-    if (its.first != last && its.second != cmpLast)
-        return *first - *cmpFirst;
-    else if (its.first != last)
+    auto zero = ReturnType();
+    while (first != last && cmpFirst != cmpLast)
+    {
+        auto value = *first - *cmpFirst;
+        if (value != zero)
+            return value;
+        first++;
+        cmpFirst++;
+    }
+    if (first != last)
         return ReturnType(1);
-    else if (its.second != cmpLast)
+    else if (cmpFirst != cmpLast)
         return ReturnType(-1);
     else
-        return ReturnType();
+        return zero;
 }
 
 template <typename InpIt1, typename InpIt2, typename BinaryFunc>
@@ -51,17 +57,21 @@ auto compare(InpIt1 first, InpIt1 last,
     -> decltype(cmp(*first, *cmpFirst))
 {
     typedef decltype(*first - *cmpFirst) ReturnType;
-    auto its = Algorithms::mismatch(first, last, cmpFirst, cmpLast,
-            [&](decltype(*first) a, decltype(*cmpFirst) b)
-                {return cmp(a, b) == 0;});
-    if (its.first != last && its.second != cmpLast)
-        return cmp(*its.first, *its.second);
-    else if (its.first != last)
+    auto zero = ReturnType();
+    while (first != last && cmpFirst != cmpLast)
+    {
+        auto value = cmp(*first, *cmpFirst);
+        if (value != zero)
+            return value;
+        first++;
+        cmpFirst++;
+    }
+    if (first != last)
         return ReturnType(1);
-    else if (its.second != cmpLast)
+    else if (cmpFirst != cmpLast)
         return ReturnType(-1);
     else
-        return ReturnType();
+        return zero;
 }
 
 template <typename FwdIt1, typename FwdIt2>
