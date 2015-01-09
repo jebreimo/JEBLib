@@ -6,6 +6,10 @@ set(JEB_DIR JEBMath/${PROJECT_NAME})
 
 set(PUBLIC_HEADERS
     Color32.hpp
+    Vector.hpp
+    VectorAccess.hpp
+    VectorMath.hpp
+    VectorOperators.hpp
     )
 
 set(SRC
