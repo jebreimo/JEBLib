@@ -12,7 +12,12 @@
 
 namespace JEBBase {
 
-const uint64_t EPOCH_YEAR = 1200; /* This must be a leap century, Gregorian calendar was introduced in the 1580-ies. */
+/* The epoch year is the year that has day 0 in the date calculations.
+   This must be a leap century and must be prior to the first year that is
+   "officially" supported by these functions.
+   1200 is the last leap-century before the Gregorian calendar was introduced
+   in the 1580-ies. */
+const uint64_t EPOCH_YEAR = 1200;
 const uint64_t MIN_YEAR = 1582;
 const uint64_t SECS_PER_DAY = 24ULL * 60ULL * 60ULL;
 const uint64_t USECS_PER_SEC = 1000000ULL;
@@ -20,11 +25,10 @@ const uint64_t USECS_PER_MIN = 60 * USECS_PER_SEC;
 const uint64_t USECS_PER_HOUR = 60 * USECS_PER_MIN;
 const uint64_t USECS_PER_DAY = SECS_PER_DAY * USECS_PER_SEC;
 
-/* Internally, March is the first month. */
-// static const int gDaysPerMonth[12] = {31, 30, 31, 30, 31, 31,
-//                                       30, 31, 30, 31, 31, 28};
-
-static const int gAccumulatedDays[12] = {  0,  31,  61,  92, 122, 153,
+/* Internally, March is the first month. This simplifies handling the
+   28/29 days of February.
+ */
+static const int ACCUMULATED_DAYS[12] = {  0,  31,  61,  92, 122, 153,
                                          184, 214, 245, 275, 306, 337};
 
 static const YearMonthDay DEFAULT_DATE = YearMonthDay(MIN_YEAR, 1, 1);
@@ -41,13 +45,11 @@ static const YearMonthDay DEFAULT_DATE = YearMonthDay(MIN_YEAR, 1, 1);
         *tzSeconds = _timezone;
     }
 
-    static uint64_t timezoneSecs()
+    static long timezoneSecs()
     {
         return _timezone;
     }
 #else
-    static uint64_t gTimezoneSeconds = ULLONG_MAX;
-
     void localdate(int* year, int* dayOfYear, int* secOfDay, int* tzSeconds)
     {
         time_t t = time(NULL);
@@ -58,8 +60,9 @@ static const YearMonthDay DEFAULT_DATE = YearMonthDay(MIN_YEAR, 1, 1);
         *tzSeconds = locTime->tm_gmtoff;
     }
 
-    static uint64_t timezoneSecs()
+    static long timezoneSecs()
     {
+        static uint64_t gTimezoneSeconds = ULLONG_MAX;
         if (gTimezoneSeconds == ULLONG_MAX)
         {
             int year, dayOfYear, secOfDay, tzSeconds;
@@ -70,7 +73,7 @@ static const YearMonthDay DEFAULT_DATE = YearMonthDay(MIN_YEAR, 1, 1);
     }
 #endif
 
-static int isLeapYear(int year)
+static bool isLeapYear(int year)
 {
     return (year % 16 == 0) || (year % 4 == 0 && year % 25 != 0);
 }
@@ -93,7 +96,7 @@ static int daysSinceEpochYD(YearDay yd)
     }
     else
     {
-        yd.day += gAccumulatedDays[10] - 1;
+        yd.day += ACCUMULATED_DAYS[10] - 1;
     }
 
     return daysSinceEpochY(yd.year) + yd.day;
@@ -115,7 +118,7 @@ static int daysSinceEpochYMD(YearMonthDay date)
         date.month += 9;
     }
     return daysSinceEpochY(date.year)
-         + gAccumulatedDays[date.month]
+         + ACCUMULATED_DAYS[date.month]
          + date.day - 1;
 }
 
@@ -163,11 +166,11 @@ static YearMonthDay toYMD(uint64_t daysSinceEpoch)
 {
     int year = 0, dayOfYear = 0;
     toInternalYD(&year, &dayOfYear, daysSinceEpoch);
-    auto it = std::upper_bound(std::begin(gAccumulatedDays),
-                               std::end(gAccumulatedDays),
+    auto it = std::upper_bound(std::begin(ACCUMULATED_DAYS),
+                               std::end(ACCUMULATED_DAYS),
                                dayOfYear);
-    int month = std::distance(std::begin(gAccumulatedDays), it);
-    int dayOfMonth = dayOfYear - gAccumulatedDays[month - 1] + 1;
+    int month = std::distance(std::begin(ACCUMULATED_DAYS), it);
+    int dayOfMonth = dayOfYear - ACCUMULATED_DAYS[month - 1] + 1;
 
     if (month > 10)
     {
@@ -211,19 +214,6 @@ static std::pair<uint64_t, uint64_t> unpackDaysUseconds(PackedDateTime dateTime)
 {
     return std::make_pair(dateTime / USECS_PER_DAY, dateTime % USECS_PER_DAY);
 }
-
-// static void unpackTimezone(int* hour, int* minute, int* second, int timezone)
-// {
-//     *hour = timezone / (60 * 60);
-//     timezone %= 60 * 60;
-//     if (timezone < 0)
-//     {
-//         *hour -= 1;
-//         timezone += 60 * 60;
-//     }
-//     *minute = timezone / 60;
-//     *second = timezone % 60;
-// }
 
 static int toWeek(int dayOfYear, int dayOfWeek, int firstDayOfWeek)
 {
@@ -299,9 +289,9 @@ YearDay unpackYearDay(PackedDateTime dateTime, int timezone)
     int year = 0, day = 0;
     auto days = (dateTime + timezone * USECS_PER_SEC) / USECS_PER_DAY;
     toInternalYD(&year, &day, days);
-    if (day >= gAccumulatedDays[10])
+    if (day >= ACCUMULATED_DAYS[10])
     {
-        day -= gAccumulatedDays[10];
+        day -= ACCUMULATED_DAYS[10];
     }
     else
     {
