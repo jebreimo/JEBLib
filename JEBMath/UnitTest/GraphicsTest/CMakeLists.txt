@@ -4,6 +4,7 @@ project(GraphicsTest)
 
 set(SRC
     test_Color32.cpp
+    test_Matrix.cpp
     test_Vector.cpp
     )
 
