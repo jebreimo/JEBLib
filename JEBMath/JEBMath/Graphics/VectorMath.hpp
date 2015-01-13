@@ -1,8 +1,9 @@
-#ifndef JEBMATH_GRAPHICS_VECTOROPERATORS_HPP
-#define JEBMATH_GRAPHICS_VECTOROPERATORS_HPP
+#ifndef JEBMATH_GRAPHICS_VECTORMATH_HPP
+#define JEBMATH_GRAPHICS_VECTORMATH_HPP
 
 #include <cmath>
-#include "Vector.hpp"
+#include "VectorAccess.hpp"
+#include "VectorOperators.hpp"
 
 namespace JEBMath {
 
@@ -11,7 +12,7 @@ auto inner(const Vector<T, N>& a, const Vector<U, N>& b)
     -> decltype(a[0] * b[0])
 {
     auto result = T() * U();
-    for (int i = 0; i < N; ++i)
+    for (size_t i = 0; i < N; ++i)
         result += a[i] * b[i];
     return result;
 }
@@ -52,12 +53,6 @@ Vector<double, N> unit(const Vector<T, N>& v)
     return v / length(v);
 }
 
-template <typename T, typename U, size_t N>
-double angle(const Vector<T, N>& u, const Vector<U, N>& v)
-{
-    return std::acos(cosAngle(u, v));
-}
-
 template <typename T, size_t N>
 Vector<T, N> resize(const Vector<T, N>& v, T newLength)
 {
@@ -67,7 +62,7 @@ Vector<T, N> resize(const Vector<T, N>& v, T newLength)
 template <typename T>
 Vector<T, 2> normal(const Vector<T, 2>& v)
 {
-    return vector2(-y(v), x(v));
+    return vector2(-getY(v), getX(v));
 }
 
 template <typename T, typename U>
@@ -84,7 +79,9 @@ Vector<double, 2> rotate(const Vector<T, 2>& v, double radians)
 {
     auto c = std::cos(radians);
     auto s = std::sin(radians);
-    return vector2(x(v) * c - y(v) * s, x(v) * s + y(v) * c);
+    return vector2(getX(v) * c - getY(v) * s, getX(v) * s + getY(v) * c);
 }
 
 }
+
+#endif

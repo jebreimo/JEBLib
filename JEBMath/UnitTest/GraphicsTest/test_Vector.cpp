@@ -1,4 +1,7 @@
 #include "JEBMath/Graphics/Vector.hpp"
+#include "JEBMath/Graphics/VectorAccess.hpp"
+#include "JEBMath/Graphics/VectorMath.hpp"
+#include "JEBMath/Graphics/VectorOperators.hpp"
 
 #include <cmath>
 #include <JEBTest/JEBTest.hpp>
@@ -12,10 +15,10 @@ void test_Basics2D()
 {
     auto u = vector2(2.0, 1.0);
     auto v = vector2(3, 4);
-    JT_EQUAL(x(u), 2);
-    JT_EQUAL(y(u), 1);
-    JT_EQUAL(x(v), 3);
-    JT_EQUAL(y(v), 4);
+    JT_EQUAL(getX(u), 2);
+    JT_EQUAL(getY(u), 1);
+    JT_EQUAL(getX(v), 3);
+    JT_EQUAL(getY(v), 4);
     JT_EQUAL(u * v, vector2(6, 4));
     JT_EQUAL(u + v, vector2(5, 5));
     JT_EQUAL(u - v, vector2(-1, -3));
@@ -30,7 +33,7 @@ void test_Basics2D()
     JT_EQUAL(u *= v, vector2(9, 6));
     JT_EQUAL(u *= 2, vector2(18, 12));
     JT_EQUAL(u /= v, vector2(6, 3));
-    JT_EQUAL(dot(u, v), 30);
+    JT_EQUAL(inner(u, v), 30);
     JT_EQUIVALENT(length(v), 5, 1e-10);
 }
 
@@ -38,14 +41,14 @@ void test_Basics4D()
 {
     auto u = vector4(2.0, 1.0, 4.0, 3.0);
     auto v = vector4(3, 4, -1, -2);
-    JT_EQUAL(x(u), 2);
-    JT_EQUAL(y(u), 1);
-    JT_EQUAL(z(u), 4);
-    JT_EQUAL(w(u), 3);
-    JT_EQUAL(x(v), 3);
-    JT_EQUAL(y(v), 4);
-    JT_EQUAL(z(v), -1);
-    JT_EQUAL(w(v), -2);
+    JT_EQUAL(getX(u), 2);
+    JT_EQUAL(getY(u), 1);
+    JT_EQUAL(getZ(u), 4);
+    JT_EQUAL(getW(u), 3);
+    JT_EQUAL(getX(v), 3);
+    JT_EQUAL(getY(v), 4);
+    JT_EQUAL(getZ(v), -1);
+    JT_EQUAL(getW(v), -2);
     JT_EQUAL(u * v, vector4(6, 4, -4, -6));
     JT_EQUAL(u + v, vector4(5, 5, 3, 1));
     JT_EQUAL(u - v, vector4(-1, -3, 5, 5));
@@ -60,8 +63,15 @@ void test_Basics4D()
     JT_EQUAL(u *= v, vector4(9, 6, -6, -9));
     JT_EQUAL(u *= 2, vector4(18, 12, -12, -18));
     JT_EQUAL(u /= v, vector4(6, 3, 12, 9));
-    JT_EQUAL(dot(u, v), 18 + 12 - 12 - 18);
+    JT_EQUAL(inner(u, v), 18 + 12 - 12 - 18);
     JT_EQUIVALENT(length(v), sqrt(9 + 16 + 1 + 4), 1e-10);
+}
+
+void test_Cross()
+{
+    auto u = vector3(1, 2, 3);
+    auto v = vector3(0, 1, 2);
+    JT_EQUAL(cross(u, v), vector3(1, -2, 1));
 }
 
 void test_Rotate()
@@ -91,8 +101,34 @@ void test_Rotate()
                          1e-12));
 }
 
-JT_SUBTEST("Geometry",
+void test_Types()
+{
+    auto u = vector2(1, 2);
+    JT_EQUAL(typeid(typename decltype(u)::ValueType).name(),
+             typeid(int).name());
+    auto v = vector2(2.0, 4.0);
+    JT_EQUAL(typeid(typename decltype(v)::ValueType).name(),
+             typeid(double).name());
+    auto w = u + v;
+    JT_EQUAL(typeid(typename decltype(w)::ValueType).name(),
+             typeid(double).name());
+}
+
+void test_Constructors()
+{
+    auto u = vector2(1, 2);
+    Vector<double, 4> v = u;
+    JT_EQUAL(v[0], 1);
+    JT_EQUAL(v[1], 2);
+    JT_EQUAL(v[2], 0);
+    JT_EQUAL(v[3], 0);
+}
+
+JT_SUBTEST("Graphics",
            test_Basics2D,
            test_Basics4D,
-           test_Rotate);
+           test_Cross,
+           test_Rotate,
+           test_Types,
+           test_Constructors);
 }

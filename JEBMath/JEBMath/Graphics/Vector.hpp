@@ -1,6 +1,7 @@
 #ifndef JEBMATH_GRAPHICS_VECTOR_HPP
 #define JEBMATH_GRAPHICS_VECTOR_HPP
 
+#include <array>
 #include <initializer_list>
 #include <stdexcept>
 #include "JEBMath/JEBMathDefinitions.hpp"
@@ -11,42 +12,55 @@ template <typename T, size_t N>
 class Vector
 {
 public:
-    static const size_t Dimension = N;
-    static const size_t dimension() {return N;}
+    typedef T ValueType;
+    static constexpr size_t size() {return N;}
 
     Vector()
-    {
-        for (int i = 0; i < N; ++i)
-            m_Coords[i] = T();
-    }
+    {}
 
-    Vector(std::initializer_list<T> v)
+    template <typename U>
+    Vector(std::initializer_list<U> v)
     {
         if (v.size() != N)
             throw std::invalid_argument("Incorrect number of arguments.");
         auto it = v.begin();
-        for (int i = 0; i < N; ++i)
-            m_Coords[i] = *it++;
-    }
-
-    Vector(T (&arr)[N])
-    {
-        for (int i = 0; i < N; ++i)
-            m_Coords[i] = arr[i];
+        for (size_t i = 0; i < N; ++i)
+            m_Values[i] = static_cast<T>(*it++);
     }
 
     template <typename U>
-    explicit Vector(const Vector<U, N>& other)
+    Vector(U (&arr)[N])
     {
         for (int i = 0; i < N; ++i)
-            m_Coords[i] = other[i];
+            m_Values[i] = arr[i];
+    }
+
+    template <typename U, size_t M>
+    Vector(const Vector<U, M>& other)
+    {
+        size_t i = 0;
+        for (; i < std::min(N, M); ++i)
+            m_Values[i] = other[i];
+        for (; i < N; ++i)
+            m_Values[i] = T();
     }
 
     template <typename U>
-    Vector<T, N>& operator=(const Vector<U, N>& other)
+    Vector& operator=(U (&arr)[N])
     {
         for (int i = 0; i < N; ++i)
-            m_Coords[i] = other[i];
+            m_Values[i] = arr[i];
+        return *this;
+    }
+
+    template <typename U, size_t M>
+    Vector& operator=(const Vector<U, N>& other)
+    {
+        size_t i = 0;
+        for (; i < std::min(N, M); ++i)
+            m_Values[i] = other[i];
+        for (; i < N; ++i)
+            m_Values[i] = T();
         return *this;
     }
 
@@ -58,9 +72,9 @@ public:
 
     explicit operator bool() const
     {
-        for (int i = 0; i < N; ++i)
+        for (size_t i = 0; i < N; ++i)
         {
-            if (m_Coords[i])
+            if (m_Values[i])
                 return true;
         }
         return false;
@@ -68,35 +82,35 @@ public:
 
     const T& operator[](size_t i) const
     {
-        return m_Coords[i];
+        return m_Values[i];
     }
 
     T& operator[](size_t i)
     {
-        return m_Coords[i];
+        return m_Values[i];
     }
 
     const T* begin() const
     {
-        return &m_Coords[0];
+        return &m_Values[0];
     }
 
     T* begin()
     {
-        return &m_Coords[0];
+        return &m_Values[0];
     }
 
     const T* end() const
     {
-        return &m_Coords[N];
+        return &m_Values[N];
     }
 
     T* end()
     {
-        return &m_Coords[N];
+        return &m_Values[N];
     }
 private:
-    T m_Coords[N];
+    std::array<T, N> m_Values;
 };
 
 }

@@ -1,8 +1,9 @@
-#ifndef JEBMATH_GRAPHICS_VECTORASSIGNMENT_HPP
-#define JEBMATH_GRAPHICS_VECTORASSIGNMENT_HPP
+#ifndef JEBMATH_GRAPHICS_VECTORACCESS_HPP
+#define JEBMATH_GRAPHICS_VECTORACCESS_HPP
 
-#include <tuple>
 #include "Vector.hpp"
+
+#include "JEBDebug/Debug.hpp"
 
 namespace JEBMath {
 
