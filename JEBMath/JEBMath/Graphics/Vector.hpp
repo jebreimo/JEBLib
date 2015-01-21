@@ -18,14 +18,13 @@ public:
     Vector()
     {}
 
-    template <typename U>
-    Vector(std::initializer_list<U> v)
+    Vector(std::initializer_list<T> v)
     {
         if (v.size() != N)
             throw std::invalid_argument("Incorrect number of arguments.");
         auto it = v.begin();
         for (size_t i = 0; i < N; ++i)
-            m_Values[i] = static_cast<T>(*it++);
+            m_Values[i] = *it++;
     }
 
     template <typename U>
@@ -112,6 +111,54 @@ public:
 private:
     std::array<T, N> m_Values;
 };
+
+template <typename T, size_t N>
+const T* begin(const Vector<T, N>& v)
+{
+    return v.begin();
+}
+
+template <typename T, size_t N>
+const T* end(const Vector<T, N>& v)
+{
+    return v.end();
+}
+
+template <typename T, size_t N>
+T* begin(Vector<T, N>& v)
+{
+    return v.begin();
+}
+
+template <typename T, size_t N>
+T* end(Vector<T, N>& v)
+{
+    return v.end();
+}
+
+template <typename T>
+Vector<T, 2> vector2(T x, T y)
+{
+    return Vector<T, 2>({x, y});
+}
+
+template <typename T>
+Vector<T, 3> vector3(T x, T y, T z)
+{
+    return Vector<T, 3>({x, y, z});
+}
+
+template <typename T>
+Vector<T, 4> vector4(T x, T y, T z, T w)
+{
+    return Vector<T, 4>({x, y, z, w});
+}
+
+template <typename T, typename U, size_t N>
+Vector<T, N> vector(const Vector<U, N>& v)
+{
+    return Vector<T, N>(v);
+}
 
 }
 

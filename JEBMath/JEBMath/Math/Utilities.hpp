@@ -27,6 +27,25 @@ constexpr double degrees(double radians)
     return radians * 180 / Pi;
 }
 
+template <typename T>
+T clamped(T value, T min, T max)
+{
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return value;
+}
+
+template <typename T>
+void clamp(T& value, T min, T max)
+{
+    if (value < min)
+        value = min;
+    else if (value > max)
+        value = max;
+}
+
 template <typename T, typename U>
 constexpr T nearest(U value)
 {

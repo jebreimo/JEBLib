@@ -1,59 +1,9 @@
-#ifndef JEBMATH_GRAPHICS_VECTORACCESS_HPP
-#define JEBMATH_GRAPHICS_VECTORACCESS_HPP
+#ifndef JEBMATH_GRAPHICS_POINTVECTOR_HPP
+#define JEBMATH_GRAPHICS_POINTVECTOR_HPP
 
 #include "Vector.hpp"
 
-#include "JEBDebug/Debug.hpp"
-
 namespace JEBMath {
-
-template <typename T, size_t N>
-const T* begin(const Vector<T, N>& v)
-{
-    return v.begin();
-}
-
-template <typename T, size_t N>
-const T* end(const Vector<T, N>& v)
-{
-    return v.end();
-}
-
-template <typename T, size_t N>
-T* begin(Vector<T, N>& v)
-{
-    return v.begin();
-}
-
-template <typename T, size_t N>
-T* end(Vector<T, N>& v)
-{
-    return v.end();
-}
-
-template <typename T>
-Vector<T, 2> vector2(T x, T y)
-{
-    return Vector<T, 2>({x, y});
-}
-
-template <typename T>
-Vector<T, 3> vector3(T x, T y, T z)
-{
-    return Vector<T, 3>({x, y, z});
-}
-
-template <typename T>
-Vector<T, 4> vector4(T x, T y, T z, T w)
-{
-    return Vector<T, 4>({x, y, z, w});
-}
-
-template <typename T, typename U, size_t N>
-Vector<T, N> vector(const Vector<U, N>& v)
-{
-    return Vector<T, N>(v);
-}
 
 template <typename T, size_t N>
 T& getX(Vector<T, N>& v)

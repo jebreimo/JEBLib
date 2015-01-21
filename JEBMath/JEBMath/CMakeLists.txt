@@ -10,6 +10,7 @@ add_subdirectory(Math)
 
 set(PUBLIC_HEADERS
     JEBMathDefinitions.hpp
+    JEBVectorMath.hpp
     )
 
 if (DEFINED JEB_INSTALL_JEBMATH_API)

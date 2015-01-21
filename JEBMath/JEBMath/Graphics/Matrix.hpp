@@ -18,18 +18,17 @@ public:
     Matrix()
     {}
 
-    template <typename U>
-    Matrix(std::initializer_list<U> v)
+    Matrix(std::initializer_list<T> v)
     {
         if (v.size() != size())
             throw std::invalid_argument("Incorrect number of arguments.");
         auto it = v.begin();
         for (size_t i = 0; i < size(); ++i)
-            m_Values[i] = (T)*it++;
+            m_Values[i] = *it++;
     }
 
     template <typename U>
-    Matrix(U (&arr)[size()])
+    Matrix(U (&arr)[N * N])
     {
         for (size_t i = 0; i < size(); ++i)
             m_Values[i] = arr[i];
@@ -41,7 +40,6 @@ public:
         for (size_t i = 0; i < size(); ++i)
             m_Values[i] = other[i];
     }
-
 
     template <typename U>
     Matrix<T, N>& operator=(const Matrix<U, N>& other)
@@ -82,6 +80,15 @@ public:
         return m_Values.data() + size();
     }
 
+    T* data()
+    {
+        return m_Values.data();
+    }
+
+    const T* data() const
+    {
+        return m_Values.data();
+    }
 private:
     std::array<T, N * N> m_Values;
 };

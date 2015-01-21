@@ -1,8 +1,8 @@
-#ifndef JEBMATH_GRAPHICS_VECTORMATH_HPP
-#define JEBMATH_GRAPHICS_VECTORMATH_HPP
+#ifndef JEBMATH_GRAPHICS_VECTORFUNCTIONS_HPP
+#define JEBMATH_GRAPHICS_VECTORFUNCTIONS_HPP
 
 #include <cmath>
-#include "VectorAccess.hpp"
+#include "JEBMath/Math/Utilities.hpp"
 #include "VectorOperators.hpp"
 
 namespace JEBMath {
@@ -59,10 +59,16 @@ Vector<T, N> resize(const Vector<T, N>& v, T newLength)
     return v * (newLength / length(v));
 }
 
+template <typename T, size_t N>
+void clamp(Vector<T, N>& v, T min, T max)
+{
+    ;
+}
+
 template <typename T>
 Vector<T, 2> normal(const Vector<T, 2>& v)
 {
-    return vector2(-getY(v), getX(v));
+    return vector2(-v[1], v[0]);
 }
 
 template <typename T, typename U>
@@ -79,7 +85,7 @@ Vector<double, 2> rotate(const Vector<T, 2>& v, double radians)
 {
     auto c = std::cos(radians);
     auto s = std::sin(radians);
-    return vector2(getX(v) * c - getY(v) * s, getX(v) * s + getY(v) * c);
+    return vector2(v[0] * c - v[1] * s, v[1] * s + v[0] * c);
 }
 
 }

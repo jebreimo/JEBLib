@@ -1,7 +1,4 @@
-#include "JEBMath/Graphics/Vector.hpp"
-#include "JEBMath/Graphics/VectorAccess.hpp"
-#include "JEBMath/Graphics/VectorMath.hpp"
-#include "JEBMath/Graphics/VectorOperators.hpp"
+#include "JEBMath/JEBVectorMath.hpp"
 
 #include <cmath>
 #include <JEBTest/JEBTest.hpp>
@@ -15,10 +12,10 @@ void test_Basics2D()
 {
     auto u = vector2(2.0, 1.0);
     auto v = vector2(3, 4);
-    JT_EQUAL(getX(u), 2);
-    JT_EQUAL(getY(u), 1);
-    JT_EQUAL(getX(v), 3);
-    JT_EQUAL(getY(v), 4);
+    JT_EQUAL(u[0], 2);
+    JT_EQUAL(u[1], 1);
+    JT_EQUAL(v[0], 3);
+    JT_EQUAL(v[1], 4);
     JT_EQUAL(u * v, vector2(6, 4));
     JT_EQUAL(u + v, vector2(5, 5));
     JT_EQUAL(u - v, vector2(-1, -3));
@@ -41,14 +38,14 @@ void test_Basics4D()
 {
     auto u = vector4(2.0, 1.0, 4.0, 3.0);
     auto v = vector4(3, 4, -1, -2);
-    JT_EQUAL(getX(u), 2);
-    JT_EQUAL(getY(u), 1);
-    JT_EQUAL(getZ(u), 4);
-    JT_EQUAL(getW(u), 3);
-    JT_EQUAL(getX(v), 3);
-    JT_EQUAL(getY(v), 4);
-    JT_EQUAL(getZ(v), -1);
-    JT_EQUAL(getW(v), -2);
+    JT_EQUAL(u[0], 2);
+    JT_EQUAL(u[1], 1);
+    JT_EQUAL(u[2], 4);
+    JT_EQUAL(u[3], 3);
+    JT_EQUAL(v[0], 3);
+    JT_EQUAL(v[1], 4);
+    JT_EQUAL(v[2], -1);
+    JT_EQUAL(v[3], -2);
     JT_EQUAL(u * v, vector4(6, 4, -4, -6));
     JT_EQUAL(u + v, vector4(5, 5, 3, 1));
     JT_EQUAL(u - v, vector4(-1, -3, 5, 5));
