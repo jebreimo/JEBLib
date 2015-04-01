@@ -32,7 +32,7 @@ endif(APPLE)
 
 find_package(JEBTest)
 
-set(JEB_INSTALL_JEBMATH_API 1)
+set(JEB_INSTALL_JEBBASE_API 1)
 add_subdirectory(JEBBase)
 
 set(JEB_INSTALL_JEBMATH_API 1)
