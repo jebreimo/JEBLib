@@ -10,6 +10,7 @@ project(ContainersTest)
 
 set(SRC
     test_Array2D.cpp
+    test_CircularArray2D.cpp
     test_IntervalMap.cpp
     )
 

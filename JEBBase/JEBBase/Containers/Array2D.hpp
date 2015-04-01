@@ -25,7 +25,6 @@ public:
     Array2D(std::pair<size_t, size_t> size);
     Array2D(const Array2D<T>& other);
     Array2D(Array2D<T>&& rhs);
-    ~Array2D();
 
     Array2D& operator=(const Array2D& rhs);
     Array2D<T>& operator=(Array2D<T>&& rhs);
@@ -93,6 +92,6 @@ typename Array2D<T>::const_iterator end(const Array2D<T>& a)
 
 }}
 
-#include "Array2D_Impl.hpp"
+#include "Array2D-Impl.hpp"
 
-#endif // JEB_ARRAY2D_HPP
+#endif

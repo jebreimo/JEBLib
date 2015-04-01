@@ -2,6 +2,8 @@
 
 #include <JEBTest/JEBTest.hpp>
 
+namespace {
+
 using namespace JEBBase::Containers;
 
 typedef std::pair<size_t, size_t> Size;
@@ -42,3 +44,5 @@ void test_Basics()
 }
 
 JT_SUBTEST("Containers", test_Basics);
+
+}

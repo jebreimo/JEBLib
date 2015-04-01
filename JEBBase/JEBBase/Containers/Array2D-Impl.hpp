@@ -49,11 +49,6 @@ Array2D<T>::Array2D(Array2D<T>&& rhs)
 }
 
 template <typename T>
-Array2D<T>::~Array2D()
-{
-}
-
-template <typename T>
 Array2D<T>& Array2D<T>::operator=(const Array2D& rhs)
 {
     m_Buffer = rhs.m_Buffer;

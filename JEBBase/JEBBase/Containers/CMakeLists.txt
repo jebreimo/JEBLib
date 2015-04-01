@@ -12,9 +12,11 @@ set(JEB_DIR JEBBase/${PROJECT_NAME})
 
 set(PUBLIC_HEADERS
     Array2D.hpp
-    Array2D_Impl.hpp
+    Array2D-Impl.hpp
     Buffer2D.hpp
-    Buffer2D_Impl.hpp
+    Buffer2D-Impl.hpp
+    CircularArray2D.hpp
+    CircularArray2D-Impl.hpp
     IntervalMap.hpp
     MapUtilities.hpp
     PairUtilities.hpp

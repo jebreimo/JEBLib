@@ -49,6 +49,6 @@ private:
 
 }}
 
-#include "Buffer2D_Impl.hpp"
+#include "Buffer2D-Impl.hpp"
 
 #endif
