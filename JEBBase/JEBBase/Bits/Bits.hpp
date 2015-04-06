@@ -88,6 +88,12 @@ size_t nthOne(T bits, size_t n);
 template <typename T>
 bool isPowerOfTwo(T bits);
 
+template <typename T>
+T powerOfTwoFloor(T bits);
+
+template <typename T>
+T powerOfTwoCeiling(T bits);
+
 }
 }
 

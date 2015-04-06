@@ -157,6 +157,7 @@ size_t highestOne(T bits)
     if (bits == 0)
         return std::numeric_limits<size_t>::max();
 
+    // binary search for the highest bit.
     size_t index = 0;
     size_t shift = sizeof(bits) * 8;
     while (shift != 0)
@@ -223,6 +224,24 @@ template <typename T>
 bool isPowerOfTwo(T bits)
 {
     return bits && (bits & (bits - 1)) == 0;
+}
+
+template <typename T>
+T powerOfTwoFloor(T bits)
+{
+    if (!bits || isPowerOfTwo(bits))
+        return bits;
+
+    return (T)1 << (highestOne(bits));
+}
+
+template <typename T>
+T powerOfTwoCeiling(T bits)
+{
+    if (!bits || isPowerOfTwo(bits))
+        return bits;
+
+    return (T)1 << (highestOne(bits) + 1);
 }
 
 }}
