@@ -3,7 +3,7 @@
 #include <iostream>
 #include <JEBTest/JEBTest.hpp>
 
-using namespace JEB;
+using namespace JEBMath;
 
 static void TestColor32(const Color32& c,
                         uint8_t a,

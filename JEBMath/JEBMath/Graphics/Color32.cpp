@@ -8,8 +8,7 @@
 
 using namespace std;
 
-namespace JEB
-{
+namespace JEBMath {
 
 inline uint32_t pack(uint32_t a, uint32_t b, uint32_t c)
 {

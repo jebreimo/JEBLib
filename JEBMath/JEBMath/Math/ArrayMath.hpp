@@ -4,10 +4,7 @@
 #include <cstddef>
 #include "JEBMath/JEBMathDefinitions.hpp"
 
-namespace JEB
-{
-namespace ArrayMath
-{
+namespace JEBMath { namespace ArrayMath {
 
 template <typename T, size_t N>
 void add(T (&lhs)[N], const T (&rhs)[N])
@@ -111,7 +108,6 @@ void subtract(T (&lhs)[4], const T (&rhs)[4])
 
 /** @}
   */
-}
-}
+}}
 
-#endif // ARRAYMATH_HPP
+#endif

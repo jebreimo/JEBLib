@@ -5,8 +5,7 @@
 #include <cstdint>
 #include "JEBMath/JEBMathDefinitions.hpp"
 
-namespace JEB
-{
+namespace JEBMath {
 
 class Color32
 {
