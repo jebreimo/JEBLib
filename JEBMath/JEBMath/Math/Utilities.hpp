@@ -1,5 +1,5 @@
-#ifndef JEB_MATH_UTILTIES_HPP
-#define JEB_MATH_UTILTIES_HPP
+#ifndef JEBMATH_UTILTIES_HPP
+#define JEBMATH_UTILTIES_HPP
 
 #include <cmath>
 #include "Constants.hpp"
@@ -25,6 +25,14 @@ constexpr double radians(double degrees)
 constexpr double degrees(double radians)
 {
     return radians * 180 / Pi;
+}
+
+constexpr int modulo(int dividend, int divisor)
+{
+    if (dividend >= 0)
+        return dividend % divisor;
+    else
+        return divisor - (-dividend % divisor);
 }
 
 template <typename T>
