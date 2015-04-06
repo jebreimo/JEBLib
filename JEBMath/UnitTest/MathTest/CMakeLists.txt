@@ -9,6 +9,7 @@ set(SRC
     test_Fraction.cpp
     test_Matrix.cpp
     test_Primes.cpp
+    test_SquaresAndDiamonds.cpp
     )
 
 add_library(${PROJECT_NAME} OBJECT ${SRC})

@@ -15,23 +15,33 @@ set(PUBLIC_HEADERS
     Fraction.impl.hpp
     FresnelIntegrals.hpp
     Limits.hpp
+    MathAlgorithms.hpp
     Matrix.hpp
     Matrix.impl.hpp
     MatrixAlgorithms.hpp
     MatrixAlgorithms.impl.hpp
     Primes.hpp
+    Random.hpp
     Rational.hpp
     Subset.hpp
     Utilities.hpp
     )
 
+set(PRIVATE_HEADERS
+    SquaresAndDiamonds.hpp
+    )
+
 set(SRC
     CubicFunction.cpp
     FresnelIntegrals.cpp
+    Random.cpp
+    SquaresAndDiamonds.cpp
     Subset.cpp
     )
 
-add_library(${PROJECT_NAME} OBJECT ${SRC} ${PUBLIC_HEADERS})
+add_library(${PROJECT_NAME} OBJECT ${SRC}
+                                   ${PUBLIC_HEADERS}
+                                   ${PRIVATE_HEADERS})
 
 if (DEFINED JEB_INSTALL_JEBMATH_API)
     install(FILES ${PUBLIC_HEADERS} DESTINATION include/${JEB_DIR})
