@@ -14,10 +14,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-include_directories(${CMAKE_SOURCE_DIR}/JEBBase
-                    ${CMAKE_SOURCE_DIR}/JEBMath
-                    ${CMAKE_SOURCE_DIR}/JEBString
-                    ${CMAKE_SOURCE_DIR}/JEBIO)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/JEBBase
+    ${CMAKE_SOURCE_DIR}/JEBMath
+    ${CMAKE_SOURCE_DIR}/JEBString
+    ${CMAKE_SOURCE_DIR}/JEBIO)
 
 find_package(JEBDebug)
 if(JEBDEBUG_FOUND)
@@ -44,34 +45,32 @@ add_subdirectory(JEBString)
 set(JEB_INSTALL_JEBIO_API 1)
 add_subdirectory(JEBIO)
 
-add_library(${PROJECT_NAME} SHARED
+add_library(
+    ${PROJECT_NAME} SHARED
             
-            # JEBBase
-            $<TARGET_OBJECTS:Bits>
-            
-            # JEBMath
-            $<TARGET_OBJECTS:Geometry>
-            $<TARGET_OBJECTS:Graphics>
-            $<TARGET_OBJECTS:Math>
+    # JEBBase
+    $<TARGET_OBJECTS:Bits>
+    
+    # JEBMath
+    $<TARGET_OBJECTS:Geometry>
+    $<TARGET_OBJECTS:Graphics>
+    $<TARGET_OBJECTS:Math>
 
-            # JEBString
-            $<TARGET_OBJECTS:CodePageStrings>
-            $<TARGET_OBJECTS:EncodedStrings>
-            $<TARGET_OBJECTS:Encodings>
-            $<TARGET_OBJECTS:Unicode>
-            $<TARGET_OBJECTS:Utf8>
-            $<TARGET_OBJECTS:Utf16>
+    # JEBString
+    $<TARGET_OBJECTS:CodePageStrings>
+    $<TARGET_OBJECTS:EncodedStrings>
+    $<TARGET_OBJECTS:Encodings>
+    $<TARGET_OBJECTS:Unicode>
+    $<TARGET_OBJECTS:Utf8>
+    $<TARGET_OBJECTS:Utf16>
 
-            # JEBIO
-            $<TARGET_OBJECTS:Json>
-            $<TARGET_OBJECTS:Paths>
-            $<TARGET_OBJECTS:Streams>
-            $<TARGET_OBJECTS:Xml>
-           )
+    # JEBIO
+    $<TARGET_OBJECTS:Json>
+    $<TARGET_OBJECTS:Paths>
+    $<TARGET_OBJECTS:Streams>
+    $<TARGET_OBJECTS:Xml>
+    )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY MACOSX_RPATH ON)
 
-# target_link_libraries(${PROJECT_NAME} JEBBase JEBMath JEBString)
-
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
-
