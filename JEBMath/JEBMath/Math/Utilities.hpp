@@ -17,12 +17,12 @@ T sign(T value)
         return T(0);
 }
 
-constexpr double radians(double degrees)
+constexpr double toRadians(double degrees)
 {
     return degrees * Pi / 180;
 }
 
-constexpr double degrees(double radians)
+constexpr double toDegrees(double radians)
 {
     return radians * 180 / Pi;
 }
@@ -55,13 +55,13 @@ void clamp(T& value, T min, T max)
 }
 
 template <typename T, typename U>
-constexpr T nearest(U value)
+constexpr T getNearest(U value)
 {
     return T(value);
 }
 
 template <typename T>
-constexpr T nearest(float value)
+constexpr T getNearest(float value)
 {
     // Good enough for integer types. I've seen examples of values very
     // close to *.5 where this rounds up when it should have rounded down and
@@ -70,25 +70,25 @@ constexpr T nearest(float value)
 }
 
 template <>
-constexpr float nearest<float>(float value)
+constexpr float getNearest<float>(float value)
 {
     return value;
 }
 
 template <>
-constexpr double nearest<double>(float value)
+constexpr double getNearest<double>(float value)
 {
     return value;
 }
 
 template <>
-constexpr long double nearest<long double>(float value)
+constexpr long double getNearest<long double>(float value)
 {
     return value;
 }
 
 template <typename T>
-constexpr T nearest(double value)
+constexpr T getNearest(double value)
 {
     // Good enough for integer types. I've seen examples of values very
     // close to *.5 where this rounds up when it should have rounded down and
@@ -97,25 +97,25 @@ constexpr T nearest(double value)
 }
 
 template <>
-constexpr float nearest<float>(double value)
+constexpr float getNearest<float>(double value)
 {
     return float(value);
 }
 
 template <>
-constexpr double nearest<double>(double value)
+constexpr double getNearest<double>(double value)
 {
     return value;
 }
 
 template <>
-constexpr long double nearest<long double>(double value)
+constexpr long double getNearest<long double>(double value)
 {
     return value;
 }
 
 template <typename T>
-constexpr T nearest(long double value)
+constexpr T getNearest(long double value)
 {
     // Good enough for integer types. I've seen examples of values very
     // close to *.5 where this rounds up when it should have rounded down and
@@ -124,19 +124,19 @@ constexpr T nearest(long double value)
 }
 
 template <>
-constexpr float nearest<float>(long double value)
+constexpr float getNearest<float>(long double value)
 {
     return float(value);
 }
 
 template <>
-constexpr double nearest<double>(long double value)
+constexpr double getNearest<double>(long double value)
 {
     return double(value);
 }
 
 template <>
-constexpr long double nearest<long double>(long double value)
+constexpr long double getNearest<long double>(long double value)
 {
     return value;
 }

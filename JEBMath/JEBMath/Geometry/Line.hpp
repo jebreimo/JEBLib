@@ -36,4 +36,3 @@ private:
 #include "Line.impl.hpp"
 
 #endif
-

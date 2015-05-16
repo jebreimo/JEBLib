@@ -8,19 +8,55 @@
 namespace JEBMath {
 
 template <typename T, typename U, size_t N>
-auto inner(const Vector<T, N>& a, const Vector<U, N>& b)
-    -> decltype(a[0] * b[0])
+Vector<T, N>& assignDiv(Vector<T, N>& u, const Vector<U, N>& v)
 {
-    auto result = T() * U();
     for (size_t i = 0; i < N; ++i)
-        result += a[i] * b[i];
-    return result;
+        u[i] /= v[i];
+    return u;
+}
+
+template <typename T, typename U, size_t N>
+Vector<T, N>& assignMul(Vector<T, N>& u, const Vector<U, N>& v)
+{
+    for (size_t i = 0; i < N; ++i)
+        u[i] *= v[i];
+    return u;
+}
+
+template <typename T, typename U, size_t N>
+auto div(const Vector<T, N>& u, const Vector<U, N>& v)
+    -> Vector<decltype(u[0] / v[0]), N>
+{
+    Vector<decltype(u[0] / v[0]), N> w;
+    for (size_t i = 0; i < N; ++i)
+        w[i] = u[i] / v[i];
+    return w;
+}
+
+template <typename T, typename U, size_t N>
+auto div(U scalar, const Vector<T, N>& v)
+    -> Vector<decltype(scalar / v[0]), N>
+{
+    Vector<decltype(scalar / v[0]), N> w;
+    for (size_t i = 0; i < N; ++i)
+        w[i] = scalar / v[i];
+    return w;
+}
+
+template <typename T, typename U, size_t N>
+auto mul(const Vector<T, N>& u, const Vector<U, N>& v)
+    -> Vector<decltype(u[0] * v[0]), N>
+{
+    Vector<decltype(u[0] * v[0]), N> w;
+    for (size_t i = 0; i < N; ++i)
+        w[i] = u[i] * v[i];
+    return w;
 }
 
 template <typename T, size_t N>
 T lengthSquared(const Vector<T, N>& v)
 {
-    return inner(v, v);
+    return v * v;
 }
 
 template <typename T, typename U, size_t N>
@@ -38,7 +74,7 @@ double length(const Vector<T, N>& v)
 template <typename T, size_t N>
 double cosAngle(const Vector<T, N>& u, const Vector<T, N>& v)
 {
-    return inner(u, v) / std::sqrt(lengthSquared(u) * lengthSquared(v));
+    return (u * v) / std::sqrt(lengthSquared(u) * lengthSquared(v));
 }
 
 template <typename T, typename U, size_t N>
@@ -62,7 +98,17 @@ Vector<T, N> resize(const Vector<T, N>& v, T newLength)
 template <typename T, size_t N>
 void clamp(Vector<T, N>& v, T min, T max)
 {
-    ;
+    for (auto i = 0u; i < N; ++i)
+        clamp(v[i], min, max);
+}
+
+template <typename T, size_t N>
+Vector<T, N> clamped(const Vector<T, N>& v, T min, T max)
+{
+    Vector<T, N> result;
+    for (auto i = 0u; i < N; ++i)
+        result[i] = clamped(v[i], min, max);
+    return result;
 }
 
 template <typename T>

@@ -56,26 +56,10 @@ Vector<T, N>& operator-=(Vector<T, N>& u, U scalar)
 }
 
 template <typename T, typename U, size_t N>
-Vector<T, N>& operator*=(Vector<T, N>& u, const Vector<U, N>& v)
-{
-    for (size_t i = 0; i < N; ++i)
-        u[i] *= v[i];
-    return u;
-}
-
-template <typename T, typename U, size_t N>
 Vector<T, N>& operator*=(Vector<T, N>& u, U scalar)
 {
     for (size_t i = 0; i < N; ++i)
         u[i] *= scalar;
-    return u;
-}
-
-template <typename T, typename U, size_t N>
-Vector<T, N>& operator/=(Vector<T, N>& u, const Vector<U, N>& v)
-{
-    for (size_t i = 0; i < N; ++i)
-        u[i] /= v[i];
     return u;
 }
 
@@ -142,16 +126,6 @@ auto operator-(const Vector<T, N>& u, U scalar)
 }
 
 template <typename T, typename U, size_t N>
-auto operator/(const Vector<T, N>& u, const Vector<U, N>& v)
-    -> Vector<decltype(u[0] / v[0]), N>
-{
-    Vector<decltype(u[0] / v[0]), N> w;
-    for (size_t i = 0; i < N; ++i)
-        w[i] = u[i] / v[i];
-    return w;
-}
-
-template <typename T, typename U, size_t N>
 auto operator/(const Vector<T, N>& u, U scalar)
     -> Vector<decltype(u[0] / scalar), N>
 {
@@ -162,23 +136,13 @@ auto operator/(const Vector<T, N>& u, U scalar)
 }
 
 template <typename T, typename U, size_t N>
-auto operator/(U scalar, const Vector<T, N>& v)
-    -> Vector<decltype(scalar / v[0]), N>
-{
-    Vector<decltype(scalar / v[0]), N> w;
-    for (size_t i = 0; i < N; ++i)
-        w[i] = scalar / v[i];
-    return w;
-}
-
-template <typename T, typename U, size_t N>
 auto operator*(const Vector<T, N>& u, const Vector<U, N>& v)
-    -> Vector<decltype(u[0] * v[0]), N>
+    -> decltype(u[0] * v[0])
 {
-    Vector<decltype(u[0] * v[0]), N> w;
+    auto result = T() * U();
     for (size_t i = 0; i < N; ++i)
-        w[i] = u[i] * v[i];
-    return w;
+        result += u[i] * v[i];
+    return result;
 }
 
 template <typename T, typename U, size_t N>

@@ -6,6 +6,7 @@ set(JEB_DIR JEBMath/${PROJECT_NAME})
 
 set(PUBLIC_HEADERS
     Color32.hpp
+    HomogeneousTransforms.hpp
     Matrix.hpp
     MatrixFunctions.hpp
     MatrixOperators.hpp
@@ -19,7 +20,7 @@ set(PUBLIC_HEADERS
 
 set(SRC
     Color32.cpp
-    Transforms.cpp
+    HomogeneousTransforms.cpp
     )
 
 add_library(${PROJECT_NAME} OBJECT ${SRC} ${PUBLIC_HEADERS})

@@ -38,27 +38,27 @@ void test_Point()
 
 void test_Rotate()
 {
-    JT_ASSERT(equivalent(rotate(vector2(100, 0), radians(30)),
+    JT_ASSERT(equivalent(rotate(vector2(100, 0), toRadians(30)),
                          vector2(50 * std::sqrt(3), 50.0), 1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(100, 0), radians(45)),
+    JT_ASSERT(equivalent(rotate(vector2(100, 0), toRadians(45)),
                          vector2(100 / std::sqrt(2), 100 / std::sqrt(2)),
                          1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(100, 0), radians(60)),
+    JT_ASSERT(equivalent(rotate(vector2(100, 0), toRadians(60)),
                          vector2(50.0, 50 * std::sqrt(3)), 1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(0, 100), radians(-60)),
+    JT_ASSERT(equivalent(rotate(vector2(0, 100), toRadians(-60)),
                          vector2(50 * std::sqrt(3), 50.0), 1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(0, 100), radians(-45)),
+    JT_ASSERT(equivalent(rotate(vector2(0, 100), toRadians(-45)),
                          vector2(100 / std::sqrt(2), 100 / std::sqrt(2)),
                          1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(0, 100), radians(-30)),
+    JT_ASSERT(equivalent(rotate(vector2(0, 100), toRadians(-30)),
                          vector2(50.0, 50 * std::sqrt(3)), 1e-12));
 
     JT_ASSERT(equivalent(rotate(vector2(1 / std::sqrt(2), 1 / std::sqrt(2)),
-                                radians(45)),
+                                toRadians(45)),
                          vector2(0, 1),
                          1e-12));
     JT_ASSERT(equivalent(rotate(vector2(1 / std::sqrt(2), 1 / std::sqrt(2)),
-                                radians(135)),
+                                toRadians(135)),
                          vector2(-1, 0),
                          1e-12));
 }

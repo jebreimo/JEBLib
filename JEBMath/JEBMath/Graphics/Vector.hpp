@@ -108,6 +108,16 @@ public:
     {
         return &m_Values[N];
     }
+
+    T* data()
+    {
+        return &m_Values[0];
+    }
+
+    const T* data() const
+    {
+        return &m_Values[0];
+    }
 private:
     std::array<T, N> m_Values;
 };

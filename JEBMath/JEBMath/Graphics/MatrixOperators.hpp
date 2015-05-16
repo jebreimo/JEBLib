@@ -21,7 +21,49 @@ bool operator==(const Matrix<T, N>& a, const Matrix<U, N>& b)
 }
 
 template <typename T, typename U, size_t N>
-auto operator*(Matrix<T, N>& a, const Matrix<U, N>& b)
+Matrix<T, N>& operator+=(Matrix<T, N>& a, const Matrix<U, N>& b)
+{
+    auto dataA = a.data();
+    auto dataB = b.data();
+    for (auto i = 0u; i < N * N; ++i)
+    {
+        dataA[i] += dataB[i];
+    }
+    return a;
+}
+
+template <typename T, typename U, size_t N>
+auto operator+(const Matrix<T, N>& a, const Matrix<U, N>& b)
+    -> Matrix<decltype(T() + U()), N>
+{
+    typedef decltype(T() + U()) ResType;
+    Matrix<ResType, N> c(a);
+    return c += b;
+}
+
+template <typename T, typename U, size_t N>
+Matrix<T, N>& operator-=(Matrix<T, N>& a, const Matrix<U, N>& b)
+{
+    auto dataA = a.data();
+    auto dataB = b.data();
+    for (auto i = 0u; i < N * N; ++i)
+    {
+        dataA[i] -= dataB[i];
+    }
+    return a;
+}
+
+template <typename T, typename U, size_t N>
+auto operator-(const Matrix<T, N>& a, const Matrix<U, N>& b)
+    -> Matrix<decltype(T() + U()), N>
+{
+    typedef decltype(T() + U()) ResType;
+    Matrix<ResType, N> c(a);
+    return c -= b;
+}
+
+template <typename T, typename U, size_t N>
+auto operator*(const Matrix<T, N>& a, const Matrix<U, N>& b)
     -> Matrix<decltype(T() * U()), N>
 {
     typedef decltype(T() * U()) ResType;

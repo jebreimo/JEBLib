@@ -23,30 +23,31 @@ public:
         if (v.size() != size())
             throw std::invalid_argument("Incorrect number of arguments.");
         auto it = v.begin();
-        for (size_t i = 0; i < size(); ++i)
-            m_Values[i] = *it++;
+        for (auto dst = begin(); dst != end(); ++dst, ++it)
+            *dst = *it;
     }
 
     template <typename U>
     Matrix(U (&arr)[N * N])
     {
-        for (size_t i = 0; i < size(); ++i)
-            m_Values[i] = arr[i];
+        for (auto dst = begin(); dst != end(); ++dst, ++arr)
+            *dst = T(*arr);
     }
 
     template <typename U>
     explicit Matrix(const Matrix<U, N>& other)
     {
-        for (size_t i = 0; i < size(); ++i)
-            m_Values[i] = other[i];
+        auto src = other.begin();
+        for (auto dst = begin(); dst != end(); ++dst, ++src)
+            *dst = T(*src);
     }
 
     template <typename U>
     Matrix<T, N>& operator=(const Matrix<U, N>& other)
     {
-        auto it = begin(other);
-        for (size_t i = 0; i < size(); ++i)
-            m_Values[i] = (T)*it++;
+        auto src = other.begin();
+        for (auto dst = begin(); dst != end(); ++dst, ++src)
+            *dst = T(*src);
         return *this;
     }
 
