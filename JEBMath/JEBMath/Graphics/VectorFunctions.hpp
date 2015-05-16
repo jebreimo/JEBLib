@@ -54,43 +54,44 @@ auto mul(const Vector<T, N>& u, const Vector<U, N>& v)
 }
 
 template <typename T, size_t N>
-T lengthSquared(const Vector<T, N>& v)
+T getLengthSquared(const Vector<T, N>& v)
 {
     return v * v;
 }
 
 template <typename T, typename U, size_t N>
-bool equivalent(const Vector<T, N>& u, const Vector<U, N>& v, double epsilon)
+bool areEquivalent(const Vector<T, N>& u, const Vector<U, N>& v,
+                   double epsilon)
 {
-    return lengthSquared(u - v) <= epsilon * epsilon;
+    return getLengthSquared(u - v) <= epsilon * epsilon;
 }
 
 template <typename T, size_t N>
-double length(const Vector<T, N>& v)
+double getLength(const Vector<T, N>& v)
 {
-    return std::sqrt(lengthSquared(v));
+    return std::sqrt(getLengthSquared(v));
 }
 
 template <typename T, size_t N>
-double cosAngle(const Vector<T, N>& u, const Vector<T, N>& v)
+double getCosAngle(const Vector<T, N>& u, const Vector<T, N>& v)
 {
-    return (u * v) / std::sqrt(lengthSquared(u) * lengthSquared(v));
+    return (u * v) / std::sqrt(getLengthSquared(u) * getLengthSquared(v));
 }
 
 template <typename T, typename U, size_t N>
-double angle(const Vector<T, N>& u, const Vector<U, N>& v)
+double getAngle(const Vector<T, N>& u, const Vector<U, N>& v)
 {
     return std::acos(cosAngle(u, v));
 }
 
 template <typename T, size_t N>
-Vector<double, N> unit(const Vector<T, N>& v)
+Vector<double, N> getUnit(const Vector<T, N>& v)
 {
     return v / length(v);
 }
 
 template <typename T, size_t N>
-Vector<T, N> resize(const Vector<T, N>& v, T newLength)
+Vector<T, N> getResized(const Vector<T, N>& v, T newLength)
 {
     return v * (newLength / length(v));
 }
@@ -103,16 +104,14 @@ void clamp(Vector<T, N>& v, T min, T max)
 }
 
 template <typename T, size_t N>
-Vector<T, N> clamped(const Vector<T, N>& v, T min, T max)
+Vector<T, N> getClamped(Vector<T, N>& v, T min, T max)
 {
-    Vector<T, N> result;
-    for (auto i = 0u; i < N; ++i)
-        result[i] = clamped(v[i], min, max);
-    return result;
+    clamp(v, min, max);
+    return v;
 }
 
 template <typename T>
-Vector<T, 2> normal(const Vector<T, 2>& v)
+Vector<T, 2> getNormal(const Vector<T, 2>& v)
 {
     return vector2(-v[1], v[0]);
 }

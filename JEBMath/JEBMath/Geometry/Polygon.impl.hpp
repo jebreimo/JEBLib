@@ -98,7 +98,7 @@ int rotation(const Point<T, 2>& p0,
              const Point<T, 2>& p1,
              const Point<T, 2>& p2)
 {
-    return (int)sign(detail::crossZ(p0, p1, p2));
+    return (int)getSign(detail::crossZ(p0, p1, p2));
 }
 
 template <typename T>

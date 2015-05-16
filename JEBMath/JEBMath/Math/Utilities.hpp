@@ -7,7 +7,7 @@
 namespace JEBMath {
 
 template <typename T>
-T sign(T value)
+T getSign(T value)
 {
     if (value > 0)
         return T(1);
@@ -36,7 +36,7 @@ constexpr int modulo(int dividend, int divisor)
 }
 
 template <typename T>
-T clamped(T value, T min, T max)
+T getClamped(T value, T min, T max)
 {
     if (value < min)
         return min;

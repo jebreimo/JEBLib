@@ -31,7 +31,7 @@ void test_Basics2D()
     JT_EQUAL(u *= 2, vector2(18, 12));
     JT_EQUAL(assignDiv(u, v), vector2(6, 3));
     JT_EQUAL(u * v, 30);
-    JT_EQUIVALENT(length(v), 5, 1e-10);
+    JT_EQUIVALENT(getLength(v), 5, 1e-10);
 }
 
 void test_Basics4D()
@@ -61,7 +61,7 @@ void test_Basics4D()
     JT_EQUAL(u *= 2, vector4(18, 12, -12, -18));
     JT_EQUAL(assignDiv(u, v), vector4(6, 3, 12, 9));
     JT_EQUAL(u * v, 18 + 12 - 12 - 18);
-    JT_EQUIVALENT(length(v), sqrt(9 + 16 + 1 + 4), 1e-10);
+    JT_EQUIVALENT(getLength(v), sqrt(9 + 16 + 1 + 4), 1e-10);
 }
 
 void test_Cross()
@@ -73,29 +73,30 @@ void test_Cross()
 
 void test_Rotate()
 {
-    JT_ASSERT(equivalent(rotate(vector2(100, 0), toRadians(30)),
-                         vector2(50 * std::sqrt(3), 50.0), 1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(100, 0), toRadians(45)),
-                         vector2(100 / std::sqrt(2), 100 / std::sqrt(2)),
-                         1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(100, 0), toRadians(60)),
-                         vector2(50.0, 50 * std::sqrt(3)), 1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(0, 100), toRadians(-60)),
-                         vector2(50 * std::sqrt(3), 50.0), 1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(0, 100), toRadians(-45)),
-                         vector2(100 / std::sqrt(2), 100 / std::sqrt(2)),
-                         1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(0, 100), toRadians(-30)),
-                         vector2(50.0, 50 * std::sqrt(3)), 1e-12));
+    auto sqrt2 = std::sqrt(2);
+    JT_ASSERT(areEquivalent(rotate(vector2(100, 0), toRadians(30)),
+                            vector2(50 * std::sqrt(3), 50.0), 1e-12));
+    JT_ASSERT(areEquivalent(rotate(vector2(100, 0), toRadians(45)),
+                            vector2(100 / sqrt2, 100 / sqrt2),
+                            1e-12));
+    JT_ASSERT(areEquivalent(rotate(vector2(100, 0), toRadians(60)),
+                            vector2(50.0, 50 * std::sqrt(3)), 1e-12));
+    JT_ASSERT(areEquivalent(rotate(vector2(0, 100), toRadians(-60)),
+                            vector2(50 * std::sqrt(3), 50.0), 1e-12));
+    JT_ASSERT(areEquivalent(rotate(vector2(0, 100), toRadians(-45)),
+                            vector2(100 / sqrt2, 100 / sqrt2),
+                            1e-12));
+    JT_ASSERT(areEquivalent(rotate(vector2(0, 100), toRadians(-30)),
+                            vector2(50.0, 50 * std::sqrt(3)), 1e-12));
 
-    JT_ASSERT(equivalent(rotate(vector2(1 / std::sqrt(2), 1 / std::sqrt(2)),
-                                toRadians(45)),
-                         vector2(0, 1),
-                         1e-12));
-    JT_ASSERT(equivalent(rotate(vector2(1 / std::sqrt(2), 1 / std::sqrt(2)),
-                                toRadians(135)),
-                         vector2(-1, 0),
-                         1e-12));
+    JT_ASSERT(areEquivalent(rotate(vector2(1 / sqrt2, 1 / sqrt2),
+                                   toRadians(45)),
+                            vector2(0, 1),
+                            1e-12));
+    JT_ASSERT(areEquivalent(rotate(vector2(1 / sqrt2, 1 / sqrt2),
+                                   toRadians(135)),
+                            vector2(-1, 0),
+                            1e-12));
 }
 
 void test_Types()
