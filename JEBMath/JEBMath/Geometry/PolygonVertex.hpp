@@ -1,8 +1,8 @@
-#ifndef JEB_MATH_POLYGON_NODE_HPP
-#define JEB_MATH_POLYGON_NODE_HPP
+#ifndef JEBMATH_POLYGONERTEX_HPP
+#define JEBMATH_POLYGONERTEX_HPP
 
 #include <iosfwd>
-#include "Types.hpp"
+#include "Vector.hpp"
 
 namespace JEBMath { namespace Polygon {
 
@@ -38,7 +38,7 @@ std::ostream& operator<<(std::ostream& os, const Spoke& h);
 struct Vertex
 {
     Vertex(double offset,
-           const Point<double, 2>& point,
+           const Vector<double, 2>& point,
            Vertex* prev = NULL,
            Vertex* next = NULL)
         : offset(offset),
@@ -50,7 +50,7 @@ struct Vertex
     }
 
     double offset;
-    Point<double, 2> point;
+    Vector<double, 2> point;
     Vertex* next;
     Vertex* prev;
     Spoke* spoke;
@@ -71,9 +71,9 @@ void updateSpokes(Spoke* isect, Vertex* vertex);
 
 std::pair<Vertex*, Vertex*> getFirstEdge(Vertex* vertex);
 
-Vertex* createVertex(double offset, const Dim2::PointD& p);
+Vertex* createVertex(double offset, const Vector<double, 2>& p);
 
-Vertex* createVertex(Vertex* next, double offset, const Dim2::PointD& p);
+Vertex* createVertex(Vertex* next, double offset, const Vector<double, 2>& p);
 
 void deleteAll(Vertex* vertex);
 

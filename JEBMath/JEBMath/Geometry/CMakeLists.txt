@@ -5,24 +5,27 @@ project(Geometry)
 set(JEB_DIR JEBMath/${PROJECT_NAME})
 
 set(PUBLIC_HEADERS
-    Arc.hpp
     CubicHermiteSpline.hpp
-    CubicHermiteSpline.impl.hpp
+    CubicHermiteSpline-impl.hpp
     Distance.hpp
-    Distance.impl.hpp
+    Distance-impl.hpp
+    HomogeneousTransforms.hpp
     Intersections.hpp
-    Intersections.impl.hpp
+    Intersections-impl.hpp
     Line.hpp
-    Line.impl.hpp
     LineSegment.hpp
-    LineSegment.impl.hpp
+    LineSegment-impl.hpp
     LineString.hpp
-    LineString.impl.hpp
-    Plane.hpp
-    Point.hpp
-    Point.impl.hpp
+    LineString-impl.hpp
+    Matrix.hpp
+    MatrixFunctions.hpp
+    MatrixOperators.hpp
+    Plane3.hpp
+    Plane3-impl.hpp
+    PlanarProjection3.hpp
+    PlanarProjection3-impl.hpp
     Polygon.hpp
-    Polygon.impl.hpp
+    Polygon-impl.hpp
     PolygonUnwinder.hpp
     PolygonVertex.hpp
     Profile.hpp
@@ -30,18 +33,17 @@ set(PUBLIC_HEADERS
     ProfileMerger.hpp
     Rect.hpp
     RotatedRect.hpp
-    Size.hpp
     SortPoints.hpp
-    Types.hpp
     Vector.hpp
-    Vector.impl.hpp
+    VectorFunctions.hpp
+    VectorOperators.hpp
     )
 
 set (PRIVATE_HEADERS
-    ProjectionPlane.hpp
     )
 
 set(SRC
+    HomogeneousTransforms.cpp
     Intersections.cpp
     PolygonVertex.cpp
     PolygonUnwinder.cpp

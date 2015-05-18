@@ -1,7 +1,7 @@
 #include <iterator>
 #include <stdexcept>
-#include "JEBMath/Math/Comparisons.hpp"
-#include "JEBMath/Math/Utilities.hpp"
+#include "../Math/Comparisons.hpp"
+#include "../Math/Utilities.hpp"
 #include "Intersections.hpp"
 #include "PolygonUnwinder.hpp"
 #include "Vector.hpp"
@@ -11,13 +11,13 @@ namespace JEBMath { namespace Polygon {
 namespace detail
 {
     template <typename T>
-    std::pair<Point<T, 2>, Point<T, 2>> sortedByY(const Point<T, 2>& a,
-                                                  const Point<T, 2>& b)
+    std::pair<Vector<T, 2>, Vector<T, 2>> sortedByY(const Vector<T, 2>& a,
+                                                    const Vector<T, 2>& b)
     {
-        if (y(a) <= y(b))
-            return std::pair<Point<T, 2>, Point<T, 2>>(a, b);
+        if (getY(a) <= getY(b))
+            return std::pair<Vector<T, 2>, Vector<T, 2>>(a, b);
         else
-            return std::pair<Point<T, 2>, Point<T, 2>>(b, a);
+            return std::pair<Vector<T, 2>, Vector<T, 2>>(b, a);
     }
 
     template <typename T>
@@ -31,12 +31,12 @@ namespace detail
     template <typename T>
     T crossZ(const Vector<T, 2>& v0, const Vector<T, 2>& v1)
     {
-        return x(v0) * y(v1) - y(v0) * x(v1);
+        return getX(v0) * getY(v1) - getY(v0) * getX(v1);
     }
 
     template <typename T>
-    T crossZ(const Point<T, 2>& p0, const Point<T, 2>& p1,
-             const Point<T, 2>& p2)
+    T crossZ(const Vector<T, 2>& p0, const Vector<T, 2>& p1,
+             const Vector<T, 2>& p2)
     {
         return crossZ(p1 - p0, p2 - p1);
     }
@@ -59,20 +59,20 @@ namespace detail
 }
 
 template <typename T>
-double angle(const Point<T, 2>& p0,
-             const Point<T, 2>& p1,
-             const Point<T, 2>& p2)
+double getAngle(const Vector<T, 2>& p0,
+                const Vector<T, 2>& p1,
+                const Vector<T, 2>& p2)
 {
-    return angle(p0 - p1, p2 - p1);
+    return getAngle(p0 - p1, p2 - p1);
 }
 
 template <typename T>
-double angleCCW(const Point<T, 2>& p0,
-                const Point<T, 2>& p1,
-                const Point<T, 2>& p2)
+double getAngleCCW(const Vector<T, 2>& p0,
+                   const Vector<T, 2>& p1,
+                   const Vector<T, 2>& p2)
 {
-    int rot = rotation(p0, p1, p2);
-    double ang = angle(p0, p1, p2);
+    int rot = getRotation(p0, p1, p2);
+    double ang = getAngle(p0, p1, p2);
     if (rot >= 0)
         return ang;
     else
@@ -88,23 +88,23 @@ bool isPolygon(FwdIt begin, FwdIt end)
 }
 
 template <typename T>
-bool isPolygon(const std::vector<Point<T, 2>>& poly)
+bool isPolygon(const std::vector<Vector<T, 2>>& poly)
 {
     return isPolygon(begin(poly), end(poly));
 }
 
 template <typename T>
-int rotation(const Point<T, 2>& p0,
-             const Point<T, 2>& p1,
-             const Point<T, 2>& p2)
+int getRotation(const Vector<T, 2>& p0,
+                const Vector<T, 2>& p1,
+                const Vector<T, 2>& p2)
 {
-    return (int)getSign(detail::crossZ(p0, p1, p2));
+    return int(getSign(detail::crossZ(p0, p1, p2)));
 }
 
 template <typename T>
-Side direction(const Vector<T, 2>& v0,
-               const Vector<T, 2>& v1,
-               double tolerance)
+Side getDirection(const Vector<T, 2>& v0,
+                  const Vector<T, 2>& v1,
+                  double tolerance)
 {
     T value = detail::crossZ(v0, v1);
     if (equal<double>(value, 0, tolerance))
@@ -118,16 +118,16 @@ Side direction(const Vector<T, 2>& v0,
 }
 
 template <typename T>
-Side direction(const Point<T, 2>& p0,
-               const Point<T, 2>& p1,
-               const Point<T, 2>& p2,
-               double tolerance)
+Side getDirection(const Vector<T, 2>& p0,
+                  const Vector<T, 2>& p1,
+                  const Vector<T, 2>& p2,
+                  double tolerance)
 {
-    return direction(p1 - p0, p2 - p1, tolerance);
+    return getDirection(p1 - p0, p2 - p1, tolerance);
 }
 
 template <typename It>
-double area(It begin, It end)
+double getArea(It begin, It end)
 {
     if (!isPolygon(begin, end))
         throw std::invalid_argument("invalid polygon");
@@ -136,37 +136,31 @@ double area(It begin, It end)
     It it1 = it2++;
     while (it2 != end)
     {
-        sum += x(*it1) * y(*it2) - x(*it2) * y(*it1);
+        sum += getX(*it1) * getY(*it2) - getX(*it2) * getY(*it1);
         ++it1, ++it2;
     }
     return sum / 2;
 }
 
 template <typename T>
-double area(const std::vector<Point<T, 2>>& poly)
+double getArea(const std::vector<Vector<T, 2>>& poly)
 {
-    return area(poly.begin(), poly.end());
-    // if (poly.size() < 4)
-    //     throw std::invalid_argument("invalid polygon");
-    // double sum = 0;
-    // for (auto it = poly.begin() + 1; it != poly.end(); ++it)
-    //     sum += x(*(it- 1)) * y(*it) - x(*it) * y(*(it - 1));
-    // return sum / 2;
+    return getArea(poly.begin(), poly.end());
 }
 
 template <typename T>
-bool isConvex(const std::vector<Point<T, 2>>& poly)
+bool isConvex(const std::vector<Vector<T, 2>>& poly)
 {
     if (poly.size() < 4)
         throw std::invalid_argument("invalid polygon");
 
     auto it = poly.begin();
 
-    int sign = rotation(*(poly.end() - 2), *it, *(it + 1));
+    int sign = getRotation(*(poly.end() - 2), *it, *(it + 1));
 
     for (++it; it != poly.end() - 1; it++)
     {
-        int newSign = rotation(*(it - 1), *it, *(it + 1));
+        int newSign = getRotation(*(it - 1), *it, *(it + 1));
         if (sign == 0)
             sign = newSign;
         else if (newSign != 0 && newSign != sign)
@@ -183,14 +177,14 @@ bool isCCW(It begin, It end)
 }
 
 template <typename T>
-bool isCCW(const std::vector<Point<T, 2>>& poly)
+bool isCCW(const std::vector<Vector<T, 2>>& poly)
 {
     return isCCW(poly.begin(), poly.end());
 }
 
 template <typename T>
-PolygonPosition::Type isInside(const std::vector<Point<T, 2>>& poly,
-                               const Point<T, 2>& point)
+PolygonPosition::Type isInside(const std::vector<Vector<T, 2>>& poly,
+                               const Vector<T, 2>& point)
 {
     if (poly.size() < 4)
         throw std::invalid_argument("invalid polygon");
@@ -200,28 +194,28 @@ PolygonPosition::Type isInside(const std::vector<Point<T, 2>>& poly,
     int intersections = 0;
     for (auto it = poly.begin() + 1; it != poly.end(); it++)
     {
-        std::pair<Point<T, 2>, Point<T, 2>> points =
+        std::pair<Vector<T, 2>, Vector<T, 2>> points =
                     detail::sortedByY(*(it - 1), *it);
 
-        if (y(points.first) < y(point) && y(point) <= y(points.second))
+        if (getY(points.first) < getY(point) && getY(point) <= getY(points.second))
         {
-            T t = (y(point) - y(points.first)) /
-                  (y(points.second) - y(points.first));
-            T xt = x(points.first) + t * (x(points.second) - x(points.first));
-            if (equal(x(point), xt))
+            T t = (getY(point) - getY(points.first)) /
+                  (getY(points.second) - getY(points.first));
+            T xt = getX(points.first) + t * (getX(points.second) - getX(points.first));
+            if (equal(getX(point), xt))
                 return PolygonPosition::OnBorder;
-            else if (x(point) > xt)
+            else if (getX(point) > xt)
                 intersections++;
         }
-        else if (y(points.first) == y(point))
+        else if (getY(points.first) == getY(point))
         {
             // If the point coincide with a vertex in the polygon.
-            if (x(points.first) == x(point))
+            if (getX(points.first) == getX(point))
                 return PolygonPosition::OnBorder;
             // If the point  lie on a horizontal edge in the polygon.
-            else if (y(points.first) == y(points.second) &&
-                     detail::between(x(point),
-                                     x(points.first), x(points.second)))
+            else if (getY(points.first) == getY(points.second) &&
+                     detail::between(getX(point),
+                                     getX(points.first), getX(points.second)))
                 return PolygonPosition::OnBorder;
 
         }
@@ -238,21 +232,21 @@ bool isSelfIntersecting(BiIt first, BiIt last)
         return false;
     auto cmpEnd = std::prev(last, 2);
     auto it = first;
-    if (Dim2::findIntersection(Dim2::LineSegmentD(*it, *std::next(it)),
-                             std::next(it, 2), cmpEnd, 0) != cmpEnd)
+    if (findIntersection(makeLineSegment(*it, *std::next(it)),
+                         std::next(it, 2), cmpEnd, 0) != cmpEnd)
         return true;
     auto itEnd = cmpEnd++;
     for (++it; it != itEnd; ++it)
     {
-        if (Dim2::findIntersection(Dim2::LineSegmentD(*it, *std::next(it)),
-                                 std::next(it, 2), cmpEnd, 0) != cmpEnd)
+        if (findIntersection(makeLineSegment(*it, *std::next(it)),
+                             std::next(it, 2), cmpEnd, 0) != cmpEnd)
             return true;
     }
     return false;
 }
 
 template <typename T>
-bool isSelfIntersecting(const std::vector<Point<T, 2>>& poly)
+bool isSelfIntersecting(const std::vector<Vector<T, 2>>& poly)
 {
     return isSelfIntersecting(begin(poly), end(poly));
 }
@@ -261,27 +255,27 @@ template <typename PointIt>
 PointIt increment(PointIt& it, PointIt end)
 {
     PointIt prev = it++;
-    while (it != end && point2(*it) == point2(*prev))
+    while (it != end && *it == *prev)
         ++it;
     return prev;
 }
 
 template <typename PointIt, typename T>
 std::pair<PointIt, double> findFirst(PointIt beg, PointIt end, double offset,
-                                     const Point<T, 2>& point,
+                                     const Vector<T, 2>& point,
                                      double tolerance)
 {
     if ((beg == end) ||
-        (offset == 0 && equivalent(point, point2(*beg), tolerance)))
+        (offset == 0 && areEquivalent(point, *beg, tolerance)))
         return std::make_pair(beg, 0.0);
 
     PointIt prev = increment(beg, end);
     while (beg != end)
     {
-        if (offset == 0.0 && equivalent(point2(*beg), point, tolerance))
+        if (offset == 0.0 && areEquivalent(*beg, point, tolerance))
             return std::make_pair(beg, 0.0);
-        auto lineSeg = lineSegment(point2(*prev), point2(*beg));
-        auto relPos = relativePosition(lineSeg, point);
+        auto lineSeg = makeLineSegment(*prev, *beg);
+        auto relPos = getRelativePosition(lineSeg, point);
         if (fabs(relPos[1]) <= tolerance &&
             inRange(offset, relPos[0], 1.0, tolerance))
         {
@@ -295,13 +289,13 @@ std::pair<PointIt, double> findFirst(PointIt beg, PointIt end, double offset,
 
 template <typename PointIt1, typename PointIt2>
 std::pair<std::pair<PointIt1, double>, std::pair<PointIt2, double>>
-overlap(PointIt1 beg, PointIt1 end, double offset,
-        PointIt2 cmpBeg, PointIt2 cmpEnd, double cmpOffset,
-        double tolerance)
+    overlap(PointIt1 beg, PointIt1 end, double offset,
+            PointIt2 cmpBeg, PointIt2 cmpEnd, double cmpOffset,
+            double tolerance)
 {
     if (beg == end || cmpBeg == cmpEnd ||
         (offset == 0 && cmpOffset == 0 &&
-         !equivalent(point2(*beg), point2(*cmpBeg), tolerance)))
+         !areEquivalent(*beg, *cmpBeg, tolerance)))
     {
         return std::make_pair(std::make_pair(beg, offset),
                               std::make_pair(cmpBeg, cmpOffset));
@@ -310,7 +304,7 @@ overlap(PointIt1 beg, PointIt1 end, double offset,
     PointIt2 cmpPrev = increment(cmpBeg, cmpEnd);
     while (beg != end && cmpBeg != cmpEnd)
     {
-        if (equivalent(point2(*beg), point2(*cmpBeg), tolerance))
+        if (areEquivalent(*beg, *cmpBeg, tolerance))
         {
             prev = increment(beg, end);
             cmpPrev = increment(cmpBeg, cmpEnd);
@@ -318,8 +312,8 @@ overlap(PointIt1 beg, PointIt1 end, double offset,
         }
         else
         {
-            auto lineSeg = lineSegment(point2(*cmpPrev), point2(*cmpBeg));
-            auto relPos = relativePosition(lineSeg, point2(*beg));
+            auto lineSeg = makeLineSegment(*cmpPrev, *cmpBeg);
+            auto relPos = getRelativePosition(lineSeg, *beg);
             if (fabs(relPos[1]) > tolerance ||
                 less<double>(relPos[0], cmpOffset, tolerance))
             {
@@ -334,8 +328,8 @@ overlap(PointIt1 beg, PointIt1 end, double offset,
             }
             else
             {
-                auto lineSeg = lineSegment(point2(*prev), point2(*beg));
-                auto relPos = relativePosition(lineSeg, point2(*cmpBeg));
+                auto lineSeg = makeLineSegment(*prev, *beg);
+                auto relPos = getRelativePosition(lineSeg, *cmpBeg);
                 if (!inRange<double>(offset, relPos[0], 1, tolerance))
                     break;
                 offset = relPos[0];
@@ -355,9 +349,9 @@ bool isLastSegment(PointIt it, PointIt end)
 }
 
 template <typename PointIt1, typename PointIt2>
-bool equivalent(PointIt1 beg, PointIt1 end,
-                PointIt2 cmpBeg, PointIt2 cmpEnd,
-                double tolerance)
+bool areEquivalent(PointIt1 beg, PointIt1 end,
+                   PointIt2 cmpBeg, PointIt2 cmpEnd,
+                   double tolerance)
 {
     if (beg == end)
         return cmpBeg == cmpEnd;
@@ -365,7 +359,7 @@ bool equivalent(PointIt1 beg, PointIt1 end,
     PointIt2 cmpIt = cmpBeg;
     while (true)
     {
-        auto match = findFirst(cmpIt, cmpEnd, 0, point2(*beg), tolerance);
+        auto match = findFirst(cmpIt, cmpEnd, 0, *beg, tolerance);
         if (match.first == cmpEnd)
             return false;
         auto match2 = overlap(beg, end, 0,
@@ -389,17 +383,18 @@ bool equivalent(PointIt1 beg, PointIt1 end,
 }
 
 template <typename PointIt>
-std::vector<Dim2::PointD> hull(PointIt begin, PointIt end, double tolerance)
+std::vector<Vector<double, 2>> getHull(PointIt begin, PointIt end,
+                                       double tolerance)
 {
     Unwinder unwinder;
     unwinder.setTolerance(tolerance);
     unwinder.setPolygon(begin, end);
-    return unwinder.hull();
+    return unwinder.getHull();
 }
 
 template <typename PointIt>
-std::vector<std::vector<Dim2::PointD>> split(PointIt begin, PointIt end,
-                                           double tolerance)
+std::vector<std::vector<Vector<double, 2>>> split(PointIt begin, PointIt end,
+                                                  double tolerance)
 {
     Unwinder unwinder;
     unwinder.setTolerance(tolerance);

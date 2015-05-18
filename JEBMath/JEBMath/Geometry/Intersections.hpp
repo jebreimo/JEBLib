@@ -3,10 +3,11 @@
 
 #include <cmath>
 #include <limits>
-#include "JEBMath/Math/Constants.hpp"
-#include "Types.hpp"
+#include "../Math/Constants.hpp"
+#include "Line.hpp"
+#include "LineString.hpp"
 
-namespace JEBMath { namespace Dim2 {
+namespace JEBMath {
 
 namespace Side
 {
@@ -20,21 +21,23 @@ namespace Side
 }
 
 template <typename T>
-Side::Enum side(const Line<T, 2>& l, const Point<T, 2>& p);
+Side::Enum getSide(const Line<T, 2>& l, const Vector<T, 2>& p);
 
-bool containsPoint(const LineD& l,
-                   const PointD& p,
+bool containsPoint(const Line<double, 2>& l,
+                   const Vector<double, 2>& p,
                    double epsilon = 0);
-bool containsPoint(const LineSegmentD& l,
-                   const PointD& p,
+bool containsPoint(const LineSegment<double, 2>& l,
+                   const Vector<double, 2>& p,
                    double epsilon = 0);
 
-bool areParallel(const LineSegmentD& a, const LineD& b, double epsilon = 0);
-bool areParallel(const LineD& a,
-                 const LineD& b,
+bool areParallel(const LineSegment<double, 2>& a,
+                 const Line<double, 2>& b,
                  double epsilon = 0);
-bool areCoincident(const LineD& a,
-                   const LineD& b,
+bool areParallel(const Line<double, 2>& a,
+                 const Line<double, 2>& b,
+                 double epsilon = 0);
+bool areCoincident(const Line<double, 2>& a,
+                   const Line<double, 2>& b,
                    double epsilon = 0);
 
 /** Returns the iterator at the first point between @a firstPoint and
@@ -45,25 +48,31 @@ bool areCoincident(const LineD& a,
   *     to the first of the two successive points.
   */
 template <typename BiIt>
-BiIt findIntersection(LineSegmentD lineSeg,
+BiIt findIntersection(LineSegment<double, 2> lineSeg,
                       BiIt firstPoint, BiIt lastPoint,
                       double epsilon);
 
-bool intersects(const LineSegmentD& a, const LineSegmentD& b, double epsilon);
-bool intersects(const LineSegmentD& a, const LineD& b, double epsilon);
-bool intersects(const LineD& a, const LineSegmentD& b, double epsilon);
+bool intersects(const LineSegment<double, 2>& a,
+                const LineSegment<double, 2>& b,
+                double epsilon);
+bool intersects(const LineSegment<double, 2>& a,
+                const Line<double, 2>& b,
+                double epsilon);
+bool intersects(const Line<double, 2>& a,
+                const LineSegment<double, 2>& b,
+                double epsilon);
 
 enum LineRelationship {
-    Nonintersecting, //< Lines or line segments are parallel, but not colinear
-    Intersecting, //< Lines or line segments are intersecting
-    Overlapping, //< Lines are colinear
-    Undetermined //< Line segments are colinear, and may or may not overlap
+    NONINTERSECTING, //< Lines or line segments are parallel, but not colinear
+    INTERSECTING, //< Lines or line segments are intersecting
+    OVERLAPPING, //< Lines are colinear
+    UNDETERMINED //< Line segments are colinear, and may or may not overlap
 };
 
 LineRelationship intersection(double& offsetA,
                               double& offsetB,
-                              const LineD& a,
-                              const LineD& b,
+                              const Line<double, 2>& a,
+                              const Line<double, 2>& b,
                               double epsilon);
 
 /**
@@ -75,25 +84,25 @@ LineRelationship intersection(double& offsetA,
   */
 LineRelationship intersection(double& offsetA,
                               double& offsetB,
-                              const LineSegmentD& a,
-                              const LineSegmentD& b,
+                              const LineSegment<double, 2>& a,
+                              const LineSegment<double, 2>& b,
                               double epsilon);
-LineRelationship intersection(PointD& intersectionPoint,
-                              const LineSegmentD& a,
-                              const LineSegmentD& b,
+LineRelationship intersection(Vector<double, 2>& intersectionPoint,
+                              const LineSegment<double, 2>& a,
+                              const LineSegment<double, 2>& b,
                               double epsilon);
-LineRelationship intersection(PointD& intersectionPoint,
-                              const LineSegmentD& a,
-                              const LineD& b,
+LineRelationship intersection(Vector<double, 2>& intersectionPoint,
+                              const LineSegment<double, 2>& a,
+                              const Line<double, 2>& b,
                               double epsilon);
-LineRelationship intersection(PointD& intersectionPoint,
-                              const LineD& a,
-                              const LineSegmentD& b,
+LineRelationship intersection(Vector<double, 2>& intersectionPoint,
+                              const Line<double, 2>& a,
+                              const LineSegment<double, 2>& b,
                               double epsilon);
 
 bool overlap(std::pair<double, double>& offsetsA,
-             const LineSegmentD& a,
-             const LineSegmentD& b,
+             const LineSegment<double, 2>& a,
+             const LineSegment<double, 2>& b,
              double epsilon = 0);
 
 /**
@@ -104,18 +113,18 @@ bool overlap(std::pair<double, double>& offsetsA,
   */
 bool overlap(std::pair<double, double>& offsetsA,
              std::pair<double, double>& offsetsB,
-             const LineSegmentD& a,
-             const LineSegmentD& b,
+             const LineSegment<double, 2>& a,
+             const LineSegment<double, 2>& b,
              double epsilon = 0);
 
 template <typename T>
-bool areTangentialAtPoint(const Point<T, 2>& point,
-                          Point<T, 2> fromA, Point<T, 2> toA,
-                          Point<T, 2> fromB, Point<T, 2> toB,
+bool areTangentialAtPoint(const Vector<T, 2>& point,
+                          Vector<T, 2> fromA, Vector<T, 2> toA,
+                          Vector<T, 2> fromB, Vector<T, 2> toB,
                           double epsilon = 0);
 
-}}
+}
 
-#include "Intersections.impl.hpp"
+#include "Intersections-impl.hpp"
 
 #endif

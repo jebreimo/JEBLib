@@ -1,8 +1,7 @@
 #ifndef JEB_MATH_POLYGON_HPP
 #define JEB_MATH_POLYGON_HPP
 #include <vector>
-#include "Point.hpp"
-#include "Types.hpp"
+#include "Vector.hpp"
 
 namespace JEBMath { namespace Polygon {
 
@@ -10,10 +9,10 @@ template <typename FwdIt>
 bool isPolygon(FwdIt begin, FwdIt end);
 
 template <typename T>
-bool isPolygon(const std::vector<Point<T, 2>>& poly);
+bool isPolygon(const std::vector<Vector<T, 2>>& poly);
 
 template <typename T>
-bool isConvex(const std::vector<Point<T, 2>>& poly);
+bool isConvex(const std::vector<Vector<T, 2>>& poly);
 
 /** @brief Returns true if the polygon from @a begin to @a end
  *      is counter-clockwise.
@@ -28,13 +27,13 @@ template <typename It>
 bool isCCW(It begin, It end);
 
 template <typename T>
-bool isCCW(const std::vector<Point<T, 2>>& poly);
+bool isCCW(const std::vector<Vector<T, 2>>& poly);
 
 template <typename BiIt>
 bool isSelfIntersecting(BiIt first, BiIt last);
 
 template <typename T>
-bool isSelfIntersecting(const std::vector<Point<T, 2>>& poly);
+bool isSelfIntersecting(const std::vector<Vector<T, 2>>& poly);
 
 /** @brief Determines the direction of three points.
  *
@@ -45,9 +44,9 @@ bool isSelfIntersecting(const std::vector<Point<T, 2>>& poly);
  *          @arg  1 Points rotate clockwise.
  */
 template <typename T>
-int rotation(const Point<T, 2>& p0,
-             const Point<T, 2>& p1,
-             const Point<T, 2>& p2);
+int getRotation(const Vector<T, 2>& p0,
+                const Vector<T, 2>& p1,
+                const Vector<T, 2>& p2);
 
 enum Side
 {
@@ -59,9 +58,9 @@ enum Side
 };
 
 template <typename T>
-Side direction(const Vector<T, 2>& v0,
-               const Vector<T, 2>& p1,
-               double tolerance);
+Side getDirection(const Vector<T, 2>& v0,
+                  const Vector<T, 2>& p1,
+                  double tolerance);
 
 /** @brief Determines the position of @a p2 relative to the line through
  *      @a p0 and @p1.
@@ -73,29 +72,29 @@ Side direction(const Vector<T, 2>& v0,
  *          @arg 4 @a p0 or @a p2 coincide with @a p1
  */
 template <typename T>
-Side direction(const Point<T, 2>& p0,
-               const Point<T, 2>& p1,
-               const Point<T, 2>& p2,
-               double tolerance);
+Side getDirection(const Vector<T, 2>& p0,
+                  const Vector<T, 2>& p1,
+                  const Vector<T, 2>& p2,
+                  double tolerance);
 
 template <typename T>
-double angle(const Point<T, 2>& p0,
-             const Point<T, 2>& p1,
-             const Point<T, 2>& p2);
+double getAngle(const Vector<T, 2>& p0,
+                const Vector<T, 2>& p1,
+                const Vector<T, 2>& p2);
 
 template <typename T>
-double angleCCW(const Point<T, 2>& p0,
-                const Point<T, 2>& p1,
-                const Point<T, 2>& p2);
+double getAngleCCW(const Vector<T, 2>& p0,
+                   const Vector<T, 2>& p1,
+                   const Vector<T, 2>& p2);
 
 template <typename T>
-double area(const std::vector<Point<T, 2>>& poly);
+double getArea(const std::vector<Vector<T, 2>>& poly);
 
 template <typename It>
-double area(It begin, It end);
+double getArea(It begin, It end);
 
 template <typename T>
-std::vector<Point<T, 2>> unwind(const std::vector<Point<T, 2>>& poly);
+std::vector<Vector<T, 2>> unwind(const std::vector<Vector<T, 2>>& poly);
 
 namespace PolygonPosition
 {
@@ -114,27 +113,28 @@ namespace PolygonPosition
  *  @throw std::invalid_argument if @a poly has less than 4 points.
  */
 template <typename T>
-PolygonPosition::Type isInside(const std::vector<Point<T, 2>>& poly,
-                               const Point<T, 2>& point);
+PolygonPosition::Type isInside(const std::vector<Vector<T, 2>>& poly,
+                               const Vector<T, 2>& point);
 
 template <typename PointIt>
-std::vector<Dim2::PointD> hull(PointIt begin, PointIt end, double tolerance);
+std::vector<Vector<double, 2>> getHull(PointIt begin, PointIt end,
+                                       double tolerance);
 
 template <typename PointIt>
-std::vector<std::vector<Dim2::PointD>> split(PointIt begin, PointIt end,
-                                           double tolerance);
+std::vector<std::vector<Vector<double, 2>>> split(PointIt begin, PointIt end,
+                                                  double tolerance);
 
 template <typename PointIt1, typename PointIt2>
-bool equivalent(PointIt1 beg, PointIt1 end,
-                PointIt2 cmpBeg, PointIt2 cmpEnd,
-                double tolerance = 0);
+bool areEquivalent(PointIt1 beg, PointIt1 end,
+                   PointIt2 cmpBeg, PointIt2 cmpEnd,
+                   double tolerance = 0);
 
 // template <typename T>
 // class CombinedPolygon
 // {
 // public:
-//     typedef Point<T, 2> Point;
-//     typedef std::vector<Point> Polygon;
+//     typedef Vector<T, 2> Vector;
+//     typedef std::vector<Vector> Polygon;
 
 //     CombinedPolygon(const Polygon& first,
 //                     const Polygon& second);
@@ -144,10 +144,10 @@ bool equivalent(PointIt1 beg, PointIt1 end,
 //     void firstOnly(std::list<Polygon>& result) const;
 //     void secondOnly(std::list<Polygon>& result) const;
 // private:
-//     struct PointD
+//     struct VectorD
 //     {
-//         PointD* next;
-//         PointD* prev;
+//         VectorD* next;
+//         VectorD* prev;
 //         PointD* other;
 //         Point point;
 //         bool entrance;
@@ -155,6 +155,6 @@ bool equivalent(PointIt1 beg, PointIt1 end,
 // };
 }}
 
-#include "Polygon.impl.hpp"
+#include "Polygon-impl.hpp"
 
 #endif

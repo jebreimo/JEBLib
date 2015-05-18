@@ -2,26 +2,26 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
-#include "JEBMath/Math/Constants.hpp"
+#include "../Math/Constants.hpp"
 #include "Distance.hpp"
 #include "Intersections.hpp"
 #include "Profile.hpp"
 #include "ProfileIterator.hpp"
 #include "ProfileMerger.hpp"
 
-namespace JEBMath { namespace Dim2 {
+namespace JEBMath {
 
 using namespace std;
 
-static void addPoints(LineStringD& prof, ProfileIterator& it);
-static bool addRemainder(LineStringD& result,
-                         const LineStringD& prof,
+static void addPoints(Profile& prof, ProfileIterator& it);
+static bool addRemainder(Profile& result,
+                         const Profile& prof,
                          size_t& index,
-                         const LineStringD& otherProf);
-static void addUniquePoint(LineStringD& prof,
-                           const PointD& p,
+                         const Profile& otherProf);
+static void addUniquePoint(Profile& prof,
+                           const Vector<double, 2>& p,
                            double precision);
-static LineSegmentD extrapolate(const LineSegmentD& orig, double length);
+static LineSegment<double, 2> extrapolate(const LineSegment<double, 2>& orig, double length);
 static ProfileIterator* getNearestIterator(ProfileIterator* itLo,
                                            ProfileIterator* itHi,
                                            double& yLo,
@@ -38,12 +38,12 @@ ProfileMerger::ProfileMerger()
 {
 }
 
-void ProfileMerger::setProfiles(const LineString& a, const LineString& b)
+void ProfileMerger::setProfiles(const Profile& a, const Profile& b)
 {
     m_ProfileA.clear();
     m_ProfileB.clear();
 
-    Point p;
+    Vector<double, 2> p;
     unsigned flags;
 
     flags = getStartPoint(p, &a, &b);
@@ -64,7 +64,7 @@ void ProfileMerger::setProfiles(const LineString& a, const LineString& b)
     m_IndexA = m_IndexB = 0;
 }
 
-double ProfileMerger::maxExtrapolation() const
+double ProfileMerger::getMaxExtrapolation() const
 {
     return m_MaxExtrapolation;
 }
@@ -75,7 +75,7 @@ void ProfileMerger::setMaxExtrapolation(double maxExtrapolation)
     m_MaxExtrapolation = maxExtrapolation;
 }
 
-double ProfileMerger::maxInterpolation() const
+double ProfileMerger::getMaxInterpolation() const
 {
     return m_MaxInterpolation;
 }
@@ -86,7 +86,7 @@ void ProfileMerger::setMaxInterpolation(double maxInterpolation)
     m_MaxInterpolation = maxInterpolation;
 }
 
-ProfileMerger::Method ProfileMerger::method() const
+ProfileMerger::Method ProfileMerger::getMethod() const
 {
     return m_Method;
 }
@@ -96,7 +96,7 @@ void ProfileMerger::setMethod(Method method)
     m_Method = method;
 }
 
-double ProfileMerger::precision() const
+double ProfileMerger::getPrecision() const
 {
     return m_Precision;
 }
@@ -106,7 +106,7 @@ void ProfileMerger::setPrecision(double precision)
     m_Precision = precision;
 }
 
-const ProfileMerger::LineString& ProfileMerger::result() const
+const Profile& ProfileMerger::getResult() const
 {
     return m_Result;
 }
@@ -121,10 +121,10 @@ bool ProfileMerger::nextResult()
 
     ProfileIterator itA(&m_ProfileA, &m_IndexA);
     ProfileIterator itB(&m_ProfileB, &m_IndexB);
-    if (itA.x() > itB.x() ||
-        (itA.x() == itB.x() && (
-            (m_Method == SelectLower && itA.y() > itB.y()) ||
-            (m_Method == SelectUpper && itA.y() < itB.y()))))
+    if (itA.getX() > itB.getX() ||
+        (itA.getX() == itB.getX() && (
+            (m_Method == SelectLower && itA.getY() > itB.getY()) ||
+            (m_Method == SelectUpper && itA.getY() < itB.getY()))))
         std::swap(itA, itB);
 
     if (m_Method == SelectUpper)
@@ -133,78 +133,78 @@ bool ProfileMerger::nextResult()
         return nextLower(&itA, &itB);
 }
 
-unsigned ProfileMerger::getStartPoint(Point& p,
-                                      const LineString* profA,
-                                      const LineString* profB) const
+unsigned ProfileMerger::getStartPoint(Vector<double, 2>& p,
+                                      const Profile* profA,
+                                      const Profile* profB) const
 {
     if (m_MaxExtrapolation == 0 || profA->size() < 2 || profB->size() < 2)
         return 0;
 
-    PointD pa = profA->front();
-    PointD pb = profB->front();
+    auto pa = profA->front();
+    auto pb = profB->front();
     if (pa == pb)
         return 0;
 
     unsigned flags = 0;
-    if (x(pa) < x(pb))
+    if (getX(pa) < getX(pb))
     {
         flags = 0x2;
     }
-    else if (x(pa) > x(pb))
+    else if (getX(pa) > getX(pb))
     {
         std::swap(profA, profB);
         flags = 0x1;
     }
     if (flags)
     {
-        LineSegmentD ext = extrapolate(firstSegment(*profB), -m_MaxExtrapolation);
-        if (Profile::firstIntersection(p, ext, *profA))
+        auto ext = extrapolate(getFirstSegment(*profB), -m_MaxExtrapolation);
+        if (firstIntersection(p, ext, *profA))
             return flags;
     }
-    if (fabs(x(pa) - x(pb)) < m_MaxExtrapolation)
+    if (fabs(getX(pa) - getX(pb)) < m_MaxExtrapolation)
     {
-        LineSegmentD extA = extrapolate(firstSegment(*profA), -m_MaxExtrapolation);
-        LineSegmentD extB = extrapolate(firstSegment(*profB), -m_MaxExtrapolation);
-        if (intersection(p, extA, extB, 0) == Intersecting)
+        auto extA = extrapolate(getFirstSegment(*profA), -m_MaxExtrapolation);
+        auto extB = extrapolate(getFirstSegment(*profB), -m_MaxExtrapolation);
+        if (intersection(p, extA, extB, 0) == INTERSECTING)
             return 0x3;
     }
 
     return 0;
 }
 
-unsigned ProfileMerger::getEndPoint(Point& p,
-                                    const LineString* profA,
-                                    const LineString* profB) const
+unsigned ProfileMerger::getEndPoint(Vector<double, 2>& p,
+                                    const Profile* profA,
+                                    const Profile* profB) const
 {
     if (m_MaxExtrapolation == 0 || profA->size() < 2 || profB->size() < 2)
         return 0;
 
-    PointD pa = profA->back();
-    PointD pb = profB->back();
+    auto pa = profA->back();
+    auto pb = profB->back();
     if (pa == pb)
         return 0;
 
     unsigned flags = 0;
-    if (x(pa) > x(pb))
+    if (getX(pa) > getX(pb))
     {
         flags = 0x2;
     }
-    else if (x(pa) < x(pb))
+    else if (getX(pa) < getX(pb))
     {
         std::swap(profA, profB);
         flags = 0x1;
     }
     if (flags)
     {
-        LineSegmentD ext = extrapolate(lastSegment(*profB), m_MaxExtrapolation);
-        if (Profile::firstIntersection(p, ext, *profA))
+        auto ext = extrapolate(getLastSegment(*profB), m_MaxExtrapolation);
+        if (firstIntersection(p, ext, *profA))
             return flags;
     }
-    if (fabs(x(pa) - x(pb)) < m_MaxExtrapolation)
+    if (fabs(getX(pa) - getX(pb)) < m_MaxExtrapolation)
     {
-        LineSegmentD extA = extrapolate(lastSegment(*profA), m_MaxExtrapolation);
-        LineSegmentD extB = extrapolate(lastSegment(*profB), m_MaxExtrapolation);
-        if (intersection(p, extA, extB, 0) == Intersecting)
+        auto extA = extrapolate(getLastSegment(*profA), m_MaxExtrapolation);
+        auto extB = extrapolate(getLastSegment(*profB), m_MaxExtrapolation);
+        if (intersection(p, extA, extB, 0) == INTERSECTING)
             return 0x3;
     }
 
@@ -221,35 +221,35 @@ bool ProfileMerger::nextLower(ProfileIterator* itLo, ProfileIterator* itHi)
         if (yLo <= yHi)
         {
             if (it == itLo)
-                addUniquePoint(m_Result, itLo->point(), m_Precision);
+                addUniquePoint(m_Result, itLo->getPoint(), m_Precision);
             it->next();
         }
-        else if (itHi->index() == 0)
+        else if (itHi->getIndex() == 0)
         {
-            Point nearest;
+            Vector<double, 2> nearest;
             size_t index;
-            if (Profile::nearestPointBefore(nearest,
-                                            index,
-                                            *itLo->profile(),
-                                            itHi->profile()->front()) &&
-                distance(itHi->profile()->front(), nearest) <= m_MaxInterpolation)
+            if (nearestPointBefore(nearest,
+                                   index,
+                                   *itLo->getProfile(),
+                                   itHi->getProfile()->front()) &&
+                getDistance(itHi->getProfile()->front(), nearest) <= m_MaxInterpolation)
             {
                 addUniquePoint(m_Result, nearest, m_Precision);
                 swap(itHi, itLo);
             }
             else
             {
-                addUniquePoint(m_Result, point2(it->x(), yLo), m_Precision);
+                addUniquePoint(m_Result, vector2(it->getX(), yLo), m_Precision);
                 return true;
             }
         }
         else
         {
-            Point isect;
-            if (intersection(isect, itLo->segment(), itHi->segment(), 0) == Intersecting)
+            Vector<double, 2> isect;
+            if (intersection(isect, itLo->getSegment(), itHi->getSegment(), 0) == INTERSECTING)
             {
                 addUniquePoint(m_Result, isect, m_Precision);
-                if (equivalent(it->point(), isect, m_Precision))
+                if (areEquivalent(it->getPoint(), isect, m_Precision))
                     it->next();
             }
             else
@@ -275,35 +275,35 @@ bool ProfileMerger::nextUpper(ProfileIterator* itLo, ProfileIterator* itHi)
         if (yLo < yHi)
         {
             if (it == itHi)
-                addUniquePoint(m_Result, itHi->point(), m_Precision);
+                addUniquePoint(m_Result, itHi->getPoint(), m_Precision);
             it->next();
         }
-        else if (itLo->index() == 0)
+        else if (itLo->getIndex() == 0)
         {
-            Point nearest;
+            Vector<double, 2> nearest;
             size_t index;
-            if (Profile::nearestPointBefore(nearest,
-                                            index,
-                                            *itHi->profile(),
-                                            itLo->profile()->front()) &&
-                distance(itLo->profile()->front(), nearest) <= m_MaxInterpolation)
+            if (nearestPointBefore(nearest,
+                                   index,
+                                   *itHi->getProfile(),
+                                   itLo->getProfile()->front()) &&
+                getDistance(itLo->getProfile()->front(), nearest) <= m_MaxInterpolation)
             {
                 addUniquePoint(m_Result, nearest, m_Precision);
                 swap(itHi, itLo);
             }
             else
             {
-                addUniquePoint(m_Result, point2(it->x(), yHi), m_Precision);
+                addUniquePoint(m_Result, vector2(it->getX(), yHi), m_Precision);
                 return true;
             }
         }
         else
         {
-            Point isect;
-            if (intersection(isect, itLo->segment(), itHi->segment(), 0) == Intersecting)
+            Vector<double, 2> isect;
+            if (intersection(isect, itLo->getSegment(), itHi->getSegment(), 0) == INTERSECTING)
             {
                 addUniquePoint(m_Result, isect, m_Precision);
-                if (equivalent(it->point(), isect, m_Precision))
+                if (areEquivalent(it->getPoint(), isect, m_Precision))
                     it->next();
             }
             else
@@ -327,44 +327,44 @@ void ProfileMerger::processTail(ProfileIterator* main, ProfileIterator* other)
     }
     else
     {
-        Point nearest;
+        Vector<double, 2> nearest;
         size_t index;
-        if (Profile::nearestPointAfter(nearest,
-                                       index,
-                                       *other->profile(),
-                                       m_Result.back()) &&
-            distance(m_Result.back(), nearest) <= m_MaxInterpolation)
+        if (nearestPointAfter(nearest,
+                              index,
+                              *other->getProfile(),
+                              m_Result.back()) &&
+            getDistance(m_Result.back(), nearest) <= m_MaxInterpolation)
         {
             addUniquePoint(m_Result, nearest, m_Precision);
             other->setIndex(index + 1);
             if (other->isValid() &&
-                equivalent(other->point(), m_Result.back(), m_Precision))
+                areEquivalent(other->getPoint(), m_Result.back(), m_Precision))
                 other->next();
             addPoints(m_Result, *other);
         }
     }
 }
 
-static void addPoints(LineStringD& prof, ProfileIterator& it)
+static void addPoints(Profile& prof, ProfileIterator& it)
 {
     while (it.isValid())
     {
-        prof.push_back(it.point());
+        prof.push_back(it.getPoint());
         it.next();
     }
 }
 
-static bool addRemainder(LineStringD& result,
-                         const LineStringD& prof,
+static bool addRemainder(Profile& result,
+                         const Profile& prof,
                          size_t& index,
-                         const LineStringD& otherProf)
+                         const Profile& otherProf)
 {
     if (index != 0 &&
         !otherProf.empty() &&
-        x(prof[index - 1]) < x(otherProf.back()))
+        getX(prof[index - 1]) < getX(otherProf.back()))
     {
-        double xc = x(otherProf.back());
-        result.push_back(point2(xc, Profile::interpolateY(prof, xc)));
+        double xc = getX(otherProf.back());
+        result.push_back(vector2(xc, interpolateY(prof, xc)));
     }
 
     result.insert(result.end(), prof.begin() + index, prof.end());
@@ -372,21 +372,21 @@ static bool addRemainder(LineStringD& result,
     return result.size() >= 2;
 }
 
-static void addUniquePoint(LineStringD& prof,
-                           const PointD& p,
+static void addUniquePoint(Profile& prof,
+                           const Vector<double, 2>& p,
                            double precision)
 {
-    if (prof.empty() || !equivalent(prof.back(), p, precision))
+    if (prof.empty() || !areEquivalent(prof.back(), p, precision))
         prof.push_back(p);
 }
 
-static LineSegmentD extrapolate(const LineSegmentD& orig, double length)
+static LineSegment<double, 2> extrapolate(const LineSegment<double, 2>& orig, double length)
 {
-    VectorD v = unit(orig.vector()) * length;
+    auto v = getUnit(orig.getVector()) * length;
     if (length >= 0)
-        return LineSegmentD(orig.end(), translate(orig.end(), v));
+        return makeLineSegment(orig.getEnd(), orig.getEnd() + v);
     else
-        return LineSegmentD(orig.start(), translate(orig.start(), v));
+        return makeLineSegment(orig.getStart(), orig.getStart() + v);
 }
 
 static ProfileIterator* getNearestIterator(ProfileIterator* itLo,
@@ -395,22 +395,22 @@ static ProfileIterator* getNearestIterator(ProfileIterator* itLo,
                                            double& yHi,
                                            ProfileMerger::Method method)
 {
-    if (itLo->x() < itHi->x())
+    if (itLo->getX() < itHi->getX())
     {
-        yLo = itLo->y();
-        yHi = itHi->yAtX(itLo->x());
+        yLo = itLo->getY();
+        yHi = itHi->getYAtX(itLo->getX());
         return itLo;
     }
-    else if (itLo->x() > itHi->x())
+    else if (itLo->getX() > itHi->getX())
     {
-        yLo = itLo->yAtX(itHi->x());
-        yHi = itHi->y();
+        yLo = itLo->getYAtX(itHi->getX());
+        yHi = itHi->getY();
         return itHi;
     }
     else
     {
-        yLo = itLo->y();
-        yHi = itHi->y();
+        yLo = itLo->getY();
+        yHi = itHi->getY();
         if ((method == ProfileMerger::SelectLower && yLo > yHi) ||
             (method == ProfileMerger::SelectUpper && yLo <= yHi))
             return itLo;
@@ -419,4 +419,4 @@ static ProfileIterator* getNearestIterator(ProfileIterator* itLo,
     }
 }
 
-}}
+}

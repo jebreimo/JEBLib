@@ -1,19 +1,17 @@
-// #include "JEBMath/Geometry/JEBMath.hpp"
-#include "JEBMath/Geometry/Types.hpp"
 #include "JEBMath/Geometry/Profile.hpp"
 #include "JEBMath/Geometry/ProfileMerger.hpp"
 
 #include <limits>
 #include <JEBTest/JEBTest.hpp>
+#include "JEBMath/Geometry/LineString.hpp"
 
 using namespace JEBMath;
-using namespace JEBMath::Dim2;
 
 template <size_t N>
-void fill(LineStringD& ls, double (&array)[N])
+void fill(Profile& ls, double (&array)[N])
 {
     for (size_t i = 0; i < N; i += 2)
-        ls.push_back(point2<double>(array[i], array[i + 1]));
+        ls.push_back(vector2<double>(array[i], array[i + 1]));
 }
 
 static void test_Bounds()
@@ -29,22 +27,22 @@ static void test_Bounds()
        10, 7
     };
 
-    LineStringD ls;
+    Profile ls;
     fill(ls, pnts);
-    JT_ASSERT(Profile::isProfile(ls));
+    JT_ASSERT(isProfile(ls));
     JT_EQUAL(ls.size(), 8);
-    JT_EQUAL(Profile::lowerBound(ls, -1), 0);
-    JT_EQUAL(Profile::upperBound(ls, -1), 0);
-    JT_EQUAL(Profile::lowerBound(ls, 0), 0);
-    JT_EQUAL(Profile::upperBound(ls, 0), 1);
-    JT_EQUAL(Profile::lowerBound(ls, 2), 1);
-    JT_EQUAL(Profile::upperBound(ls, 2), 3);
-    JT_EQUAL(Profile::lowerBound(ls, 6.5), 4);
-    JT_EQUAL(Profile::upperBound(ls, 6.5), 4);
-    JT_EQUAL(Profile::lowerBound(ls, 7), 4);
-    JT_EQUAL(Profile::upperBound(ls, 7), 6);
-    JT_EQUAL(Profile::lowerBound(ls, 10), 7);
-    JT_EQUAL(Profile::upperBound(ls, 10), 8);
+    JT_EQUAL(lowerBound(ls, -1), 0);
+    JT_EQUAL(upperBound(ls, -1), 0);
+    JT_EQUAL(lowerBound(ls, 0), 0);
+    JT_EQUAL(upperBound(ls, 0), 1);
+    JT_EQUAL(lowerBound(ls, 2), 1);
+    JT_EQUAL(upperBound(ls, 2), 3);
+    JT_EQUAL(lowerBound(ls, 6.5), 4);
+    JT_EQUAL(upperBound(ls, 6.5), 4);
+    JT_EQUAL(lowerBound(ls, 7), 4);
+    JT_EQUAL(upperBound(ls, 7), 6);
+    JT_EQUAL(lowerBound(ls, 10), 7);
+    JT_EQUAL(upperBound(ls, 10), 8);
 }
 
 static void test_SegmentAt()
@@ -60,30 +58,30 @@ static void test_SegmentAt()
        10, 7
     };
 
-    LineStringD ls;
+    Profile ls;
     fill(ls, pnts);
-    JT_ASSERT(Profile::isProfile(ls));
+    JT_ASSERT(isProfile(ls));
     JT_EQUAL(ls.size(), 8);
-    JT_EQUAL(Profile::firstSegmentAt(ls, -0.1), JEBMath::InvalidIndex);
-    JT_EQUAL(Profile::lastSegmentAt(ls, -0.1), JEBMath::InvalidIndex);
-    JT_EQUAL(Profile::firstSegmentAt(ls, 0), 0);
-    JT_EQUAL(Profile::lastSegmentAt(ls, 0), 0);
-    JT_EQUAL(Profile::firstSegmentAt(ls, 2), 0);
-    JT_EQUAL(Profile::lastSegmentAt(ls, 2), 2);
-    JT_EQUAL(Profile::firstSegmentAt(ls, 10), 6);
-    JT_EQUAL(Profile::lastSegmentAt(ls, 10), 6);
-    JT_EQUAL(Profile::firstSegmentAt(ls, 10.1), segmentCount(ls));
-    JT_EQUAL(Profile::lastSegmentAt(ls, 10.1), segmentCount(ls));
+    JT_EQUAL(firstSegmentAt(ls, -0.1), JEBMath::InvalidIndex);
+    JT_EQUAL(lastSegmentAt(ls, -0.1), JEBMath::InvalidIndex);
+    JT_EQUAL(firstSegmentAt(ls, 0), 0);
+    JT_EQUAL(lastSegmentAt(ls, 0), 0);
+    JT_EQUAL(firstSegmentAt(ls, 2), 0);
+    JT_EQUAL(lastSegmentAt(ls, 2), 2);
+    JT_EQUAL(firstSegmentAt(ls, 10), 6);
+    JT_EQUAL(lastSegmentAt(ls, 10), 6);
+    JT_EQUAL(firstSegmentAt(ls, 10.1), getSegmentCount(ls));
+    JT_EQUAL(lastSegmentAt(ls, 10.1), getSegmentCount(ls));
 }
 
-static void testFirstIsect(const LineStringD& prof,
-                           const PointD& lineSegStart,
-                           const PointD& lineSegEnd,
-                           const PointD& result)
+static void testFirstIsect(const Profile& prof,
+                           const Vector<double, 2>& lineSegStart,
+                           const Vector<double, 2>& lineSegEnd,
+                           const Vector<double, 2>& result)
 {
-    LineSegmentD line(lineSegStart, lineSegEnd);
-    PointD isect;
-    JT_ASSERT(Profile::firstIntersection(isect, line, prof));
+    auto line = makeLineSegment(lineSegStart, lineSegEnd);
+    Vector<double, 2> isect;
+    JT_ASSERT(firstIntersection(isect, line, prof));
     JT_EQUAL(isect, result);
 }
 
@@ -97,10 +95,10 @@ static void test_FirstIntersection()
          9, 0,
         12, 0
     };
-    LineStringD prof;
+    Profile prof;
     fill(prof, pnts);
 
-    Point<double, 2> (*P)(double x, double y) = point2<double>;
+    Vector<double, 2> (*P)(double x, double y) = vector2<double>;
 
     testFirstIsect(prof, P(4, 2), P(7, 1), P(4, 2));
     testFirstIsect(prof, P(7, 1), P(4, 2), P(7, 1));

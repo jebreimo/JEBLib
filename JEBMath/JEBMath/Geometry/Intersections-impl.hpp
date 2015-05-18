@@ -1,13 +1,13 @@
 #include <cstdlib>
-#include "JEBMath/Math/Comparisons.hpp"
+#include "../Math/Comparisons.hpp"
 
-namespace JEBMath { namespace Dim2 {
+namespace JEBMath {
 
 template <typename T>
 class DirectionComparer2
 {
 public:
-    DirectionComparer2(const Point<T, 2>& center, T tolerance = 0)
+    DirectionComparer2(const Vector<T, 2>& center, T tolerance = 0)
         : m_Center(center),
           m_Tolerance(tolerance)
     {
@@ -16,10 +16,10 @@ public:
     template <typename Point>
     int compare(const Point& a, const Point& b) const
     {
-        T xa = x(a) - x(m_Center);
-        T xb = x(b) - x(m_Center);
-        T ya = y(a) - y(m_Center);
-        T yb = y(b) - y(m_Center);
+        T xa = getX(a) - getX(m_Center);
+        T xb = getX(b) - getX(m_Center);
+        T ya = getY(a) - getY(m_Center);
+        T yb = getY(b) - getY(m_Center);
 
         if (less(xa * xb, T(0), m_Tolerance))
             return xa > xb ? -1 : 1;
@@ -37,14 +37,14 @@ public:
     template <typename Point>
     bool operator()(const Point& a, const Point& b) const
     {
-        T xa = x(a) - x(m_Center);
-        T xb = x(b) - x(m_Center);
+        T xa = getX(a) - getX(m_Center);
+        T xb = getX(b) - getX(m_Center);
         T xproduct = xa * xb;
         if (xproduct < 0)
             return xa > xb;
 
-        T ya = y(a) - y(m_Center);
-        T yb = y(b) - y(m_Center);
+        T ya = getY(a) - getY(m_Center);
+        T yb = getY(b) - getY(m_Center);
 
         if (xproduct == 0 && ya * yb < 0)
             return ya > yb;
@@ -56,14 +56,14 @@ public:
             return xa * xa + ya * ya > xb * xb + yb * yb;
     }
 private:
-    Point<T, 2> m_Center;
+    Vector<T, 2> m_Center;
     T m_Tolerance;
 };
 
 template <typename T>
-bool areTangentialAtPoint(const Point<T, 2>& point,
-                          Point<T, 2> fromA, Point<T, 2> toA,
-                          Point<T, 2> fromB, Point<T, 2> toB,
+bool areTangentialAtPoint(const Vector<T, 2>& point,
+                          Vector<T, 2> fromA, Vector<T, 2> toA,
+                          Vector<T, 2> fromB, Vector<T, 2> toB,
                           double tolerance)
 {
     DirectionComparer2<T> comparer(point, tolerance);
@@ -82,22 +82,22 @@ bool areTangentialAtPoint(const Point<T, 2>& point,
 }
 
 template <typename BiIt>
-BiIt findIntersection(LineSegmentD lineSeg,
+BiIt findIntersection(LineSegment<double, 2> lineSeg,
                       BiIt firstPoint, BiIt lastPoint,
                       double epsilon)
 {
     for (BiIt it = firstPoint; it != lastPoint; ++it)
     {
-        if (intersects(lineSeg, LineSegmentD(*it, *std::next(it)), epsilon))
+        if (intersects(lineSeg, LineSegment<double, 2>(*it, *std::next(it)), epsilon))
             return it;
     }
     return lastPoint;
 }
 
 template <typename T>
-Side::Enum side(const Line<T, 2>& l, const Point<T, 2>& p)
+Side::Enum getide(const Line<T, 2>& l, const Vector<T, 2>& p)
 {
-    double tmp = (double)dot(normal(l.vector()), Vector<T, 2>(l.point(), p));
+    auto tmp = getNormal(l.getVector()) * (p - l.getPoint());
     if (tmp > 0)
       return Side::Left;
     else if (tmp < 0)
@@ -106,4 +106,4 @@ Side::Enum side(const Line<T, 2>& l, const Point<T, 2>& p)
       return Side::Neither;
 }
 
-}}
+}

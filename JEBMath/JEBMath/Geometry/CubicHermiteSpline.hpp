@@ -1,7 +1,8 @@
 #ifndef JEB_MATH_CUBICHERMITESPLINE_HPP
 #define JEB_MATH_CUBICHERMITESPLINE_HPP
 
-#include "JEBMath/JEBMathDefinitions.hpp"
+#include "../JEBMathDefinitions.hpp"
+#include "Vector.hpp"
 
 namespace JEBMath {
 
@@ -29,32 +30,36 @@ namespace JEBMath {
  *      h_{11}(t) &=& t^{3} - t^{2}
  *  @f}
  */
-template <typename Point, typename Vector>
+template <unsigned N>
 class CubicHermiteSpline
 {
 public:
     CubicHermiteSpline();
-    CubicHermiteSpline(const Point& start, const Vector& startTangent,
-                       const Point& end, const Vector& endTangent);
+    CubicHermiteSpline(const Vector<double, N>& start,
+                       const Vector<double, N>& startTangent,
+                       const Vector<double, N>& end,
+                       const Vector<double, N>& endTangent);
 
-    const Point& start() const;
-    const Vector& startTangent() const;
-    Point end() const;
-    Vector endTangent() const;
+    const Vector<double, N>& getStart() const;
+    const Vector<double, N>& getStartTangent() const;
+    Vector<double, N> getEnd() const;
+    Vector<double, N> getEndTangent() const;
 
-    void set(const Point& start, const Vector& startTangent,
-             const Point& end, const Vector& endTangent);
+    void setPointsAndTangents(const Vector<double, N>& start,
+                              const Vector<double, N>& startTangent,
+                              const Vector<double, N>& end,
+                              const Vector<double, N>& endTangent);
 
-    Point pointAt(double t) const;
+    Vector<double, N> getPointAt(double t) const;
 private:
-    Point m_Start;
-    Vector m_StartTangent;
-    Vector m_A;
-    Vector m_B;
+    Vector<double, N> m_Start;
+    Vector<double, N> m_StartTangent;
+    Vector<double, N> m_A;
+    Vector<double, N> m_B;
 };
 
 }
 
-#include "CubicHermiteSpline.impl.hpp"
+#include "CubicHermiteSpline-impl.hpp"
 
 #endif
