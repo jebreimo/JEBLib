@@ -34,6 +34,7 @@ set(PUBLIC_HEADERS
     Rect.hpp
     RotatedRect.hpp
     SortPoints.hpp
+    Transforms.hpp
     Vector.hpp
     VectorFunctions.hpp
     VectorOperators.hpp

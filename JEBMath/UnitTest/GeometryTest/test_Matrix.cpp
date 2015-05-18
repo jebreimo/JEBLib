@@ -1,4 +1,4 @@
-#include "JEBMath/JEBVectorMath.hpp"
+#include "JEBMath/Geometry/Matrix.hpp"
 
 #include <cmath>
 #include <JEBTest/JEBTest.hpp>
@@ -87,7 +87,7 @@ void test_MatrixVectorMultiplication()
     JT_EQUAL(v * m, product2);
 }
 
-JT_SUBTEST("Graphics",
+JT_SUBTEST("Geometry",
            test_Basics,
            test_Transpose,
            test_MatrixMatrixAddition,

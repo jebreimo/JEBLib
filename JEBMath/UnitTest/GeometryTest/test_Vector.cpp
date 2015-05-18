@@ -122,7 +122,7 @@ void test_Constructors()
     JT_EQUAL(v[3], 0);
 }
 
-JT_SUBTEST("Graphics",
+JT_SUBTEST("Geometry",
            test_Basics2D,
            test_Basics4D,
            test_Cross,

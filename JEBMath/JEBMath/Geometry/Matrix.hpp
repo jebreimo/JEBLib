@@ -7,13 +7,13 @@
 
 namespace JEBMath {
 
-template <typename T, size_t N>
+template <typename T, unsigned N>
 class Matrix
 {
 public:
-    static constexpr size_t rows() {return N;}
-    static constexpr size_t cols() {return N;}
-    static constexpr size_t size() {return N * N;}
+    static constexpr unsigned rows() {return N;}
+    static constexpr unsigned cols() {return N;}
+    static constexpr unsigned size() {return N * N;}
 
     Matrix()
     {}
@@ -51,12 +51,12 @@ public:
         return *this;
     }
 
-    T* operator[](size_t row)
+    T* operator[](unsigned row)
     {
         return &m_Values[row * cols()];
     }
 
-    const T* operator[](size_t row) const
+    const T* operator[](unsigned row) const
     {
         return &m_Values[row * cols()];
     }
@@ -95,5 +95,8 @@ private:
 };
 
 }
+
+#include "MatrixFunctions.hpp"
+#include "MatrixOperators.hpp"
 
 #endif

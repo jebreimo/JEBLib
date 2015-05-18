@@ -7,6 +7,7 @@ set(SRC
     test_Distance.cpp
     test_Intersections.cpp
     test_LineString.cpp
+    test_Matrix.cpp
     test_Plane3.cpp
     test_Polygon.cpp
     test_PolygonUnwinder.cpp

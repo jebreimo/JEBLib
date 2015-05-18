@@ -1,8 +1,6 @@
 #ifndef JEBMATH_GEOMETRY_HOMOGENEOUSTRANSFORMS_HPP
 #define JEBMATH_GEOMETRY_HOMOGENEOUSTRANSFORMS_HPP
 
-#include "Transforms.hpp"
-
 namespace JEBMath { namespace HomogeneousTransforms {
 
 Matrix<double, 4> scale4D(double s);

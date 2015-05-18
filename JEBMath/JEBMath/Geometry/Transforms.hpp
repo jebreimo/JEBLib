@@ -7,7 +7,7 @@
 
 namespace JEBMath { namespace Transforms {
 
-template <size_t N>
+template <unsigned N>
 Matrix<double, N> scale(double s)
 {
     Matrix<double, N> m;
@@ -17,7 +17,7 @@ Matrix<double, N> scale(double s)
     return m;
 }
 
-template <size_t N>
+template <unsigned N>
 Matrix<double, N + 1> scale(Vector<double, N>& scales)
 {
     Matrix<double, N + 1> m;
@@ -27,7 +27,7 @@ Matrix<double, N + 1> scale(Vector<double, N>& scales)
     return m;
 }
 
-template <size_t N>
+template <unsigned N>
 Matrix<double, N> rotateZ(double angle)
 {
     static_assert(N > 1, "Matrix must be of dimension 2 or greater.");
@@ -43,7 +43,7 @@ Matrix<double, N> rotateZ(double angle)
     return m;
 }
 
-template <size_t N>
+template <unsigned N>
 Matrix<double, N> rotateY(double angle)
 {
     static_assert(N > 2, "Matrix must be of dimension 3 or greater.");
@@ -60,7 +60,7 @@ Matrix<double, N> rotateY(double angle)
     return m;
 }
 
-template <size_t N>
+template <unsigned N>
 Matrix<double, 4> rotateX(double angle)
 {
     static_assert(N > 2, "Matrix must be of dimension 3 or greater.");
