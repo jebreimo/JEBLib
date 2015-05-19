@@ -11,9 +11,9 @@ template <typename T, unsigned N>
 class Matrix
 {
 public:
-    static constexpr unsigned rows() {return N;}
-    static constexpr unsigned cols() {return N;}
-    static constexpr unsigned size() {return N * N;}
+    static unsigned rows() {return N;}
+    static unsigned cols() {return N;}
+    static unsigned size() {return N * N;}
 
     Matrix()
     {}

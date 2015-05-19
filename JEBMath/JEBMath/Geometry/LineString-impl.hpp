@@ -4,14 +4,14 @@
 namespace JEBMath {
 
 template <typename T, unsigned N>
-unsigned getSegmentCount(const std::vector<Vector<T, N>>& lineString)
+size_t getSegmentCount(const std::vector<Vector<T, N>>& lineString)
 {
     return lineString.empty() ? 0 : lineString.size() - 1;
 }
 
 template <typename T, unsigned N>
 LineSegment<T, N> getSegment(const std::vector<Vector<T, N>>& lineString,
-                             unsigned i)
+                             size_t i)
 {
     assert(i < getSegmentCount(lineString));
     return LineSegment<T, N>(lineString[i], lineString[i + 1]);
@@ -31,7 +31,7 @@ LineSegment<T, N> getLastSegment(const std::vector<Vector<T, N>>& lineString)
 }
 
 template <typename T, unsigned N>
-void removeSegment(std::vector<Vector<T, N>>& lineString, unsigned i)
+void removeSegment(std::vector<Vector<T, N>>& lineString, size_t i)
 {
     lineString.erase(lineString.begin() + i, lineString.begin() + i + 1);
 }

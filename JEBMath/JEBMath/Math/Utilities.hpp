@@ -27,7 +27,7 @@ constexpr double toDegrees(double radians)
     return radians * 180 / Pi;
 }
 
-constexpr int modulo(int dividend, int divisor)
+inline int modulo(int dividend, int divisor)
 {
     if (dividend >= 0)
         return dividend % divisor;

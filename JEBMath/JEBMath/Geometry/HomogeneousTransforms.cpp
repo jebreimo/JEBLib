@@ -1,7 +1,7 @@
-#include "Transforms.hpp"
+#include "HomogeneousTransforms.hpp"
 
 #include <cmath>
-#include "VectorOperators.hpp"
+#include "Vector.hpp"
 
 namespace JEBMath { namespace HomogeneousTransforms {
 

@@ -172,7 +172,7 @@ Vector<T, N> vector(const Vector<U, N>& v)
 
 }
 
-#include "VectorFunctions.hpp"
 #include "VectorOperators.hpp"
+#include "VectorFunctions.hpp"
 
 #endif

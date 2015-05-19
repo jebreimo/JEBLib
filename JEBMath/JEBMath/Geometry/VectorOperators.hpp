@@ -2,8 +2,12 @@
 #define JEBMATH_GEOMETRY_VECTOROPERATORS_HPP
 
 #include <iostream>
+#include <type_traits>
 
 namespace JEBMath {
+
+#define JEB_TYPE_OF(expr) \
+  typename std::remove_cv<decltype(expr)>::type
 
 template <typename T, typename U, unsigned N>
 bool operator==(const Vector<T, N>& u, const Vector<U, N>& v)
@@ -86,9 +90,9 @@ Vector<T, N> operator-(const Vector<T, N>& v)
 
 template <typename T, typename U, unsigned N>
 auto operator+(const Vector<T, N>& u, const Vector<U, N>& v)
-    -> Vector<decltype(u[0] + v[0]), N>
+    -> Vector<JEB_TYPE_OF(u[0] + v[0]), N>
 {
-    Vector<decltype(u[0] + v[0]), N> w;
+    Vector<JEB_TYPE_OF(u[0] + v[0]), N> w;
     for (unsigned i = 0; i < N; ++i)
         w[i] = u[i] + v[i];
     return w;
@@ -96,9 +100,9 @@ auto operator+(const Vector<T, N>& u, const Vector<U, N>& v)
 
 template <typename T, typename U, unsigned N>
 auto operator+(const Vector<T, N>& u, U scalar)
-    -> Vector<decltype(u[0] + scalar), N>
+    -> Vector<JEB_TYPE_OF(u[0] + scalar), N>
 {
-    Vector<decltype(u[0] + scalar), N> w;
+    Vector<JEB_TYPE_OF(u[0] + scalar), N> w;
     for (unsigned i = 0; i < N; ++i)
         w[i] = u[i] + scalar;
     return w;
@@ -106,9 +110,9 @@ auto operator+(const Vector<T, N>& u, U scalar)
 
 template <typename T, typename U, unsigned N>
 auto operator-(const Vector<T, N>& u, const Vector<U, N>& v)
-    -> Vector<decltype(u[0] - v[0]), N>
+    -> Vector<JEB_TYPE_OF(u[0] - v[0]), N>
 {
-    Vector<decltype(u[0] - v[0]), N> w;
+    Vector<JEB_TYPE_OF(u[0] - v[0]), N> w;
     for (unsigned i = 0; i < N; ++i)
         w[i] = u[i] - v[i];
     return w;
@@ -116,9 +120,9 @@ auto operator-(const Vector<T, N>& u, const Vector<U, N>& v)
 
 template <typename T, typename U, unsigned N>
 auto operator-(const Vector<T, N>& u, U scalar)
-    -> Vector<decltype(u[0] - scalar), N>
+    -> Vector<JEB_TYPE_OF(u[0] - scalar), N>
 {
-    Vector<decltype(u[0] - scalar), N> w;
+    Vector<JEB_TYPE_OF(u[0] - scalar), N> w;
     for (unsigned i = 0; i < N; ++i)
         w[i] = u[i] - scalar;
     return w;
@@ -126,9 +130,9 @@ auto operator-(const Vector<T, N>& u, U scalar)
 
 template <typename T, typename U, unsigned N>
 auto operator/(const Vector<T, N>& u, U scalar)
-    -> Vector<decltype(u[0] / scalar), N>
+    -> Vector<JEB_TYPE_OF(u[0] / scalar), N>
 {
-    Vector<decltype(u[0] / scalar), N> w;
+    Vector<JEB_TYPE_OF(u[0] / scalar), N> w;
     for (unsigned i = 0; i < N; ++i)
         w[i] = u[i] / scalar;
     return w;
@@ -136,7 +140,7 @@ auto operator/(const Vector<T, N>& u, U scalar)
 
 template <typename T, typename U, unsigned N>
 auto operator*(const Vector<T, N>& u, const Vector<U, N>& v)
-    -> decltype(u[0] * v[0])
+    -> JEB_TYPE_OF(u[0] * v[0])
 {
     auto result = T() * U();
     for (unsigned i = 0; i < N; ++i)
@@ -146,9 +150,9 @@ auto operator*(const Vector<T, N>& u, const Vector<U, N>& v)
 
 template <typename T, typename U, unsigned N>
 auto operator*(const Vector<T, N>& u, U scalar)
-    -> Vector<decltype(u[0] * scalar), N>
+    -> Vector<JEB_TYPE_OF(u[0] * scalar), N>
 {
-    Vector<decltype(u[0] * scalar), N> w;
+    Vector<JEB_TYPE_OF(u[0] * scalar), N> w;
     for (unsigned i = 0; i < N; ++i)
         w[i] = u[i] * scalar;
     return w;
@@ -156,7 +160,7 @@ auto operator*(const Vector<T, N>& u, U scalar)
 
 template <typename T, typename U, unsigned N>
 auto operator*(U scalar, const Vector<T, N>& v)
-    -> Vector<decltype(v[0] + scalar), N>
+    -> Vector<JEB_TYPE_OF(v[0] + scalar), N>
 {
     return v * scalar;
 }

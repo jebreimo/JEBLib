@@ -9,7 +9,7 @@ namespace JEBMath {
 
 template <typename T, unsigned N>
 LineSegment<T, N> getSegment(const std::vector<Vector<T, N>>& lineString,
-                             unsigned i);
+                             size_t i);
 
 template <typename T, unsigned N>
 LineSegment<T, N> getFirstSegment(
@@ -20,10 +20,10 @@ LineSegment<T, N> getLastSegment(
         const std::vector<Vector<T, N>>& lineString);
 
 template <typename T, unsigned N>
-void removeSegment(std::vector<Vector<T, N>>& lineString, unsigned i);
+void removeSegment(std::vector<Vector<T, N>>& lineString, size_t i);
 
 template <typename T, unsigned N>
-unsigned getSegmentCount(const std::vector<Vector<T, N>>& lineString);
+size_t getSegmentCount(const std::vector<Vector<T, N>>& lineString);
 
 template <typename T, unsigned N>
 std::pair<Vector<T, N>, Vector<T, N>> getBoundingBox(

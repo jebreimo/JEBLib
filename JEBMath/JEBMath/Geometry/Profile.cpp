@@ -110,7 +110,7 @@ double interpolateY(const Profile& prof,
                     double xc,
                     ConflictResolution pick)
 {
-    size_t i = firstSegmentAt(prof, xc);
+    auto i = firstSegmentAt(prof, xc);
     if (i == ::JEBMath::InvalidIndex || i == getSegmentCount(prof))
         return ::JEBMath::InvalidDouble;
     else if (xc != getX(prof[i + 1]))
@@ -121,7 +121,7 @@ double interpolateY(const Profile& prof,
     // conflict resolution method to pick the elevation.
     if (getX(prof[i]) != xc)
       i++;
-    double min = getY(prof[i]), max = getY(prof[i]);
+    auto min = getY(prof[i]), max = getY(prof[i]);
     while (i < prof.size() && getX(prof[i]) == getX(prof[i + 1]))
     {
         i++;
@@ -143,7 +143,7 @@ size_t findProfileSegment(const Profile& prof, double xc)
     size_t min = 0, max = prof.size();
     while (min < max)
     {
-        size_t mid = (min + max) / 2;
+        auto mid = (min + max) / 2;
         if (getX(prof[mid]) > xc)
             max = mid - 1;
         else
@@ -196,7 +196,7 @@ size_t upperBound(const Profile& prof, double xc)
 
 size_t firstSegmentAt(const Profile& prof, double xc)
 {
-    size_t n = lowerBound(prof, xc);
+    auto n = lowerBound(prof, xc);
     if (n > 0)
         return n - 1;
     else if (getX(prof[0]) == xc)
@@ -207,7 +207,7 @@ size_t firstSegmentAt(const Profile& prof, double xc)
 
 size_t lastSegmentAt(const Profile& prof, double xc)
 {
-    size_t n = upperBound(prof, xc);
+    auto n = upperBound(prof, xc);
     if (n == 0)
         return ::JEBMath::InvalidIndex;
     else if (n < prof.size())
@@ -223,12 +223,12 @@ bool nearestPointBefore(Vector<double, 2>& nearestPoint,
                         const Profile& prof,
                         const Vector<double, 2>& point)
 {
-    size_t i = lastSegmentAt(prof, getX(point));
-    double minDist = numeric_limits<double>::max();
+    auto i = lastSegmentAt(prof, getX(point));
+    auto minDist = numeric_limits<double>::max();
     if (i < getSegmentCount(prof) && getX(prof[i + 1]) > getX(point))
     {
-        double yt = getYAtX(getSegment(prof, i), getX(point));
-        double dy = getY(getSegment(prof, i).getVector());
+        auto yt = getYAtX(getSegment(prof, i), getX(point));
+        auto dy = getY(getSegment(prof, i).getVector());
         if ((yt <= getY(point) && dy >= 0) || (yt >= getY(point) && dy <= 0))
         {
             minDist = fabs(yt - getY(point));
@@ -244,7 +244,7 @@ bool nearestPointBefore(Vector<double, 2>& nearestPoint,
     while (::JEBMath::isValid(i) && getX(point) - getX(prof[i + 1]) < minDist)
     {
         auto candidate = getNearestPoint(getSegment(prof, i), point);
-        double dist = getDistance(candidate, point);
+        auto dist = getDistance(candidate, point);
         if (dist < minDist)
         {
             nearestPoint = candidate;
@@ -262,12 +262,12 @@ bool nearestPointAfter(Vector<double, 2>& nearestPoint,
                        const Profile& prof,
                        const Vector<double, 2>& point)
 {
-    size_t i = firstSegmentAt(prof, getX(point));
-    double minDist = numeric_limits<double>::max();
+    auto i = firstSegmentAt(prof, getX(point));
+    auto minDist = numeric_limits<double>::max();
     if (i < getSegmentCount(prof) && getX(prof[i]) < getX(point))
     {
-        double yt = getYAtX(getSegment(prof, i), getX(point));
-        double dy = getY(getSegment(prof, i).getVector());
+        auto yt = getYAtX(getSegment(prof, i), getX(point));
+        auto dy = getY(getSegment(prof, i).getVector());
         if ((yt <= getY(point) && dy <= 0) || (yt >= getY(point) && dy >= 0))
         {
             minDist = fabs(yt - getY(point));
@@ -284,7 +284,7 @@ bool nearestPointAfter(Vector<double, 2>& nearestPoint,
     while (i < getSegmentCount(prof) && getX(prof[i]) - getX(point) < minDist)
     {
         auto candidate = getNearestPoint(getSegment(prof, i), point);
-        double dist = getDistance(candidate, point);
+        auto dist = getDistance(candidate, point);
         if (dist < minDist)
         {
             nearestPoint = candidate;
@@ -304,10 +304,10 @@ bool firstIntersection(Vector<double, 2>& isect,
     if (getX(v) == 0)
         return firstIntersectionOnVertLineSegment(isect, line, prof);
 
-    double xMin = std::min(getX(line.getStart()), getX(line.getEnd()));
-    double xMax = std::max(getX(line.getStart()), getX(line.getEnd()));
-    size_t iMin = firstSegmentAt(prof, xMin);
-    size_t iMax = lastSegmentAt(prof, xMax);
+    auto xMin = std::min(getX(line.getStart()), getX(line.getEnd()));
+    auto xMax = std::max(getX(line.getStart()), getX(line.getEnd()));
+    auto iMin = firstSegmentAt(prof, xMin);
+    auto iMax = lastSegmentAt(prof, xMax);
     if (iMax == ::JEBMath::InvalidIndex || iMin == getSegmentCount(prof))
         return false;
     if (iMax == getSegmentCount(prof))
@@ -316,7 +316,7 @@ bool firstIntersection(Vector<double, 2>& isect,
         iMin = 0;
     if (getX(v) < 0)
     {
-        for (size_t i = iMax; i != ::JEBMath::InvalidIndex; i--)
+        for (auto i = iMax; i != ::JEBMath::InvalidIndex; i--)
         {
             if (intersection(isect, getSegment(prof, i), line, 0) == INTERSECTING)
                 return true;
@@ -324,7 +324,7 @@ bool firstIntersection(Vector<double, 2>& isect,
     }
     else
     {
-        for (size_t i = iMin; i <= iMax; i++)
+        for (auto i = iMin; i <= iMax; i++)
         {
             if (intersection(isect, getSegment(prof, i), line, 0) == INTERSECTING)
                 return true;
