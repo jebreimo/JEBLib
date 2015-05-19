@@ -3,6 +3,7 @@
 
 #include <cfloat>
 #include <climits>
+#include <cstdint>
 #include "JEBMath/JEBMathDefinitions.hpp"
 
 namespace JEBMath {
