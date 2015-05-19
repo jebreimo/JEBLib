@@ -33,7 +33,7 @@ typedef std::pair<std::string::iterator, std::string::iterator>
   */
 std::string& append(std::string& str, uint32_t chr);
 
-/** @brief Iterates over the values between @a first and @a last and appends
+/** @brief Iterates over the values from @a first to @a last and appends
   *     them to @a dst.
   *
   * The values in the range must be convertible to std::string.

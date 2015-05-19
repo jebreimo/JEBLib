@@ -97,7 +97,7 @@ bool advanceWhileEqual(CodePointIterator<Decoder1>& str,
 
 template <typename Decoder1, typename Decoder2, typename BinaryPred>
 CodePointIterator<Decoder1> search(CodePointIterator<Decoder1>& str,
-                                   CodePointIterator<Decoder2>& cmp,
+                                   const CodePointIterator<Decoder2>& cmp,
                                    BinaryPred compare)
 {
     while (true)
@@ -118,7 +118,7 @@ CodePointIterator<Decoder1> search(CodePointIterator<Decoder1>& str,
 
 template <typename Decoder1, typename Decoder2>
 CodePointIterator<Decoder1> search(CodePointIterator<Decoder1>& str,
-                                   CodePointIterator<Decoder2> cmp)
+                                   const CodePointIterator<Decoder2> cmp)
 {
     return search(str, cmp, [](uint32_t a, uint32_t b){return a == b;});
 }
