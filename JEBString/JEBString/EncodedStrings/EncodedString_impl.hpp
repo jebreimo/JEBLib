@@ -40,13 +40,46 @@ bool contains(EncodedRange<It, Enc> str, uint32_t chr)
     return CodePoints::advanceUntil(it, [=](uint32_t c){return c == chr;});
 }
 
+struct EqualEncodings
+{};
+
+struct DifferentEncodings
+{};
+
+template <bool SameEncoding>
+struct CompareEncodings
+{};
+
+template <>
+struct CompareEncodings<true>
+{
+    typedef EqualEncodings Type;
+};
+
+template <>
+struct CompareEncodings<false>
+{
+    typedef DifferentEncodings Type;
+};
+
+template <typename InpIt, typename Enc1, typename OutIt, typename Enc2>
+void copyImpl(EncodedRange<InpIt, Enc1> src, Encoder<OutIt, Enc2> dst,
+              EqualEncodings)
+{
+    std::copy(begin(src), end(src), dst.iterator());
+}
+
+template <typename InpIt, typename Enc1, typename OutIt, typename Enc2>
+void copyImpl(EncodedRange<InpIt, Enc1> src, Encoder<OutIt, Enc2> dst,
+              DifferentEncodings)
+{
+    copy(makeForwardIterator(src), dst);
+}
+
 template <typename InpIt, typename Enc1, typename OutIt, typename Enc2>
 void copy(EncodedRange<InpIt, Enc1> src, Encoder<OutIt, Enc2> dst)
 {
-    if (src.encoding().encoding == dst.encoding().encoding)
-        std::copy(begin(src), end(src), dst.iterator());
-    else
-        copy(makeForwardIterator(src), dst);
+    copyImpl(src, dst, CompareEncodings<Enc1::encoding == Enc2::encoding>::Type());
 }
 
 template <typename It1, typename Enc1, typename It2, typename Enc2>
