@@ -1,14 +1,15 @@
 #include "ProfileIterator.hpp"
 
 #include <limits>
-#include "JEBMath/Math/Constants.hpp"
+#include "../Math/Constants.hpp"
+#include "LineString.hpp"
 #include "Profile.hpp"
 
-namespace JEBMath { namespace Dim2 {
+namespace JEBMath {
 
 using namespace std;
 
-ProfileIterator::ProfileIterator(const LineStringD* prof, size_t* index)
+ProfileIterator::ProfileIterator(const Profile* prof, size_t* index)
     : m_Profile(prof),
       m_Index(index),
       m_UndefinedHeight(numeric_limits<double>::max())
@@ -26,7 +27,7 @@ void ProfileIterator::next()
         ++(*m_Index);
 }
 
-size_t ProfileIterator::index() const
+size_t ProfileIterator::getIndex() const
 {
     return *m_Index;
 }
@@ -36,12 +37,12 @@ void ProfileIterator::setIndex(size_t index)
     *m_Index = std::min(index, m_Profile->size());
 }
 
-const LineStringD* ProfileIterator::profile() const
+const Profile* ProfileIterator::getProfile() const
 {
     return m_Profile;
 }
 
-double ProfileIterator::undefinedHeight() const
+double ProfileIterator::getUndefinedHeight() const
 {
     return m_UndefinedHeight;
 }
@@ -51,38 +52,42 @@ void ProfileIterator::setUndefinedHeight(double undefinedHeight)
     m_UndefinedHeight = undefinedHeight;
 }
 
-PointD ProfileIterator::point() const
+Vector<double, 2> ProfileIterator::getPoint() const
 {
     return (*m_Profile)[*m_Index];
 }
 
-PointD ProfileIterator::pointAtX(double x) const
+Vector<double, 2> ProfileIterator::getPointAtX(double x) const
 {
-    return point2(x, yAtX(x));
+    return vector2(x, getYAtX(x));
 }
 
-double ProfileIterator::x() const
+double ProfileIterator::getX() const
 {
-    return JEBMath::x(point());
+    using JEBMath::getX;
+    return getX(getPoint());
 }
 
-double ProfileIterator::y() const
+double ProfileIterator::getY() const
 {
-    return JEBMath::y(point());
+    using JEBMath::getY;
+    return getY(getPoint());
 }
 
-double ProfileIterator::yAtX(double x) const
+double ProfileIterator::getYAtX(double x) const
 {
-    double y = Profile::interpolateY(*m_Profile, x);
-    if (!::JEBMath::isValid(y))
+    using JEBMath::isValid;
+    double y = interpolateY(*m_Profile, x);
+    if (!isValid(y))
         return m_UndefinedHeight;
     else
         return y;
 }
 
-LineSegmentD ProfileIterator::segment() const
+LineSegment<double, 2> ProfileIterator::getSegment() const
 {
-    return JEBMath::segment(*m_Profile, *m_Index - 1);
+    using JEBMath::getSegment;
+    return getSegment(*m_Profile, *m_Index - 1);
 }
 
-}}
+}

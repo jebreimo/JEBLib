@@ -1,191 +1,182 @@
 #include <utility>
 #include "JEBBase/Algorithms/Sort.hpp"
-#include "JEBMath/Math/Comparisons.hpp"
+#include "../Math/Comparisons.hpp"
+#include "../Math/Utilities.hpp"
 #include "Intersections.hpp"
 
-namespace JEBMath { namespace Dim2 {
+namespace JEBMath {
 
-bool containsPoint(const LineD& l, const PointD& p, double epsilon)
+bool containsPoint(const Line<double, 2>& l, const Vector<double, 2>& p, double epsilon)
 {
-    return fabs(normal(l.vector()) * (p - l.point())) <= epsilon;
+    return fabs(getNormal(l.getVector()) * (p - l.getPoint())) <= epsilon;
 }
 
-bool containsPoint(const LineSegmentD& l, const PointD& p, double epsilon)
+bool containsPoint(const LineSegment<double, 2>& l, const Vector<double, 2>& p, double epsilon)
 {
-    VectorD lv = l.vector();
-    VectorD pv = p - l.start();
-    return fabs(normal(lv) * pv) <= epsilon &&
-           fabs(0.5 - (lv * pv) / lengthSquared(lv)) <= 0.5 + epsilon;
+    auto lv = l.getVector();
+    auto pv = p - l.getStart();
+    return std::fabs(getNormal(lv) * pv) <= epsilon &&
+           std::fabs(0.5 - (lv * pv) / getLengthSquared(lv)) <= 0.5 + epsilon;
 }
 
-bool areParallel(const LineSegmentD& a, const LineD& b, double epsilon)
+bool areParallel(const LineSegment<double, 2>& a, const Line<double, 2>& b, double epsilon)
 {
-    double tmp = a.vector() * normal(b.vector());
+    double tmp = a.getVector() * getNormal(b.getVector());
     return std::fabs(tmp) <= epsilon;
 }
 
-bool areParallel(const LineD& a, const LineD& b, double epsilon)
+bool areParallel(const Line<double, 2>& a, const Line<double, 2>& b, double epsilon)
 {
-    double tmp = a.vector() * normal(b.vector());
+    double tmp = a.getVector() * getNormal(b.getVector());
     return std::fabs(tmp) <= epsilon;
 }
 
-bool areCoincident(const LineD& a, const LineD& b, double epsilon)
+bool areCoincident(const Line<double, 2>& a, const Line<double, 2>& b, double epsilon)
 {
-    return containsPoint(a, b.point(), epsilon) &&
+    return containsPoint(a, b.getPoint(), epsilon) &&
            areParallel(a, b, epsilon);
 }
 
 LineRelationship intersection(double& offsetA,
-                              const LineSegmentD& a,
-                              const LineD& b,
+                              const LineSegment<double, 2>& a,
+                              const Line<double, 2>& b,
                               double epsilon)
 {
-    VectorD vA = a.vector();
-    VectorD nB = normal(b.vector());
+    auto vA = a.getVector();
+    auto nB = getNormal(b.getVector());
 
     double denominator = vA * nB;
     if (equal<double>(denominator, 0, epsilon))
         // Lines are parallel or overlapping. Overlapping lines are not
         // considered as intersecting.
-        return Nonintersecting;
+        return NONINTERSECTING;
 
-    VectorD vAB = b.point() - a.start();
+    auto vAB = b.getPoint() - a.getStart();
     offsetA = vAB * nB / denominator;
-    return (0 <= offsetA && offsetA <= 1) ? Intersecting : Nonintersecting;
+    return (0 <= offsetA && offsetA <= 1) ? INTERSECTING : NONINTERSECTING;
 }
 
 LineRelationship intersection(double& offsetA,
                               double& offsetB,
-                              const LineD& a,
-                              const LineD& b,
+                              const Line<double, 2>& a,
+                              const Line<double, 2>& b,
                               double epsilon)
 {
-    VectorD vA = a.vector();
-    VectorD nB = normal(b.vector());
+    auto vA = a.getVector();
+    auto nB = getNormal(b.getVector());
 
-    double denominator = vA * nB;
+    auto denominator = vA * nB;
     if (equal<double>(denominator, 0, epsilon))
     {
-        if (equal<double>(nB * (a.point() - b.point()), epsilon))
-          return Overlapping;
+        if (equal<double>(nB * (a.getPoint() - b.getPoint()), epsilon))
+          return OVERLAPPING;
         else
-          return Nonintersecting;
+          return NONINTERSECTING;
     }
 
-    VectorD nA = normal(a.vector());
+    auto nA = getNormal(a.getVector());
 
-    VectorD vAB = b.point() - a.point();
+    auto vAB = b.getPoint() - a.getPoint();
 
     offsetA = vAB * nB / denominator;
     offsetB = vAB * nA / denominator;
 
-    return Intersecting;
+    return INTERSECTING;
 }
 
 LineRelationship intersection(double& offsetA,
                               double& offsetB,
-                              const LineSegmentD& a,
-                              const LineSegmentD& b,
+                              const LineSegment<double, 2>& a,
+                              const LineSegment<double, 2>& b,
                               double epsilon)
 {
     LineRelationship res = intersection(offsetA, offsetB,
-                                        LineD(a), LineD(b),
+                                        Line<double, 2>(a), Line<double, 2>(b),
                                         epsilon);
-    if (res == Overlapping)
-        return Undetermined;
-    else if (res == Intersecting &&
+    if (res == OVERLAPPING)
+        return UNDETERMINED;
+    else if (res == INTERSECTING &&
              inRange<double>(0, offsetA, 1, epsilon) &&
              inRange<double>(0, offsetB, 1, epsilon))
-        return Intersecting;
+        return INTERSECTING;
     else
-        return Nonintersecting;
+        return NONINTERSECTING;
 }
 
-LineRelationship intersection(PointD& intersectionPoint,
-                              const LineSegmentD& a,
-                              const LineSegmentD& b,
+LineRelationship intersection(Vector<double, 2>& intersectionPoint,
+                              const LineSegment<double, 2>& a,
+                              const LineSegment<double, 2>& b,
                               double epsilon)
 {
     double offsetA, offsetB;
     LineRelationship result = intersection(offsetA, offsetB, a, b, epsilon);
-    if (result == Intersecting)
-        intersectionPoint = a.pointAtT(offsetA);
+    if (result == INTERSECTING)
+        intersectionPoint = a.getPointAtT(offsetA);
     return result;
 }
 
-LineRelationship intersection(PointD& intersectionPoint,
-                              const LineSegmentD& a,
-                              const LineD& b,
+LineRelationship intersection(Vector<double, 2>& intersectionPoint,
+                              const LineSegment<double, 2>& a,
+                              const Line<double, 2>& b,
                               double epsilon)
 {
     double offset;
     LineRelationship result = intersection(offset, a, b, epsilon);
-    if (result == Intersecting)
-        intersectionPoint = a.pointAtT(offset);
+    if (result == INTERSECTING)
+        intersectionPoint = a.getPointAtT(offset);
     return result;
 }
 
-static double restrictValue(double value)
-{
-    if (value < 0)
-        return 0;
-    else if (value > 1)
-        return 1;
-    else
-        return value;
-}
-
 bool overlap(std::pair<double, double>& offsetsA,
-             const LineSegmentD& a,
-             const LineSegmentD& b,
+             const LineSegment<double, 2>& a,
+             const LineSegment<double, 2>& b,
              double epsilon)
 {
-    double ta0 = a.vector() * (b.start() - a.start()) / lengthSquared(a.vector());
-    double ta1 = a.vector() * (b.end() - a.start()) / lengthSquared(a.vector());
+    auto ta0 = a.getVector() * (b.getStart() - a.getStart()) / getLengthSquared(a.getVector());
+    auto ta1 = a.getVector() * (b.getEnd() - a.getStart()) / getLengthSquared(a.getVector());
     if ((ta0 > 1 && ta1 > 1) || (ta0 < 0 && ta1 < 0))
         return false;
-    offsetsA.first = restrictValue(ta0);
-    offsetsA.second = restrictValue(ta1);
+    offsetsA.first = getClamped(ta0, 0.0, 1.0);
+    offsetsA.second = getClamped(ta1, 0.0, 1.0);
     return true;
 }
 
 bool overlap(std::pair<double, double>& offsetsA,
              std::pair<double, double>& offsetsB,
-             const LineSegmentD& a,
-             const LineSegmentD& b,
+             const LineSegment<double, 2>& a,
+             const LineSegment<double, 2>& b,
              double epsilon)
 {
     if (!overlap(offsetsA, a, b, epsilon))
         return false;
-    double tb0 = b.vector() * (a.start() - b.start()) / lengthSquared(b.vector());
-    double tb1 = b.vector() * (a.end() - b.start()) / lengthSquared(b.vector());
+    auto tb0 = b.getVector() * (a.getStart() - b.getStart()) / getLengthSquared(b.getVector());
+    auto tb1 = b.getVector() * (a.getEnd() - b.getStart()) / getLengthSquared(b.getVector());
     if (offsetsA.first > offsetsA.second)
         std::swap(tb0, tb1);
-    offsetsB.first = restrictValue(tb0);
-    offsetsB.second = restrictValue(tb1);
+    offsetsB.first = getClamped(tb0, 0.0, 1.0);
+    offsetsB.second = getClamped(tb1, 0.0, 1.0);
     return true;
 }
 
-bool intersects(const LineSegmentD& a, const LineSegmentD& b, double epsilon)
+bool intersects(const LineSegment<double, 2>& a, const LineSegment<double, 2>& b, double epsilon)
 {
   double offsetA, offsetB;
-  return intersection(offsetA, offsetB, a, b, epsilon) == Intersecting;
+  return intersection(offsetA, offsetB, a, b, epsilon) == INTERSECTING;
 }
 
-bool intersects(const LineSegmentD& a, const LineD& b, double epsilon)
+bool intersects(const LineSegment<double, 2>& a, const Line<double, 2>& b, double epsilon)
 {
     double offsetA;
-    return intersection(offsetA, a, b, epsilon) == Intersecting;
+    return intersection(offsetA, a, b, epsilon) == INTERSECTING;
 }
 
-bool intersects(const LineD& a, const LineSegmentD& b, double epsilon)
+bool intersects(const Line<double, 2>& a, const LineSegment<double, 2>& b, double epsilon)
 {
     return intersects(b, a, epsilon);
 }
 
 //bool nextIntersection(size_t& intersectingSegment,
-//                      const LineD& line,
+//                      const Line<double, 2>& line,
 //                      const LineStringD& ls,
 //                      const RangeS& lsRange)
 //{
@@ -201,4 +192,4 @@ bool intersects(const LineD& a, const LineSegmentD& b, double epsilon)
 //  return false;
 //}
 
-}}
+}

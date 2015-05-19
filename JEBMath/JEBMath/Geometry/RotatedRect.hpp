@@ -5,17 +5,17 @@
 #include "Rect.hpp"
 #include "LineString.hpp"
 
-#include <JEBDebug/Debug.hpp>
-
-namespace JEBMath { namespace Dim2 {
+namespace JEBMath {
 
 class RotatedRect
 {
 public:
-    RotatedRect() : m_Angle(0) {}
+    RotatedRect()
+        : m_Angle(0)
+    {}
 
     template <typename T, typename U>
-    RotatedRect(const Point<T, 2>& origin,
+    RotatedRect(const Vector<T, 2>& origin,
                 const Vector<U, 2>& size,
                 double angle = 0.0)
         : m_Origin(origin),
@@ -30,29 +30,27 @@ public:
           m_Angle(0)
     {}
 
-    Point<double, 2> center() const
+    Vector<double, 2> getCenter() const
     {
-        using JEBMath::rotate;
-        return m_Origin + rotate(m_Size / 2, m_Angle);
+        return m_Origin + getRotated(m_Size / 2, m_Angle);
     }
 
-    void setCenter(const Point<double, 2>& center)
+    void setCenter(const Vector<double, 2>& center)
     {
-        using JEBMath::rotate;
-        m_Origin = center - rotate(m_Size / 2, m_Angle);
+        m_Origin = center - getRotated(m_Size / 2, m_Angle);
     }
 
-    const Point<double, 2>& origin() const
+    const Vector<double, 2>& getOrigin() const
     {
         return m_Origin;
     }
 
-    void setOrigin(const Point<double, 2>& origin)
+    void setOrigin(const Vector<double, 2>& origin)
     {
         m_Origin = origin;
     }
 
-    const Vector<double, 2>& size() const
+    const Vector<double, 2>& getSize() const
     {
         return m_Size;
     }
@@ -62,7 +60,7 @@ public:
         m_Size = size;
     }
 
-    double angle() const
+    double getAngle() const
     {
         return m_Angle;
     }
@@ -72,26 +70,30 @@ public:
         m_Angle = angle;
     }
 
-    Point<double, 2> point(size_t n) const
+    Vector<double, 2> getPoint(size_t n) const
     {
-        using JEBMath::rotate;
         switch (n & 0x3)
         {
-        case 0: return m_Origin;
-        case 1: return m_Origin + rotate(vector2(x(m_Size), 0.0), m_Angle);
-        case 2: return m_Origin + rotate(m_Size, m_Angle);
-        case 3: return m_Origin + rotate(vector2(0.0, y(m_Size)), m_Angle);
-        default: return Point<double, 2>{};
+        case 0:
+            return m_Origin;
+        case 1:
+            return m_Origin + getRotated(vector2(getX(m_Size), 0.0), m_Angle);
+        case 2:
+            return m_Origin + getRotated(m_Size, m_Angle);
+        case 3:
+            return m_Origin + getRotated(vector2(0.0, getY(m_Size)), m_Angle);
+        default:
+            return Vector<double, 2>{};
         }
     }
 
-    std::vector<Point<double, 2>> points() const
+    std::vector<Vector<double, 2>> getPoints() const
     {
         auto c = std::cos(m_Angle);
         auto s = std::sin(m_Angle);
-        auto xw = x(m_Size) * c, xh = x(m_Size) * s;
-        auto yw = y(m_Size) * s, yh = y(m_Size) * c;
-        return std::vector<Point<double, 2>>{
+        auto xw = getX(m_Size) * c, xh = getX(m_Size) * s;
+        auto yw = getY(m_Size) * s, yh = getY(m_Size) * c;
+        return std::vector<Vector<double, 2>>{
                 m_Origin,
                 m_Origin + vector2(xw, xh),
                 m_Origin + vector2(xw - yw, xh + yh),
@@ -99,35 +101,35 @@ public:
                 };
     }
 
-    void rotate(const Point<double, 2>& point, double angle)
+    void rotate(const Vector<double, 2>& point, double angle)
     {
-        using JEBMath::rotate;
         m_Angle += angle;
-        m_Origin = point + rotate(m_Origin - point, angle);
+        m_Origin = point + getRotated(m_Origin - point, angle);
     }
 
     void rotateCenter(double angle)
     {
-        rotate(center(), angle);
+        rotate(getCenter(), angle);
     }
 private:
-    Point<double, 2> m_Origin;
+    Vector<double, 2> m_Origin;
     Vector<double, 2> m_Size;
     double m_Angle;
 };
 
-inline std::pair<Point<double, 2>, Point<double, 2>> boundingBox(
+inline std::pair<Vector<double, 2>, Vector<double, 2>> getBoundingBox(
         const RotatedRect& rect)
 {
-    return boundingBox(rect.points());
+    return getBoundingBox(rect.getPoints());
 }
 
 inline std::ostream& operator<<(std::ostream& os, const RotatedRect& r)
 {
-    return os << "[" << r.origin() << " " << r.size()
-              << " " << r.angle() << "]";
+    return os << "{\"origin\":" << r.getOrigin()
+              << ", \"size\":" << r.getSize()
+              << ", \"angle\":" << r.getAngle() << "}";
 }
 
-}}
+}
 
 #endif

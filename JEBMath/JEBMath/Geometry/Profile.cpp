@@ -2,37 +2,84 @@
 
 #include <cassert>
 #include <limits>
-#include "JEBMath/Math/Constants.hpp"
+#include "../Math/Constants.hpp"
 #include "Distance.hpp"
 #include "Intersections.hpp"
 
-namespace JEBMath { namespace Dim2 {
-
-namespace Profile
-{
+namespace JEBMath {
 
 using namespace std;
 
-static int compare(double a, double b)
+namespace
 {
-    if (a < b)
-        return -1;
-    else
-        return a > b;
+    int compare(double a, double b)
+    {
+        if (a < b)
+            return -1;
+        else
+            return a > b;
+    }
+
+    double getTAtX(const LineSegment<double, 2>& l, double xc)
+    {
+        return (xc - getX(l.getStart())) / getX(l.getVector());
+    }
+
+    double getYAtX(const LineSegment<double, 2>& l, double xc)
+    {
+        return getY(l.getStart()) + getTAtX(l, xc) * getY(l.getVector());
+    }
+
+    bool firstIntersectionOnVertLineSegment(Vector<double, 2>& isect,
+                                            const LineSegment<double, 2>& line,
+                                            const Profile& prof)
+    {
+        double lMin = std::min(getY(line.getStart()), getY(line.getEnd()));
+        double lMax = std::max(getY(line.getStart()), getY(line.getEnd()));
+        double pMin = interpolateY(prof, getX(line.getStart()), PickLowest);
+        double pMax = interpolateY(prof, getX(line.getStart()), PickHighest);
+        if (getY(line.getVector()) >= 0)
+        {
+            if (pMin <= lMin && lMin <= pMax)
+            {
+                isect = line.getStart();
+                return true;
+            }
+            else if (lMin <= pMin && pMin <= lMax)
+            {
+                isect = vector2(getX(line.getStart()), pMin);
+                return true;
+            }
+        }
+        else
+        {
+            if (pMin <= lMax && lMax <= pMax)
+            {
+                isect = line.getStart();
+                return true;
+            }
+            else if (lMin <= pMax && pMax <= lMax)
+            {
+                isect = vector2(getX(line.getStart()), pMax);
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
-bool isProfile(const LineStringD& prof)
+bool isProfile(const Profile& prof)
 {
-    if (segmentCount(prof) == 0)
+    if (getSegmentCount(prof) == 0)
         return false;
     for (size_t i = 1; i < prof.size(); ++i)
     {
-        if (x(prof[i - 1]) > x(prof[i]))
+        if (getX(prof[i - 1]) > getX(prof[i]))
             return false;
         int direction = 0;
-        while (x(prof[i - 1]) == x(prof[i]))
+        while (getX(prof[i - 1]) == getX(prof[i]))
         {
-            int curDirection = compare(y(prof[i - 1]), y(prof[i]));
+            int curDirection = compare(getY(prof[i - 1]), getY(prof[i]));
             if (direction == 0)
                 direction = curDirection;
             else if (curDirection != 0 && curDirection != direction)
@@ -44,54 +91,44 @@ bool isProfile(const LineStringD& prof)
     return true;
 }
 
-size_t indexOfBottomPoint(const LineStringD& prof)
+size_t indexOfBottomPoint(const Profile& prof)
 {
     size_t index = ::JEBMath::InvalidIndex;
     double bottom = -std::numeric_limits<double>::max();
     for (size_t i = 0; i < prof.size(); i++)
     {
-        if (y(prof[i]) < bottom)
+        if (getY(prof[i]) < bottom)
         {
             index = i;
-            bottom = y(prof[i]);
+            bottom = getY(prof[i]);
         }
     }
     return index;
 }
 
-static double tAtX(const LineSegmentD& l, double xc)
-{
-    return (xc - x(l.start())) / x(l.vector());
-}
-
-static double yAtX(const LineSegmentD& l, double xc)
-{
-    return y(l.start()) + tAtX(l, xc) * y(l.vector());
-}
-
-double interpolateY(const LineStringD& prof,
+double interpolateY(const Profile& prof,
                     double xc,
                     ConflictResolution pick)
 {
     size_t i = firstSegmentAt(prof, xc);
-    if (i == ::JEBMath::InvalidIndex || i == segmentCount(prof))
+    if (i == ::JEBMath::InvalidIndex || i == getSegmentCount(prof))
         return ::JEBMath::InvalidDouble;
-    else if (xc != x(prof[i + 1]))
-        return yAtX(segment(prof, i), xc);
+    else if (xc != getX(prof[i + 1]))
+        return getYAtX(getSegment(prof, i), xc);
 
     // If x equals the end of a line segment, it is necessary to check
     // the next segment to see if it's vertical or not. If it is, use the
     // conflict resolution method to pick the elevation.
-    if (x(prof[i]) != xc)
+    if (getX(prof[i]) != xc)
       i++;
-    double min = y(prof[i]), max = y(prof[i]);
-    while (i < prof.size() && x(prof[i]) == x(prof[i + 1]))
+    double min = getY(prof[i]), max = getY(prof[i]);
+    while (i < prof.size() && getX(prof[i]) == getX(prof[i + 1]))
     {
         i++;
-        if (y(prof[i]) < min)
-            min = y(prof[i]);
-        else if (max < x(prof[i]))
-            max = y(prof[i]);
+        if (getY(prof[i]) < min)
+            min = getY(prof[i]);
+        else if (max < getX(prof[i]))
+            max = getY(prof[i]);
     }
     if (pick == PickHighest)
         return max;
@@ -101,13 +138,13 @@ double interpolateY(const LineStringD& prof,
         return min;
 }
 
-size_t findProfileSegment(const LineStringD& prof, double xc)
+size_t findProfileSegment(const Profile& prof, double xc)
 {
     size_t min = 0, max = prof.size();
     while (min < max)
     {
         size_t mid = (min + max) / 2;
-        if (x(prof[mid]) > xc)
+        if (getX(prof[mid]) > xc)
             max = mid - 1;
         else
             min = mid;
@@ -129,13 +166,13 @@ struct IntersectionPos
     LineStringPos b;
 };
 
-size_t lowerBound(const LineStringD& prof, double xc)
+size_t lowerBound(const Profile& prof, double xc)
 {
     size_t min = 0, max = prof.size();
     while (min < max)
     {
         size_t mid = (min + max) / 2;
-        if (x(prof[mid]) < xc)
+        if (getX(prof[mid]) < xc)
             min = mid + 1;
         else
             max = mid;
@@ -143,13 +180,13 @@ size_t lowerBound(const LineStringD& prof, double xc)
     return min;
 }
 
-size_t upperBound(const LineStringD& prof, double xc)
+size_t upperBound(const Profile& prof, double xc)
 {
     size_t min = 0, max = prof.size();
     while (min < max)
     {
         size_t mid = (min + max) / 2;
-        if (xc < x(prof[mid]))
+        if (xc < getX(prof[mid]))
             max = mid;
         else
             min = mid + 1;
@@ -157,57 +194,57 @@ size_t upperBound(const LineStringD& prof, double xc)
     return min;
 }
 
-size_t firstSegmentAt(const LineStringD& prof, double xc)
+size_t firstSegmentAt(const Profile& prof, double xc)
 {
     size_t n = lowerBound(prof, xc);
     if (n > 0)
         return n - 1;
-    else if (x(prof[0]) == xc)
+    else if (getX(prof[0]) == xc)
         return 0;
     else
         return ::JEBMath::InvalidIndex;
 }
 
-size_t lastSegmentAt(const LineStringD& prof, double xc)
+size_t lastSegmentAt(const Profile& prof, double xc)
 {
     size_t n = upperBound(prof, xc);
     if (n == 0)
         return ::JEBMath::InvalidIndex;
     else if (n < prof.size())
         return n - 1;
-    else if (x(prof.back()) == xc)
+    else if (getX(prof.back()) == xc)
         return n - 2;
     else
         return n - 1;
 }
 
-bool nearestPointBefore(PointD& nearestPoint,
+bool nearestPointBefore(Vector<double, 2>& nearestPoint,
                         size_t& segmentIndex,
-                        const LineStringD& prof,
-                        const PointD& point)
+                        const Profile& prof,
+                        const Vector<double, 2>& point)
 {
-    size_t i = lastSegmentAt(prof, x(point));
+    size_t i = lastSegmentAt(prof, getX(point));
     double minDist = numeric_limits<double>::max();
-    if (i < segmentCount(prof) && x(prof[i + 1]) > x(point))
+    if (i < getSegmentCount(prof) && getX(prof[i + 1]) > getX(point))
     {
-        double yt = yAtX(segment(prof, i), x(point));
-        double dy = y(JEBMath::segment(prof, i).vector());
-        if ((yt <= y(point) && dy >= 0) || (yt >= y(point) && dy <= 0))
+        double yt = getYAtX(getSegment(prof, i), getX(point));
+        double dy = getY(getSegment(prof, i).getVector());
+        if ((yt <= getY(point) && dy >= 0) || (yt >= getY(point) && dy <= 0))
         {
-            minDist = fabs(yt - y(point));
-            nearestPoint = point2(x(point), yt);
+            minDist = fabs(yt - getY(point));
+            nearestPoint = vector2(getX(point), yt);
             segmentIndex = i;
             i--;
         }
     }
-    else if (i == segmentCount(prof))
+    else if (i == getSegmentCount(prof))
     {
         i--;
     }
-    while (::JEBMath::isValid(i) && x(point) - x(prof[i + 1]) < minDist)
+    while (::JEBMath::isValid(i) && getX(point) - getX(prof[i + 1]) < minDist)
     {
-        PointD candidate = ::JEBMath::nearestPoint(segment(prof, i), point);
-        double dist = distance(candidate, point);
+        auto candidate = getNearestPoint(getSegment(prof, i), point);
+        double dist = getDistance(candidate, point);
         if (dist < minDist)
         {
             nearestPoint = candidate;
@@ -220,21 +257,21 @@ bool nearestPointBefore(PointD& nearestPoint,
 }
 
 
-bool nearestPointAfter(PointD& nearestPoint,
+bool nearestPointAfter(Vector<double, 2>& nearestPoint,
                        size_t& segmentIndex,
-                       const LineStringD& prof,
-                       const PointD& point)
+                       const Profile& prof,
+                       const Vector<double, 2>& point)
 {
-    size_t i = firstSegmentAt(prof, x(point));
+    size_t i = firstSegmentAt(prof, getX(point));
     double minDist = numeric_limits<double>::max();
-    if (i < segmentCount(prof) && x(prof[i]) < x(point))
+    if (i < getSegmentCount(prof) && getX(prof[i]) < getX(point))
     {
-        double yt = yAtX(segment(prof, i), x(point));
-        double dy = y(segment(prof, i).vector());
-        if ((yt <= y(point) && dy <= 0) || (yt >= y(point) && dy >= 0))
+        double yt = getYAtX(getSegment(prof, i), getX(point));
+        double dy = getY(getSegment(prof, i).getVector());
+        if ((yt <= getY(point) && dy <= 0) || (yt >= getY(point) && dy >= 0))
         {
-            minDist = fabs(yt - y(point));
-            nearestPoint = point2(x(point), yt);
+            minDist = fabs(yt - getY(point));
+            nearestPoint = vector2(getX(point), yt);
             segmentIndex = i;
             i++;
         }
@@ -244,10 +281,10 @@ bool nearestPointAfter(PointD& nearestPoint,
         i = 0;
     }
 
-    while (i < segmentCount(prof) && x(prof[i]) - x(point) < minDist)
+    while (i < getSegmentCount(prof) && getX(prof[i]) - getX(point) < minDist)
     {
-        PointD candidate = ::JEBMath::nearestPoint(segment(prof, i), point);
-        double dist = distance(candidate, point);
+        auto candidate = getNearestPoint(getSegment(prof, i), point);
+        double dist = getDistance(candidate, point);
         if (dist < minDist)
         {
             nearestPoint = candidate;
@@ -259,66 +296,29 @@ bool nearestPointAfter(PointD& nearestPoint,
     return minDist != numeric_limits<double>::max();
 }
 
-static bool firstIntersectionOnVertLineSegment(PointD& isect,
-                                               const LineSegmentD& line,
-                                               const LineStringD& prof)
+bool firstIntersection(Vector<double, 2>& isect,
+                       const LineSegment<double, 2>& line,
+                       const Profile& prof)
 {
-    double lMin = std::min(y(line.start()), y(line.end()));
-    double lMax = std::max(y(line.start()), y(line.end()));
-    double pMin = interpolateY(prof, x(line.start()), PickLowest);
-    double pMax = interpolateY(prof, x(line.start()), PickHighest);
-    if (y(line.vector()) >= 0)
-    {
-        if (pMin <= lMin && lMin <= pMax)
-        {
-            isect = line.start();
-            return true;
-        }
-        else if (lMin <= pMin && pMin <= lMax)
-        {
-            isect = point2(x(line.start()), pMin);
-            return true;
-        }
-    }
-    else
-    {
-        if (pMin <= lMax && lMax <= pMax)
-        {
-            isect = line.start();
-            return true;
-        }
-        else if (lMin <= pMax && pMax <= lMax)
-        {
-            isect = point2(x(line.start()), pMax);
-            return true;
-        }
-    }
-    return false;
-}
-
-bool firstIntersection(PointD& isect,
-                       const LineSegmentD& line,
-                       const LineStringD& prof)
-{
-    VectorD v = line.vector();
-    if (x(v) == 0)
+    auto v = line.getVector();
+    if (getX(v) == 0)
         return firstIntersectionOnVertLineSegment(isect, line, prof);
 
-    double xMin = std::min(x(line.start()), x(line.end()));
-    double xMax = std::max(x(line.start()), x(line.end()));
+    double xMin = std::min(getX(line.getStart()), getX(line.getEnd()));
+    double xMax = std::max(getX(line.getStart()), getX(line.getEnd()));
     size_t iMin = firstSegmentAt(prof, xMin);
     size_t iMax = lastSegmentAt(prof, xMax);
-    if (iMax == ::JEBMath::InvalidIndex || iMin == segmentCount(prof))
+    if (iMax == ::JEBMath::InvalidIndex || iMin == getSegmentCount(prof))
         return false;
-    if (iMax == segmentCount(prof))
-        iMax = segmentCount(prof) - 1;
+    if (iMax == getSegmentCount(prof))
+        iMax = getSegmentCount(prof) - 1;
     if (iMin == ::JEBMath::InvalidIndex)
         iMin = 0;
-    if (x(v) < 0)
+    if (getX(v) < 0)
     {
         for (size_t i = iMax; i != ::JEBMath::InvalidIndex; i--)
         {
-            if (intersection(isect, segment(prof, i), line, 0) == Intersecting)
+            if (intersection(isect, getSegment(prof, i), line, 0) == INTERSECTING)
                 return true;
         }
     }
@@ -326,7 +326,7 @@ bool firstIntersection(PointD& isect,
     {
         for (size_t i = iMin; i <= iMax; i++)
         {
-            if (intersection(isect, segment(prof, i), line, 0) == Intersecting)
+            if (intersection(isect, getSegment(prof, i), line, 0) == INTERSECTING)
                 return true;
         }
     }
@@ -335,4 +335,4 @@ bool firstIntersection(PointD& isect,
 }
 
 }
-}}
+

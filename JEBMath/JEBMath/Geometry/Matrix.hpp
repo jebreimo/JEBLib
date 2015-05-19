@@ -1,22 +1,102 @@
 #ifndef JEBMATH_GEOMETRY_MATRIX_HPP
 #define JEBMATH_GEOMETRY_MATRIX_HPP
 
-namespace JEBMath
-{
+#include <array>
+#include <initializer_list>
+#include <stdexcept>
 
-template <typename T, size_t N>
+namespace JEBMath {
+
+template <typename T, unsigned N>
 class Matrix
 {
 public:
-    constexpr size_t rows() {return N;}
-    constexpr size_t columns() {return N;}
+    static constexpr unsigned rows() {return N;}
+    static constexpr unsigned cols() {return N;}
+    static constexpr unsigned size() {return N * N;}
 
-    const T* operator[](size_t row) const {return m_Values + (row * N);}
-    T* operator[](size_t row) {return m_Values + (row * N);}
+    Matrix()
+    {}
+
+    Matrix(std::initializer_list<T> v)
+    {
+        if (v.size() != size())
+            throw std::invalid_argument("Incorrect number of arguments.");
+        auto it = v.begin();
+        for (auto dst = begin(); dst != end(); ++dst, ++it)
+            *dst = *it;
+    }
+
+    template <typename U>
+    Matrix(U (&arr)[N * N])
+    {
+        for (auto dst = begin(); dst != end(); ++dst, ++arr)
+            *dst = T(*arr);
+    }
+
+    template <typename U>
+    explicit Matrix(const Matrix<U, N>& other)
+    {
+        auto src = other.begin();
+        for (auto dst = begin(); dst != end(); ++dst, ++src)
+            *dst = T(*src);
+    }
+
+    template <typename U>
+    Matrix<T, N>& operator=(const Matrix<U, N>& other)
+    {
+        auto src = other.begin();
+        for (auto dst = begin(); dst != end(); ++dst, ++src)
+            *dst = T(*src);
+        return *this;
+    }
+
+    T* operator[](unsigned row)
+    {
+        return &m_Values[row * cols()];
+    }
+
+    const T* operator[](unsigned row) const
+    {
+        return &m_Values[row * cols()];
+    }
+
+    T* begin()
+    {
+        return m_Values.data();
+    }
+
+    T* end()
+    {
+        return m_Values.data() + size();
+    }
+
+    const T* begin() const
+    {
+        return m_Values.data();
+    }
+
+    const T* end() const
+    {
+        return m_Values.data() + size();
+    }
+
+    T* data()
+    {
+        return m_Values.data();
+    }
+
+    const T* data() const
+    {
+        return m_Values.data();
+    }
 private:
-    T m_Values[N * N];
+    std::array<T, N * N> m_Values;
 };
 
 }
+
+#include "MatrixFunctions.hpp"
+#include "MatrixOperators.hpp"
 
 #endif

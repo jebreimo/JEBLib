@@ -1,4 +1,4 @@
-#include "JEBMath/JEBVectorMath.hpp"
+#include "JEBMath/Geometry/Matrix.hpp"
 
 #include <cmath>
 #include <JEBTest/JEBTest.hpp>
@@ -25,12 +25,42 @@ void test_Transpose()
                                   8, 9, 0, 1,
                                   2, 3, 4, 5};
     auto mat1t = Matrix<double, 4>{0, 4, 8, 2,
-                                  1, 5, 9, 3,
-                                  2, 6, 0, 4,
-                                  3, 7, 1, 5};
+                                   1, 5, 9, 3,
+                                   2, 6, 0, 4,
+                                   3, 7, 1, 5};
     JT_EQUAL(transposed(mat1), mat1t);
     transpose(mat1t);
     JT_EQUAL(mat1, mat1t);
+}
+
+void test_MatrixMatrixAddition()
+{
+    typedef Matrix<int, 3> Mat;
+    auto m1 = Mat{1, 2, 3,
+                  4, 5, 6,
+                  7, 8, 9};
+    auto m2 = Mat{ 1, -1,  1,
+                  -1,  1, -1,
+                   1, -1,  1};
+    auto product =  Mat{ 2,  1,  4,
+                         3,  6,  5,
+                         8,  7, 10};
+    JT_EQUAL(m1 + m2, product);
+}
+
+void test_MatrixMatrixSubtraction()
+{
+    typedef Matrix<int, 3> Mat;
+    auto m1 = Mat{1, 2, 3,
+                  4, 5, 6,
+                  7, 8, 9};
+    auto m2 = Mat{ 1, -1,  1,
+                  -1,  1, -1,
+                   1, -1,  1};
+    auto product =  Mat{0, 3, 2,
+                        5, 4, 7,
+                        6, 9, 8};
+    JT_EQUAL(m1 - m2, product);
 }
 
 void test_MatrixMatrixMultiplication()
@@ -57,9 +87,11 @@ void test_MatrixVectorMultiplication()
     JT_EQUAL(v * m, product2);
 }
 
-JT_SUBTEST("Graphics",
+JT_SUBTEST("Geometry",
            test_Basics,
            test_Transpose,
+           test_MatrixMatrixAddition,
+           test_MatrixMatrixSubtraction,
            test_MatrixMatrixMultiplication,
            test_MatrixVectorMultiplication);
 }

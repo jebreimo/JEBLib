@@ -1,11 +1,11 @@
-#ifndef JEB_MATH_POLYGONUNWINDER_HPP
-#define JEB_MATH_POLYGONUNWINDER_HPP
+#ifndef JEBMATH_GEOMETRY_POLYGONUNWINDER_HPP
+#define JEBMATH_GEOMETRY_POLYGONUNWINDER_HPP
 
 #include <iosfwd>
-#include <utility>
+#include <vector>
 #include "JEBBase/Iterators/Iterators.hpp"
+#include "LineSegment.hpp"
 #include "PolygonVertex.hpp"
-#include "Types.hpp"
 
 namespace JEBMath { namespace Polygon {
 
@@ -15,7 +15,7 @@ public:
     Unwinder();
     ~Unwinder();
 
-    double tolerance() const;
+    double getTolerance() const;
     void setTolerance(double tolerance);
 
     template <typename FwdIt>
@@ -27,13 +27,13 @@ public:
     void prepare();
     void print(std::ostream& os) const;
 
-    std::vector<Point<double, 2>> hull();
-    std::vector<std::vector<Point<double, 2>>> split();
+    std::vector<Vector<double, 2>> getHull();
+    std::vector<std::vector<Vector<double, 2>>> split();
 private:
     /** @return the next vertex that should be checked for intersections.
      */
     Vertex* insertIntersections(Vertex* first,
-                                const Dim2::LineSegmentD& line1,
+                                const LineSegment<double, 2>& line1,
                                 Vertex* second);
 
     /** @return the next vertex that should be checked for intersections.
@@ -45,12 +45,12 @@ private:
                              double offset2,
                              Vertex* vertex1,
                              Vertex* vertex2,
-                             const Dim2::LineSegmentD& line1,
-                             const Dim2::LineSegmentD& line2);
+                             const LineSegment<double, 2>& line1,
+                             const LineSegment<double, 2>& line2);
 
-    Vertex* vertexAtOffset(Vertex* vertex,
-                           const Dim2::LineSegmentD& line,
-                           double offset);
+    Vertex* getVertexAtOffset(Vertex* vertex,
+                              const LineSegment<double, 2>& line,
+                              double offset);
 
     Vertex* m_FirstVertex;
     bool m_Prepared;
@@ -59,8 +59,11 @@ private:
 
 namespace detail
 {
-template <typename Point>
-Dim2::PointD toPoint2D(const Point& p) {return Dim2::pointD(x(p), y(p));}
+    template <typename Point>
+    Vector<double, 2> toPoint2D(const Point& p)
+    {
+        return vector2<double>(getX(p), getY(p));
+    }
 }
 
 template <typename FwdIt>

@@ -1,13 +1,12 @@
-#ifndef JEBMATH_GRAPHICS_MATRIXOPERATORS_HPP
-#define JEBMATH_GRAPHICS_MATRIXOPERATORS_HPP
+#ifndef JEBMATH_GEOMETRY_MATRIXOPERATORS_HPP
+#define JEBMATH_GEOMETRY_MATRIXOPERATORS_HPP
 
 #include <ostream>
-#include "JEBMath/Graphics/Matrix.hpp"
-#include "JEBMath/Graphics/Vector.hpp"
+#include "Vector.hpp"
 
 namespace JEBMath {
 
-template <typename T, typename U, size_t N>
+template <typename T, typename U, unsigned N>
 bool operator==(const Matrix<T, N>& a, const Matrix<U, N>& b)
 {
     auto aData = a.data();
@@ -20,8 +19,50 @@ bool operator==(const Matrix<T, N>& a, const Matrix<U, N>& b)
     return true;
 }
 
-template <typename T, typename U, size_t N>
-auto operator*(Matrix<T, N>& a, const Matrix<U, N>& b)
+template <typename T, typename U, unsigned N>
+Matrix<T, N>& operator+=(Matrix<T, N>& a, const Matrix<U, N>& b)
+{
+    auto dataA = a.data();
+    auto dataB = b.data();
+    for (auto i = 0u; i < N * N; ++i)
+    {
+        dataA[i] += dataB[i];
+    }
+    return a;
+}
+
+template <typename T, typename U, unsigned N>
+auto operator+(const Matrix<T, N>& a, const Matrix<U, N>& b)
+    -> Matrix<decltype(T() + U()), N>
+{
+    typedef decltype(T() + U()) ResType;
+    Matrix<ResType, N> c(a);
+    return c += b;
+}
+
+template <typename T, typename U, unsigned N>
+Matrix<T, N>& operator-=(Matrix<T, N>& a, const Matrix<U, N>& b)
+{
+    auto dataA = a.data();
+    auto dataB = b.data();
+    for (auto i = 0u; i < N * N; ++i)
+    {
+        dataA[i] -= dataB[i];
+    }
+    return a;
+}
+
+template <typename T, typename U, unsigned N>
+auto operator-(const Matrix<T, N>& a, const Matrix<U, N>& b)
+    -> Matrix<decltype(T() + U()), N>
+{
+    typedef decltype(T() + U()) ResType;
+    Matrix<ResType, N> c(a);
+    return c -= b;
+}
+
+template <typename T, typename U, unsigned N>
+auto operator*(const Matrix<T, N>& a, const Matrix<U, N>& b)
     -> Matrix<decltype(T() * U()), N>
 {
     typedef decltype(T() * U()) ResType;
@@ -39,13 +80,13 @@ auto operator*(Matrix<T, N>& a, const Matrix<U, N>& b)
     return c;
 }
 
-template <typename T, typename U, size_t N>
+template <typename T, typename U, unsigned N>
 Matrix<T, N>& operator*=(Matrix<T, N>& a, const Matrix<U, N>& b)
 {
     return a = a * b;
 }
 
-template <typename T, typename U, size_t N>
+template <typename T, typename U, unsigned N>
 auto operator*(const Matrix<T, N>& m, const Vector<U, N>& v)
     -> Vector<decltype(T() * U()), N>
 {
@@ -63,7 +104,7 @@ auto operator*(const Matrix<T, N>& m, const Vector<U, N>& v)
     return result;
 }
 
-template <typename T, typename U, size_t N>
+template <typename T, typename U, unsigned N>
 auto operator*(const Vector<T, N>& v, const Matrix<U, N>& m)
     -> Vector<decltype(T() * U()), N>
 {
@@ -81,7 +122,7 @@ auto operator*(const Vector<T, N>& v, const Matrix<U, N>& m)
     return result;
 }
 
-template <typename T, size_t N>
+template <typename T, unsigned N>
 std::ostream& operator<<(std::ostream& os, const Matrix<T, N>& m)
 {
     os << m[0][0];

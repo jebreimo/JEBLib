@@ -7,32 +7,34 @@
 
 namespace JEBMath {
 
-template <typename T, size_t N>
-LineSegment<T, N> segment(const std::vector<Point<T, N>>& lineString,
-                          size_t i);
+template <typename T, unsigned N>
+LineSegment<T, N> getSegment(const std::vector<Vector<T, N>>& lineString,
+                             unsigned i);
 
-template <typename T, size_t N>
-LineSegment<T, N> firstSegment(const std::vector<Point<T, N>>& lineString);
+template <typename T, unsigned N>
+LineSegment<T, N> getFirstSegment(
+        const std::vector<Vector<T, N>>& lineString);
 
-template <typename T, size_t N>
-LineSegment<T, N> lastSegment(const std::vector<Point<T, N>>& lineString);
+template <typename T, unsigned N>
+LineSegment<T, N> getLastSegment(
+        const std::vector<Vector<T, N>>& lineString);
 
-template <typename T, size_t N>
-void removeSegment(std::vector<Point<T, N>>& lineString, size_t i);
+template <typename T, unsigned N>
+void removeSegment(std::vector<Vector<T, N>>& lineString, unsigned i);
 
-template <typename T, size_t N>
-size_t segmentCount(const std::vector<Point<T, N>>& lineString);
+template <typename T, unsigned N>
+unsigned getSegmentCount(const std::vector<Vector<T, N>>& lineString);
 
-template <typename T, size_t N>
-std::pair<Point<T, N>, Point<T, N>> boundingBox(
-        const std::vector<Point<T, N>>& lineString);
+template <typename T, unsigned N>
+std::pair<Vector<T, N>, Vector<T, N>> getBoundingBox(
+        const std::vector<Vector<T, N>>& lineString);
 
-template <typename T, size_t N>
+template <typename T, unsigned N>
 std::ostream& operator<<(std::ostream& os,
-                         const std::vector<Point<T, N>>& ls);
+                         const std::vector<Vector<T, N>>& ls);
 
 }
 
-#include "LineString.impl.hpp"
+#include "LineString-impl.hpp"
 
 #endif

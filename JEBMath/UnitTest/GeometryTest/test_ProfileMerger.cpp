@@ -1,18 +1,17 @@
 #include "JEBMath/Geometry/ProfileMerger.hpp"
 
 #include <algorithm>
+#include "JEBMath/Geometry/LineString.hpp"
 #include "JEBMath/Geometry/Profile.hpp"
-#include "JEBMath/Geometry/Types.hpp"
 #include <JEBTest/JEBTest.hpp>
 
 using namespace JEBMath;
-using namespace JEBMath::Dim2;
 
 template <size_t N>
-void fill(LineStringD& ls, double (&array)[N])
+void fill(Profile& ls, double (&array)[N])
 {
     for (size_t i = 0; i < N; i += 2)
-        ls.push_back(point2<double>(array[i], array[i + 1]));
+        ls.push_back(vector2<double>(array[i], array[i + 1]));
 }
 
 static void test_MergeBothEmpty()
@@ -21,45 +20,45 @@ static void test_MergeBothEmpty()
     JT_ASSERT(!merger.nextResult());
 }
 
-static void CheckResult(const LineStringD& result,
-                        const LineStringD& expected,
+static void CheckResult(const Profile& result,
+                        const Profile& expected,
                         double precision)
 {
     JT_EQUAL(result.size(), expected.size());
-    LineStringD::const_iterator itR = result.begin();
-    LineStringD::const_iterator itE = expected.begin();
+    auto itR = result.begin();
+    auto itE = expected.begin();
     size_t i = 0;
     for (; itR != result.end(); ++itR, ++itE)
     {
-        JT_ASSERT_MSG(equivalent(*itR, *itE, precision),
+        JT_ASSERT_MSG(areEquivalent(*itR, *itE, precision),
                       "Index " << i << ": got " << *itR <<
                       ", expected " << *itE);
         i++;
     }
 }
 
-static void TestMerging(const LineStringD& a,
-                        const LineStringD& b,
-                        const std::vector<LineStringD>& result,
+static void TestMerging(const Profile& a,
+                        const Profile& b,
+                        const std::vector<Profile>& result,
                         double maxExtrapolation = 0,
                         double maxInterpolation = 0,
                         double precision = 1e-9)
 {
-    JT_ASSERT(a.size() < 2 || Profile::isProfile(a));
-    JT_ASSERT(b.size() < 2 || Profile::isProfile(b));
+    JT_ASSERT(a.size() < 2 || isProfile(a));
+    JT_ASSERT(b.size() < 2 || isProfile(b));
     ProfileMerger merger;
     merger.setMaxExtrapolation(maxExtrapolation);
-    JT_EQUAL(merger.maxExtrapolation(), maxExtrapolation);
+    JT_EQUAL(merger.getMaxExtrapolation(), maxExtrapolation);
     merger.setMaxInterpolation(maxInterpolation);
-    JT_EQUAL(merger.maxInterpolation(), maxInterpolation);
+    JT_EQUAL(merger.getMaxInterpolation(), maxInterpolation);
     merger.setPrecision(precision);
-    JT_EQUAL(merger.precision(), precision);
+    JT_EQUAL(merger.getPrecision(), precision);
 
     merger.setProfiles(a, b);
     for (auto& lineString : result)
     {
         JT_ASSERT_MSG(merger.nextResult(), "Expected: " << lineString);
-        CheckResult(merger.result(), lineString, precision);
+        CheckResult(merger.getResult(), lineString, precision);
     }
     JT_ASSERT(!merger.nextResult());
 }
@@ -71,12 +70,12 @@ static void test_MergeOneEmpty()
          0, -2,
          1,  0
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
-    LineStringD b;
+    Profile b;
 
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], ap);
 
     TestMerging(a, b, result);
@@ -89,14 +88,14 @@ static void test_MergeSimple()
          0, -2,
          1,  0
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
         -5,  0,
          5,  0
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp[] = {
@@ -106,7 +105,7 @@ static void test_MergeSimple()
          1,  0,
          5,  0
     };
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], rp);
 
     TestMerging(a, b, result);
@@ -118,7 +117,7 @@ static void test_Merge_AB_B()
          0,  1,
          2,  0
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
@@ -126,7 +125,7 @@ static void test_Merge_AB_B()
          2,  0,
          4,  1
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp[] = {
@@ -134,7 +133,7 @@ static void test_Merge_AB_B()
          2,  0,
          4,  1
     };
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], rp);
 
     TestMerging(a, b, result);
@@ -147,14 +146,14 @@ static void test_Merge_AB_A()
          2,  0,
          4,  1
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
          0,  2,
          2,  0
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp[] = {
@@ -162,7 +161,7 @@ static void test_Merge_AB_A()
          2,  0,
          4,  1
     };
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], rp);
 
     TestMerging(a, b, result);
@@ -175,7 +174,7 @@ static void test_Merge_AB_BA()
          2,  0,
          4,  1
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
@@ -183,7 +182,7 @@ static void test_Merge_AB_BA()
          2,  0,
          4, -1
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp[] = {
@@ -191,7 +190,7 @@ static void test_Merge_AB_BA()
          2,  0,
          4, -1
     };
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], rp);
 
     TestMerging(a, b, result);
@@ -204,7 +203,7 @@ static void test_Vertical1()
         4, 2,
         8, 1
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
@@ -213,7 +212,7 @@ static void test_Vertical1()
         4, 0,
         8, 1
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp[] = {
@@ -223,7 +222,7 @@ static void test_Vertical1()
          4,  0,
          8,  1
     };
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], rp);
 
     TestMerging(a, b, result);
@@ -237,7 +236,7 @@ static void test_Vertical2()
         2, 0,
         4, 0
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
@@ -246,7 +245,7 @@ static void test_Vertical2()
         2, 1,
         4, 1
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp[] = {
@@ -255,7 +254,7 @@ static void test_Vertical2()
          2,  0,
          4,  0
     };
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], rp);
 
     TestMerging(a, b, result);
@@ -269,7 +268,7 @@ static void test_Vertical3()
         2, 1,
         4, 1
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
@@ -278,7 +277,7 @@ static void test_Vertical3()
         2, 0,
         4, 0
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp[] = {
@@ -287,7 +286,7 @@ static void test_Vertical3()
          2,  0,
          4,  0
     };
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], rp);
 
     TestMerging(a, b, result);
@@ -300,14 +299,14 @@ static void test_Segments1()
         4, 5,
         8, 0
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
         2, 2,
         6, 2
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp0[] = {
@@ -322,7 +321,7 @@ static void test_Segments1()
          6,  2.5,
          8,  0
     };
-    std::vector<LineStringD> result(3);
+    std::vector<Profile> result(3);
     fill(result[0], rp0);
     fill(result[1], rp1);
     fill(result[2], rp2);
@@ -337,14 +336,14 @@ static void test_Extrapolation1()
         4, 5,
         8, 0
     };
-    LineStringD a;
+    Profile a;
     fill(a, ap);
 
     double bp[] = {
         2, 2,
         6, 2
     };
-    LineStringD b;
+    Profile b;
     fill(b, bp);
 
     double rp[] = {
@@ -355,7 +354,7 @@ static void test_Extrapolation1()
          6.4, 2,
          8, 0
     };
-    std::vector<LineStringD> result(1);
+    std::vector<Profile> result(1);
     fill(result[0], rp);
 
     TestMerging(a, b, result, 0.4001);

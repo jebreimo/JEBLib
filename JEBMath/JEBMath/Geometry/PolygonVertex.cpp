@@ -5,7 +5,7 @@
 #include <iostream>
 #include <iterator>
 #include "JEBBase/Iterators/CircularListIterator.hpp"
-#include "JEBMath/Math/Comparisons.hpp"
+#include "../Math/Comparisons.hpp"
 #include "Intersections.hpp"
 #include "Polygon.hpp"
 #include "SortPoints.hpp"
@@ -44,7 +44,7 @@ void createSpokes(Vertex* vertex1, Vertex* vertex2)
         new Spoke(vertex1, &vertex1->next),
         new Spoke(vertex2, &vertex2->next),
     };
-    Dim2::sortClockwise(std::begin(spoke), std::end(spoke), vertex1->point,
+    sortClockwise(std::begin(spoke), std::end(spoke), vertex1->point,
                         [](const Spoke* i){return otherSpoke(i)->point;});
     spoke[0]->left = spoke[3];
     for (size_t i = 1; i < 4; i++)
@@ -92,7 +92,7 @@ Spoke* getRightSpoke(Spoke* spoke)
     {
         result = *it;
         auto vec = otherSpoke(*it)->point - spoke->vertex->point;
-        bestRatio = x(vec) != 0 ? y(vec) / x(vec)
+        bestRatio = getX(vec) != 0 ? getY(vec) / getX(vec)
                                 : std::numeric_limits<double>::max();
     }
     while (it.next())
@@ -101,7 +101,7 @@ Spoke* getRightSpoke(Spoke* spoke)
             otherSpoke(*it)->spoke != otherSpoke(result)->spoke)
         {
             auto vec = otherSpoke(*it)->point - spoke->vertex->point;
-            double ratio = x(vec) != 0 ? y(vec) / x(vec)
+            double ratio = getX(vec) != 0 ? getY(vec) / getX(vec)
                                        : std::numeric_limits<double>::max();
             if (ratio < bestRatio)
             {
@@ -121,8 +121,8 @@ std::pair<Vertex*, Vertex*> getRightEdge(Vertex* vertex)
         return std::make_pair(spoke->vertex, otherSpoke(spoke));
     }
 
-    if (direction(vertex->prev->point, vertex->point, vertex->next->point,
-                  1e-9) & (Left | Ahead))
+    if (getDirection(vertex->prev->point, vertex->point, vertex->next->point,
+                     1e-9) & (Left | Ahead))
     {
         return std::make_pair(vertex, vertex->next);
     }
@@ -134,7 +134,7 @@ std::pair<Vertex*, Vertex*> getRightEdge(Vertex* vertex)
 
 Spoke* findInsertPos(Spoke* existing,
                      Spoke* newSpoke,
-                     const Dim2::DirectionComparer<double>& cmp)
+                     const DirectionComparer<double>& cmp)
 {
     auto it = makeIterator(existing, nextSpoke);
     while (it.next())
@@ -145,7 +145,7 @@ Spoke* findInsertPos(Spoke* existing,
 
 void insert(Spoke* first,
             Spoke* newSpoke,
-            const Dim2::DirectionComparer<double>& cmp)
+            const DirectionComparer<double>& cmp)
 {
     Spoke* next = findInsertPos(first, newSpoke, cmp);
     newSpoke->left = next->left;
@@ -158,7 +158,7 @@ void updateSpokes(Spoke* spoke, Vertex* vertex)
 {
     assert(spoke);
     assert(!vertex->spoke);
-    Dim2::DirectionComparer<double> cmp(vertex->point);
+    DirectionComparer<double> cmp(vertex->point);
     insert(spoke, new Spoke(vertex, &vertex->prev), cmp);
     insert(spoke, new Spoke(vertex, &vertex->next), cmp);
     // Note that all vertexes at the intersection will have a pointer
@@ -175,9 +175,9 @@ std::pair<Vertex*, Vertex*> getFirstEdge(Vertex* vertex)
     while (it.next())
     {
         Vertex* n = *it;
-        if (x((*it)->point) < x(loLe->point) ||
-            (x((*it)->point) == x(loLe->point) &&
-             y((*it)->point) < y(loLe->point)))
+        if (getX((*it)->point) < getX(loLe->point) ||
+            (getX((*it)->point) == getX(loLe->point) &&
+             getY((*it)->point) < getY(loLe->point)))
         {
             loLe = n;
         }
@@ -185,14 +185,14 @@ std::pair<Vertex*, Vertex*> getFirstEdge(Vertex* vertex)
     return getRightEdge(loLe);
 }
 
-Vertex* createVertex(double offset, const Point<double, 2>& p)
+Vertex* createVertex(double offset, const Vector<double, 2>& p)
 {
     Vertex* vertex = new Vertex(offset, p);
     vertex->next = vertex->prev = vertex;
     return vertex;
 }
 
-Vertex* createVertex(Vertex* next, double offset, const Point<double, 2>& p)
+Vertex* createVertex(Vertex* next, double offset, const Vector<double, 2>& p)
 {
     assert(next);
     next->prev->next = new Vertex(offset, p, next->prev, next);

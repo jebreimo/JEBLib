@@ -1,12 +1,13 @@
 #include "JEBMath/Geometry/SortPoints.hpp"
+#include "JEBMath/Geometry/LineSegment.hpp"
 
-#include "JEBMath/Geometry/Types.hpp"
+// #include "JEBMath/Geometry/Types.hpp"
 #include <JEBTest/JEBTest.hpp>
 
 using namespace JEBMath;
 
-void assertLess(const Dim2::DirectionComparer<double>& cmp,
-                const Dim2::PointD& p, const Dim2::PointD& q)
+void assertLess(const DirectionComparer<double>& cmp,
+                const Vector<double, 2>& p, const Vector<double, 2>& q)
 {
     JT_ASSERT_MSG(cmp(p, q), p << " not less than " << q);
     JT_ASSERT_MSG(!cmp(q, p), q << " not less than " << p);
@@ -14,31 +15,31 @@ void assertLess(const Dim2::DirectionComparer<double>& cmp,
 
 void test_SortClockwise()
 {
-    Dim3::LineSegmentD lines[] = {
-        Dim3::LineSegmentD(Dim3::pointD(2, 2, 0), Dim3::pointD(0, 0, 3)),
-        Dim3::LineSegmentD(Dim3::pointD(2, 2, 0), Dim3::pointD(4, 4, 1)),
-        Dim3::LineSegmentD(Dim3::pointD(2, 2, 0), Dim3::pointD(0, 4, 5)),
-        Dim3::LineSegmentD(Dim3::pointD(2, 2, 0), Dim3::pointD(4, 0, 1))
+    LineSegment<double, 3> lines[] = {
+        makeLineSegment(vector3(2.0, 2.0, 0.0), vector3(0.0, 0.0, 3.0)),
+        makeLineSegment(vector3(2.0, 2.0, 0.0), vector3(4.0, 4.0, 1.0)),
+        makeLineSegment(vector3(2.0, 2.0, 0.0), vector3(0.0, 4.0, 5.0)),
+        makeLineSegment(vector3(2.0, 2.0, 0.0), vector3(4.0, 0.0, 1.0))
     };
-    Dim2::sortClockwise(std::begin(lines), std::end(lines), Dim2::pointD(2, 2),
-                      [](const Dim3::LineSegmentD& l)
-                      {return Dim2::pointD(x(l.end()), y(l.end()));});
-    JT_EQUAL(lines[0].end(), Dim3::pointD(4, 4, 1));
-    JT_EQUAL(lines[1].end(), Dim3::pointD(0, 4, 5));
-    JT_EQUAL(lines[2].end(), Dim3::pointD(0, 0, 3));
-    JT_EQUAL(lines[3].end(), Dim3::pointD(4, 0, 1));
+    sortClockwise(std::begin(lines), std::end(lines), vector2(2.0, 2.0),
+                  [](const LineSegment<double, 3>& l)
+                  {return vector2(getX(l.getEnd()), getY(l.getEnd()));});
+    JT_EQUAL(lines[0].getEnd(), vector3(4.0, 4.0, 1.0));
+    JT_EQUAL(lines[1].getEnd(), vector3(0.0, 4.0, 5.0));
+    JT_EQUAL(lines[2].getEnd(), vector3(0.0, 0.0, 3.0));
+    JT_EQUAL(lines[3].getEnd(), vector3(4.0, 0.0, 1.0));
 }
 
 void test_CompareXYDirections()
 {
-    Dim2::DirectionComparer<double> cmp(Dim2::pointD(5, 3));
-    Dim2::PointD p[] = {
-        Dim2::pointD(8, 3),
-        Dim2::pointD(7, 3),
-        Dim2::pointD(5, 3),
-        Dim2::pointD(2, 3),
-        Dim2::pointD(1, 3),
-        Dim2::pointD(7, 4),
+    DirectionComparer<double> cmp(vector2(5.0, 3.0));
+    Vector<double, 2> p[] = {
+        vector2(8.0, 3.0),
+        vector2(7.0, 3.0),
+        vector2(5.0, 3.0),
+        vector2(2.0, 3.0),
+        vector2(1.0, 3.0),
+        vector2(7.0, 4.0),
     };
     assertLess(cmp, p[0], p[1]);
     assertLess(cmp, p[0], p[2]);
@@ -52,21 +53,21 @@ void test_CompareXYDirections()
 
 void test_SortBug()
 {
-    Dim2::PointD p[] = {
-        Dim2::pointD(5, 0),
-        Dim2::pointD(0, 5),
-        Dim2::pointD(-5, 0),
-        Dim2::pointD(0, -5),
-        Dim2::pointD(4, 3),
-        Dim2::pointD(-4, 3),
-        Dim2::pointD(-4, -3),
-        Dim2::pointD(4, -3),
-        Dim2::pointD(3, 4),
-        Dim2::pointD(-3, 4),
-        Dim2::pointD(-3, -4),
-        Dim2::pointD(3, -4),
+    Vector<double, 2> p[] = {
+        vector2(5.0, 0.0),
+        vector2(0.0, 5.0),
+        vector2(-5.0, 0.0),
+        vector2(0.0, -5.0),
+        vector2(4.0, 3.0),
+        vector2(-4.0, 3.0),
+        vector2(-4.0, -3.0),
+        vector2(4.0, -3.0),
+        vector2(3.0, 4.0),
+        vector2(-3.0, 4.0),
+        vector2(-3.0, -4.0),
+        vector2(3.0, -4.0),
     };
-    Dim2::DirectionComparer<double> cmp(Dim2::pointD(0, 0));
+    DirectionComparer<double> cmp(vector2(0.0, 0.0));
     assertLess(cmp, p[0], p[4]);
     assertLess(cmp, p[4], p[8]);
     assertLess(cmp, p[8], p[1]);
@@ -87,22 +88,22 @@ void test_SortBug()
 
 void test_SortClockwiseXY()
 {
-    Dim2::PointD points[] = {
-        Dim2::pointD(5, 0),
-        Dim2::pointD(0, 5),
-        Dim2::pointD(-5, 0),
-        Dim2::pointD(0, -5),
-        Dim2::pointD(4, 3),
-        Dim2::pointD(-4, 3),
-        Dim2::pointD(-4, -3),
-        Dim2::pointD(4, -3),
-        Dim2::pointD(3, 4),
-        Dim2::pointD(-3, 4),
-        Dim2::pointD(-3, -4),
-        Dim2::pointD(3, -4),
+    Vector<double, 2> points[] = {
+        vector2(5.0, 0.0),
+        vector2(0.0, 5.0),
+        vector2(-5.0, 0.0),
+        vector2(0.0, -5.0),
+        vector2(4.0, 3.0),
+        vector2(-4.0, 3.0),
+        vector2(-4.0, -3.0),
+        vector2(4.0, -3.0),
+        vector2(3.0, 4.0),
+        vector2(-3.0, 4.0),
+        vector2(-3.0, -4.0),
+        vector2(3.0, -4.0),
     };
-    std::vector<Dim2::PointD> vec(std::begin(points), std::end(points));
-    Dim2::sortClockwise(vec, Dim2::pointD(0, 0));
+    std::vector<Vector<double, 2>> vec(std::begin(points), std::end(points));
+    sortClockwise(vec, vector2(0.0, 0.0));
     JT_EQUAL(vec[0], points[0]);
     JT_EQUAL(vec[1], points[4]);
     JT_EQUAL(vec[2], points[8]);
@@ -119,25 +120,25 @@ void test_SortClockwiseXY()
 
 void test_SortXY()
 {
-    Dim2::PointD points[] = {
-        Dim2::pointD( 0,  0), //  0
-        Dim2::pointD(-2,  0), //  1
-        Dim2::pointD( 2,  0), //  2
-        Dim2::pointD(-2, -1), //  3
-        Dim2::pointD(-2,  1), //  4
-        Dim2::pointD( 2, -1), //  5
-        Dim2::pointD( 2,  1), //  6
-        Dim2::pointD(-3, -1), //  7
-        Dim2::pointD(-1, -1), //  8
-        Dim2::pointD(-3,  1), //  9
-        Dim2::pointD(-1,  1), // 10
-        Dim2::pointD( 1, -1), // 11
-        Dim2::pointD( 3, -1), // 12
-        Dim2::pointD( 1,  1), // 13
-        Dim2::pointD( 3,  1)  // 14
+    Vector<double, 2> points[] = {
+        vector2( 0.0,  0.0), //  0
+        vector2(-2.0,  0.0), //  1
+        vector2( 2.0,  0.0), //  2
+        vector2(-2.0, -1.0), //  3
+        vector2(-2.0,  1.0), //  4
+        vector2( 2.0, -1.0), //  5
+        vector2( 2.0,  1.0), //  6
+        vector2(-3.0, -1.0), //  7
+        vector2(-1.0, -1.0), //  8
+        vector2(-3.0,  1.0), //  9
+        vector2(-1.0,  1.0), // 10
+        vector2( 1.0, -1.0), // 11
+        vector2( 3.0, -1.0), // 12
+        vector2( 1.0,  1.0), // 13
+        vector2( 3.0,  1.0)  // 14
     };
-    std::vector<Dim2::PointD> vec(std::begin(points), std::end(points));
-    Dim2::sort(vec.begin(), vec.end());
+    std::vector<Vector<double, 2>> vec(std::begin(points), std::end(points));
+    sortPointsXY(vec.begin(), vec.end());
     JT_EQUAL(vec[7], points[0]);
     JT_EQUAL(vec[3], points[1]);
     JT_EQUAL(vec[11], points[2]);

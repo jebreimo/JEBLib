@@ -5,7 +5,7 @@
 #include <set>
 #include "JEBBase/Containers/UniquePairSet.hpp"
 #include "JEBBase/Iterators/CircularListIterator.hpp"
-#include "JEBMath/Math/Comparisons.hpp"
+#include "../Math/Comparisons.hpp"
 #include "Intersections.hpp"
 #include "Polygon.hpp"
 
@@ -32,7 +32,7 @@ Unwinder::~Unwinder()
     clear();
 }
 
-double Unwinder::tolerance() const
+double Unwinder::getTolerance() const
 {
     return m_Tolerance;
 }
@@ -92,12 +92,12 @@ bool isDoubleEdge(Spoke* a, Spoke* b)
            otherSpoke(a)->spoke == otherSpoke(b)->spoke;
 }
 
-std::vector<Dim2::PointD> walk(
+std::vector<Vector<double, 2>> walk(
         const Vertex* prev,
         const Vertex* vertex,
         JEBBase::UniquePairSet<Spoke*>& corners)
 {
-    std::vector<Dim2::PointD> result;
+    std::vector<Vector<double, 2>> result;
     result.push_back(prev->point);
     result.push_back(vertex->point);
     bool forward = prev->next == vertex;
@@ -172,11 +172,11 @@ void printSet(std::ostream& os, const JEBBase::UniquePairSet<Spoke*>& set)
     }
 }
 
-std::vector<std::vector<Dim2::PointD>> Unwinder::split()
+std::vector<std::vector<Vector<double, 2>>> Unwinder::split()
 {
     using namespace Polygon;
     prepare();
-    std::vector<std::vector<Dim2::PointD>> result;
+    std::vector<std::vector<Vector<double, 2>>> result;
     JEBBase::UniquePairSet<Spoke*> corners = getCorners(m_FirstVertex);
     std::pair<Vertex*, Vertex*> vertexes = getFirstEdge(m_FirstVertex);
     result.push_back(walk(vertexes.first, vertexes.second, corners));
@@ -197,9 +197,9 @@ std::vector<std::vector<Dim2::PointD>> Unwinder::split()
     return result;
 }
 
-Vertex* Unwinder::vertexAtOffset(Vertex* segStart,
-                                 const Dim2::LineSegmentD& line,
-                                 double offset)
+Vertex* Unwinder::getVertexAtOffset(Vertex* segStart,
+                                    const LineSegment<double, 2>& line,
+                                    double offset)
 {
     Vertex* nextVertex = findInsertPos(segStart, segStart->offset + offset,
                                    m_Tolerance);
@@ -207,18 +207,18 @@ Vertex* Unwinder::vertexAtOffset(Vertex* segStart,
         return nextVertex;
 
     return createVertex(nextVertex, segStart->offset + offset,
-                      line.pointAtT(offset));
+                        line.getPointAtT(offset));
 }
 
 void Unwinder::insertIntersections(double offset1,
                                    double offset2,
                                    Vertex* vertex1,
                                    Vertex* vertex2,
-                                   const Dim2::LineSegmentD& line1,
-                                   const Dim2::LineSegmentD& line2)
+                                   const LineSegment<double, 2>& line1,
+                                   const LineSegment<double, 2>& line2)
 {
-    Vertex* isect1 = vertexAtOffset(vertex1, line1, offset1);
-    Vertex* isect2 = vertexAtOffset(vertex2, line2, offset2);
+    Vertex* isect1 = getVertexAtOffset(vertex1, line1, offset1);
+    Vertex* isect2 = getVertexAtOffset(vertex2, line2, offset2);
     if (!isect1->spoke && !isect2->spoke)
         createSpokes(isect1, isect2);
     else if (!isect1->spoke)
@@ -228,19 +228,18 @@ void Unwinder::insertIntersections(double offset1,
 }
 
 Vertex* Unwinder::insertIntersections(Vertex* first,
-                                      const Dim2::LineSegmentD& line1,
+                                      const LineSegment<double, 2>& line1,
                                       Vertex* second)
 {
     Vertex* secondEnd = nextZeroOffsetVertex(second);
     Vertex* nextStart = secondEnd;
-    Dim2::LineSegmentD line2(second->point, secondEnd->point);
+    LineSegment<double, 2> line2(second->point, secondEnd->point);
     double offset1, offset2;
-    Dim2::LineRelationship rel = Dim2::intersection(
-            offset1, offset2, line1, line2, m_Tolerance);
-    if (rel == Dim2::Undetermined)
+    auto rel = intersection(offset1, offset2, line1, line2, m_Tolerance);
+    if (rel == UNDETERMINED)
     {
         std::pair<double, double> offs1, offs2;
-        if (!Dim2::overlap(offs1, offs2, line1, line2, m_Tolerance))
+        if (!overlap(offs1, offs2, line1, line2, m_Tolerance))
             return nextStart;
         if (!equal(offs1.first, 1.0, m_Tolerance) &&
             !equal(offs2.first, 1.0, m_Tolerance))
@@ -256,7 +255,7 @@ Vertex* Unwinder::insertIntersections(Vertex* first,
                                 line1, line2);
         }
     }
-    else if (rel == Dim2::Intersecting &&
+    else if (rel == INTERSECTING &&
              !equal(offset1, 1.0, m_Tolerance) &&
              !equal(offset2, 1.0, m_Tolerance))
     {
@@ -270,7 +269,7 @@ Vertex* Unwinder::insertIntersections(Vertex* lineStart,
                                       const Vertex* searchEnd)
 {
     Vertex* lineEnd = nextZeroOffsetVertex(lineStart);
-    Dim2::LineSegmentD line1(lineStart->point, lineEnd->point);
+    LineSegment<double, 2> line1(lineStart->point, lineEnd->point);
     Vertex* it = nextZeroOffsetVertex(lineEnd);
     while (it != searchEnd)
     {
@@ -279,7 +278,7 @@ Vertex* Unwinder::insertIntersections(Vertex* lineStart,
     return lineEnd;
 }
 
-std::vector<Dim2::PointD> Unwinder::hull()
+std::vector<Vector<double, 2>> Unwinder::getHull()
 {
     std::pair<Vertex*, Vertex*> vertexes = getFirstEdge(m_FirstVertex);
     JEBBase::UniquePairSet<Spoke*> corners = getCorners(m_FirstVertex);

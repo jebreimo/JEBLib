@@ -1,39 +1,55 @@
-#ifndef JEB_MATH_LINE_HPP
-#define JEB_MATH_LINE_HPP
+#ifndef JEBMATH_GEOMETRY_LINE_HPP
+#define JEBMATH_GEOMETRY_LINE_HPP
 
-#include "Point.hpp"
 #include "Vector.hpp"
 
 namespace JEBMath {
 
-template <typename T, size_t N>
+template <typename T, unsigned N>
 class LineSegment;
 
-template <typename T, size_t N>
+template <typename T, unsigned N>
 class Line
 {
 public:
-    typedef Point<T, N> Point;
-    typedef Vector<T, N> Vector;
-    typedef LineSegment<T, N> LineSegment;
+    Line()
+    {}
 
-    Line() {}
-    explicit Line(const LineSegment& ls);
-    Line(const Point& p, const Vector& v) : m_Point(p), m_Vector(v) {}
+    template <typename U>
+    explicit Line(const LineSegment<U, N>& ls)
+        : m_Point(ls.getStart()),
+          m_Vector(ls.getVector())
+    {}
 
-    const Point& point() const {return m_Point;}
-    void setPoint(const Point& point) {m_Point = point;}
+    Line(const Vector<T, N>& point, const Vector<T, N>& vector)
+        : m_Point(point),
+          m_Vector(vector)
+    {}
 
-    const Vector& vector() const {return m_Vector;}
-    void setVector(const Vector& vector) {m_Vector = vector;}
+    const Vector<T, N>& getPoint() const {return m_Point;}
+    void setPoint(const Vector<T, N>& point)
+    {
+        m_Point = point;
+    }
+
+    const Vector<T, N>& getVector() const {return m_Vector;}
+    void setVector(const Vector<T, N>& vector)
+    {
+        m_Vector = vector;
+    }
 private:
-    Point m_Point;
-    Vector m_Vector;
+    Vector<T, N> m_Point;
+    Vector<T, N> m_Vector;
 };
+
+
+template <typename T, unsigned N>
+Line<T, N> makeLine(const Vector<T, N>& point,
+                    const Vector<T, N>& vector)
+{
+    return Line<T, N>(point, vector);
+}
 
 }
 
-#include "Line.impl.hpp"
-
 #endif
-

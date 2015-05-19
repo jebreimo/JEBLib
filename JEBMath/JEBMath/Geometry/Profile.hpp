@@ -1,21 +1,23 @@
-#ifndef JEB_MATH_PROFILE_HPP
-#define JEB_MATH_PROFILE_HPP
+#ifndef JEBMATH_GEOMETRY_PROFILE_HPP
+#define JEBMATH_GEOMETRY_PROFILE_HPP
 
-#include "Intersections.hpp"
+// #include "Intersections.hpp"
+#include <vector>
+#include "LineSegment.hpp"
 
-namespace JEBMath { namespace Dim2 {
+namespace JEBMath {
 
-namespace Profile {
+typedef std::vector<Vector<double, 2>> Profile;
 
-bool isProfile(const LineStringD& prof);
+bool isProfile(const Profile& prof);
 
-size_t indexOfBottomPoint(const LineStringD& prof);
+size_t indexOfBottomPoint(const Profile& prof);
 
-size_t lowerBound(const LineStringD& prof, double x);
-size_t upperBound(const LineStringD& prof, double x);
+size_t lowerBound(const Profile& prof, double x);
+size_t upperBound(const Profile& prof, double x);
 
-size_t firstSegmentAt(const LineStringD& prof, double x);
-size_t lastSegmentAt(const LineStringD& prof, double x);
+size_t firstSegmentAt(const Profile& prof, double x);
+size_t lastSegmentAt(const Profile& prof, double x);
 
 enum ConflictResolution
 {
@@ -24,25 +26,24 @@ enum ConflictResolution
     PickLowest
 };
 
-double interpolateY(const LineStringD& prof,
+double interpolateY(const Profile& prof,
                     double x,
                     ConflictResolution pick = PickMiddle);
 
-bool nearestPointBefore(PointD& nearestPoint,
+bool nearestPointBefore(Vector<double, 2>& nearestPoint,
                         size_t& segment,
-                        const LineStringD& prof,
-                        const PointD& point);
+                        const Profile& prof,
+                        const Vector<double, 2>& point);
 
-bool nearestPointAfter(PointD& nearestPoint,
+bool nearestPointAfter(Vector<double, 2>& nearestPoint,
                        size_t& segment,
-                       const LineStringD& prof,
-                       const PointD& point);
+                       const Profile& prof,
+                       const Vector<double, 2>& point);
 
-bool firstIntersection(PointD& isect,
-                       const LineSegmentD& line,
-                       const LineStringD& prof);
+bool firstIntersection(Vector<double, 2>& isect,
+                       const LineSegment<double, 2>& line,
+                       const Profile& prof);
+
 }
-
-}}
 
 #endif
