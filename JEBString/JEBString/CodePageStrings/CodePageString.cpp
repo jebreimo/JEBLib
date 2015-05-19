@@ -36,7 +36,7 @@ namespace detail {
         Equal(const CodePage& codePage) : codePage(codePage)
         {}
 
-        int32_t operator()(char a, char b)
+        bool operator()(char a, char b)
         {
             return Unicode::caseInsensitiveEqual(codePage.toCodePoint(a),
                                                  codePage.toCodePoint(b));
@@ -49,7 +49,7 @@ namespace detail {
         Less(const CodePage& codePage) : codePage(codePage)
         {}
 
-        int32_t operator()(char a, char b)
+        bool operator()(char a, char b)
         {
             return Unicode::caseInsensitiveLess(codePage.toCodePoint(a),
                                                 codePage.toCodePoint(b));

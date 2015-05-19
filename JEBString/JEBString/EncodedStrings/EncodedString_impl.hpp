@@ -1,5 +1,6 @@
 #include "JEBString/CodePoints/CodePointString.hpp"
 
+#include "JEBString/CodePoints/CodePointAlgorithms.hpp"
 #include "JEBString/Unicode/CaseInsensitive.hpp"
 #include "JEBString/Unicode/UnicodePredicates.hpp"
 
@@ -36,7 +37,7 @@ template <typename It, typename Enc>
 bool contains(EncodedRange<It, Enc> str, uint32_t chr)
 {
     auto it = makeForwardIterator(str);
-    return advanceUntil(it, [=](uint32_t c){return c == chr;});
+    return CodePoints::advanceUntil(it, [=](uint32_t c){return c == chr;});
 }
 
 template <typename InpIt, typename Enc1, typename OutIt, typename Enc2>
