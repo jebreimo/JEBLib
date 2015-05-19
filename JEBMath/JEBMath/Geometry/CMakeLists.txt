@@ -44,7 +44,6 @@ set (PRIVATE_HEADERS
     )
 
 set(SRC
-    HomogeneousTransforms.cpp
     Intersections.cpp
     PolygonVertex.cpp
     PolygonUnwinder.cpp
