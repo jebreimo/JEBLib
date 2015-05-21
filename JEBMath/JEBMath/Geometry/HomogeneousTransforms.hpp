@@ -43,7 +43,8 @@ template <typename T, unsigned N>
 Matrix<T, N> rotateZT(T angle)
 {
     auto m = rotateZ(angle);
-    std::swap(m[0][1], m[1][0]);
+    m[0][1] = -m[0][1];
+    m[1][0] = -m[1][0];
     return m;
 }
 
