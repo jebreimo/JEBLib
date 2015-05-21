@@ -16,7 +16,9 @@ public:
     static unsigned size() {return N * N;}
 
     Matrix()
-    {}
+    {
+        m_Values.fill(0);
+    }
 
     Matrix(std::initializer_list<T> v)
     {
