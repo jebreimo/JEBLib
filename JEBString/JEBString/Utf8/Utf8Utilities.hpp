@@ -40,7 +40,7 @@ inline std::string toString(
 template <typename OutIt>
 EncodedStrings::Encoder<OutIt, Utf8Encoding> utf8Encoder(OutIt it)
 {
-    return EncodedStrings::Encoder<OutIt, Utf8Encoding>(it, Utf8Encoding());
+    return EncodedStrings::makeEncoder(it, Utf8Encoding());
 }
 
 inline EncodedStrings::Encoder<std::back_insert_iterator<std::string>,

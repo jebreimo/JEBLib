@@ -36,6 +36,11 @@ private:
     Encoding m_Encoding;
 };
 
+template <typename OutIt, typename Enc>
+Encoder<OutIt, Enc> makeEncoder(OutIt dst, Enc encoding)
+{
+    return Encoder<OutIt, Enc>(dst, encoding);
+}
 }}
 
 #endif
