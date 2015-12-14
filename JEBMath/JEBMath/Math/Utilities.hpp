@@ -6,6 +6,14 @@
 
 namespace JEBMath {
 
+inline int compare(double a, double b, double tolerance)
+{
+  auto d = a - b;
+  if (std::fabs(d) < tolerance)
+    return 0;
+  return d < 0 ? -1 : 1;
+}
+
 template <typename T>
 T getSign(T value)
 {
