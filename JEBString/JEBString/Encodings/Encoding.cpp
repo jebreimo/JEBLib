@@ -145,7 +145,9 @@ Encoding_t encodingFromPattern(unsigned pattern, size_t patternSize)
         switch (pattern)
         {
         case 0x1: return Encoding::Utf32LE;
+        case 0x2: return Encoding::Utf32LE;
         case 0x3: return Encoding::Utf32LE;
+        case 0x4: return Encoding::Utf32BE;
         case 0x5: return Encoding::Utf16LE;
         case 0x8: return Encoding::Utf32BE;
         case 0xA: return Encoding::Utf16BE;
@@ -175,7 +177,7 @@ Encoding_t encodingFromPattern(unsigned pattern, size_t patternSize)
 }
 
 Encoding_t encodingFromString(const char* str, size_t len,
-                                  bool ignoreLastCharacter)
+                              bool ignoreLastCharacter)
 {
     size_t patternSize;
     if (len % 4 == 0)

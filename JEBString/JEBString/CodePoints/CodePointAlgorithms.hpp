@@ -82,8 +82,7 @@ bool advanceWhileEqual(CodePointIterator<Decoder1>& str,
                        BinaryPred compare)
 {
     while (advanceIfEqual(str, cmp, compare))
-    {
-    }
+    {}
     return empty(cmp);
 }
 

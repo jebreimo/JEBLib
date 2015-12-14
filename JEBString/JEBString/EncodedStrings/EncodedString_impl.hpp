@@ -79,7 +79,9 @@ void copyImpl(EncodedRange<InpIt, Enc1> src, Encoder<OutIt, Enc2> dst,
 template <typename InpIt, typename Enc1, typename OutIt, typename Enc2>
 void copy(EncodedRange<InpIt, Enc1> src, Encoder<OutIt, Enc2> dst)
 {
-    copyImpl(src, dst, CompareEncodings<Enc1::encoding == Enc2::encoding>::Type());
+    typedef typename CompareEncodings<Enc1::encoding == Enc2::encoding>::Type
+        CompareEncodings;
+    copyImpl(src, dst, CompareEncodings());
 }
 
 template <typename It1, typename Enc1, typename It2, typename Enc2>
