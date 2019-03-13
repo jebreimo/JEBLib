@@ -13,23 +13,32 @@
 
 namespace JEBBase { namespace StateMachine {
 
-template <typename State, typename Event>
+template <typename State, typename Event, typename Data>
 class Transition
 {
 public:
     typedef State StateType;
     typedef Event EventType;
-    typedef StateMachine<State, Event> StateMachineType;
-    typedef ActionParameter<State, Event> ActionParameterType;
+    typedef StateMachine<State, Event, Data> StateMachineType;
+    typedef ActionParameter<State, Event, Data> ActionParameterType;
     typedef std::function<bool (ActionParameterType&)> ActionType;
 
     Transition();
+
     Transition(const State& fromState, const Event& event);
-    Transition(const State& fromState, const Event& event, const State& toState);
+
     Transition(const State& fromState,
                const Event& event,
-               const State& toState,
                const ActionType& action);
+
+    Transition(const State& fromState,
+               const Event& event,
+               const State& toState);
+
+    Transition(const State& fromState,
+               const Event& event,
+               const ActionType& action,
+               const State& toState);
 
     const State& fromState() const;
     void setFromState(const State& fromState);
@@ -49,9 +58,9 @@ private:
     ActionType m_Action;
 };
 
-template <typename State, typename Event>
-bool operator<(const Transition<State, Event>& lhs,
-               const Transition<State, Event>& rhs);
+template <typename State, typename Event, typename Data>
+bool operator<(const Transition<State, Event, Data>& lhs,
+               const Transition<State, Event, Data>& rhs);
 
 }}
 

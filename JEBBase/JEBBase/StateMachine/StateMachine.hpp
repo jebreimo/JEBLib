@@ -14,32 +14,41 @@
 
 namespace JEBBase { namespace StateMachine {
 
-template <typename State, typename Event>
+template <typename State, typename Event, typename Data>
 class StateMachine
 {
 public:
     typedef State StateType;
     typedef Event EventType;
-    typedef Transition<State, Event> TransitionType;
-    typedef ActionParameter<State, Event> ActionParameterType;
+    typedef Data DataType;
+    typedef Transition<State, Event, Data> TransitionType;
+    typedef ActionParameter<State, Event, Data> ActionParameterType;
     typedef std::function<bool (ActionParameterType&)> ActionType;
 
     StateMachine();
-    StateMachine(const std::vector<Transition<State, Event>>& transitions,
+    StateMachine(std::vector<TransitionType> transitions,
                  const State& initialState);
+    StateMachine(std::vector<TransitionType> transitions,
+                 const State& initialState,
+                 const Data& data);
 
     const State& state() const;
     void setState(const State& state);
 
-    void addTransition(const Transition<State, Event>& transition);
-    const Transition<State, Event>* transition(const Event& event);
+    void addTransition(const TransitionType& transition);
+    const TransitionType* transition(const Event& event);
+
+    Data& data();
+    const Data& data() const;
+    void setData(const Data& data);
 
     bool event(const Event& event);
 private:
     void ensureValidState();
 
     State m_State;
-    std::vector<Transition<State, Event>> m_Transitions;
+    std::vector<TransitionType> m_Transitions;
+    Data m_Data;
     mutable bool m_Dirty;
 };
 

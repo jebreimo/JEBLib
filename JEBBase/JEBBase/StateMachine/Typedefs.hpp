@@ -10,11 +10,11 @@
 
 namespace JEBBase { namespace StateMachine {
 
-template <typename State, typename Event>
+template <typename State, typename Event, typename Data>
 class ActionParameter;
-template <typename State, typename Event>
+template <typename State, typename Event, typename Data>
 class StateMachine;
-template <typename State, typename Event>
+template <typename State, typename Event, typename Data>
 class Transition;
 
 }}

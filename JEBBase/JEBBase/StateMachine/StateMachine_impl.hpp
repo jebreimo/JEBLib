@@ -10,45 +10,57 @@
 
 namespace JEBBase { namespace StateMachine {
 
-template <typename State, typename Event>
-StateMachine<State, Event>::StateMachine()
-    : m_State(State()),
+template <typename State, typename Event, typename Data>
+StateMachine<State, Event, Data>::StateMachine()
+    : m_State(),
+      m_Data(),
       m_Dirty(false)
-{
-}
+{}
 
-template <typename State, typename Event>
-StateMachine<State, Event>::StateMachine(
-            const std::vector<Transition<State, Event>>& transitions,
+template <typename State, typename Event, typename Data>
+StateMachine<State, Event, Data>::StateMachine(
+            std::vector<TransitionType> transitions,
             const State& initialState)
-    : m_State(State()),
-      m_Transitions(transitions),
+    : m_State(initialState),
+      m_Transitions(move(transitions)),
+      m_Data(),
       m_Dirty(!m_Transitions.empty())
-{
-}
+{}
 
-template <typename State, typename Event>
-const State& StateMachine<State, Event>::state() const
+template <typename State, typename Event, typename Data>
+StateMachine<State, Event, Data>::StateMachine(
+            std::vector<TransitionType> transitions,
+            const State& initialState,
+            const Data& data)
+    : m_State(initialState),
+      m_Transitions(move(transitions)),
+      m_Data(data),
+      m_Dirty(!m_Transitions.empty())
+{}
+
+template <typename State, typename Event, typename Data>
+const State& StateMachine<State, Event, Data>::state() const
 {
     return m_State;
 }
 
-template <typename State, typename Event>
-void StateMachine<State, Event>::setState(const State& state)
+template <typename State, typename Event, typename Data>
+void StateMachine<State, Event, Data>::setState(const State& state)
 {
     m_State = state;
 }
 
-template <typename State, typename Event>
-void StateMachine<State, Event>::addTransition(const Transition<State, Event>& transition)
+template <typename State, typename Event, typename Data>
+void StateMachine<State, Event, Data>::addTransition(const TransitionType& transition)
 {
     m_Dirty = m_Dirty ||
               (!m_Transitions.empty() && transition < m_Transitions.back());
     m_Transitions.push_back(transition);
 }
 
-template <typename State, typename Event>
-const Transition<State, Event>* StateMachine<State, Event>::transition(const Event& event)
+template <typename State, typename Event, typename Data>
+auto StateMachine<State, Event, Data>::transition(const Event& event)
+        -> const TransitionType*
 {
     ensureValidState();
     typename std::vector<TransitionType>::const_iterator it =
@@ -62,8 +74,26 @@ const Transition<State, Event>* StateMachine<State, Event>::transition(const Eve
         return NULL;
 }
 
-template <typename State, typename Event>
-bool StateMachine<State, Event>::event(const Event& event)
+template <typename State, typename Event, typename Data>
+Data& StateMachine<State, Event, Data>::data()
+{
+  return m_Data;
+}
+
+template <typename State, typename Event, typename Data>
+const Data& StateMachine<State, Event, Data>::data() const
+{
+  return m_Data;
+}
+
+template <typename State, typename Event, typename Data>
+void StateMachine<State, Event, Data>::setData(const Data& data)
+{
+  m_Data = data;
+}
+
+template <typename State, typename Event, typename Data>
+bool StateMachine<State, Event, Data>::event(const Event& event)
 {
     const TransitionType* tran = transition(event);
     if (!tran)
@@ -84,8 +114,8 @@ bool StateMachine<State, Event>::event(const Event& event)
     return result;
 }
 
-template <typename State, typename Event>
-void StateMachine<State, Event>::ensureValidState()
+template <typename State, typename Event, typename Data>
+void StateMachine<State, Event, Data>::ensureValidState()
 {
     if (m_Dirty)
     {

@@ -12,16 +12,16 @@
 
 namespace JEBBase { namespace StateMachine {
 
-template <typename State, typename Event>
+template <typename State, typename Event, typename Data>
 class ActionParameter
 {
 public:
-    ActionParameter(const Transition<State, Event>* transition,
-                    StateMachine<State, Event>* stateMachine);
+    ActionParameter(const Transition<State, Event, Data>* transition,
+                    StateMachine<State, Event, Data>* stateMachine);
     ActionParameter(const State& currentState,
                     const Event& event,
                     const State& nextState,
-                    StateMachine<State, Event>* stateMachine);
+                    StateMachine<State, Event, Data>* stateMachine);
 
     const State& currentState() const;
     void setCurrentState(const State& currentState);
@@ -35,14 +35,14 @@ public:
     const State& nextState() const;
     void setNextState(const State& nextState);
 
-    StateMachine<State, Event>* stateMachine() const;
-    void setStateMachine(StateMachine<State, Event>* stateMachine);
+    StateMachine<State, Event, Data>* stateMachine() const;
+    void setStateMachine(StateMachine<State, Event, Data>* stateMachine);
 private:
     const State& m_CurrentState;
     const Event& m_Event;
     const State& m_DefaultNextState;
     State m_NextState;
-    StateMachine<State, Event>* m_StateMachine;
+    StateMachine<State, Event, Data>* m_StateMachine;
 };
 
 }}
